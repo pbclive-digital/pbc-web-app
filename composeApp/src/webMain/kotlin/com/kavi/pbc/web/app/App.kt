@@ -9,11 +9,34 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.kavi.pbc.web.app.navigation.AppNavGraph
+import com.kavi.pbc.web.dashboard.DashboardModule
+import com.kavi.pbc.web.network.Network
+import com.kavi.pbc.web.network.model.NetConfig
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.DashboardContract
 import com.kavi.pbc.web.parent.contract.model.SplashContract
+import com.kavi.pbc.web.splash.SplashModule
 
 @Composable
-fun App() {
+fun App(
+    onNavHostReady: suspend (NavController) -> Unit = {}
+) {
+    // Register UI modules
+    registerUiModules()
+
+    // Initiate Network
+    //Network.shared.initiate(NetConfig("https", "pbc-api-staging-1f3fe32cb947.herokuapp.com"))
+    Network.shared.initiate(NetConfig("http", "localhost:8082"))
+
+    val navController = rememberNavController()
+
+    LaunchedEffect(navController) {
+        onNavHostReady(navController)
+    }
+
     val lightTheme = lightColorScheme(
         primary = Color(0xffb84910),
         secondary = Color(0xff5c2508),
@@ -35,8 +58,12 @@ fun App() {
                 .safeContentPadding()
                 .fillMaxSize(),
         ) {
-            ContractServiceLocator.locate(SplashContract::class).RetrieveEntry()
-            //ContractServiceLocator.locate(DashboardContract::class).RetrieveEntry()
+            AppNavGraph(navController = navController)
         }
     }
+}
+
+fun registerUiModules() {
+    ContractServiceLocator.register(SplashContract::class) { SplashModule() }
+    ContractServiceLocator.register(DashboardContract::class) { DashboardModule() }
 }

@@ -37,7 +37,14 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
 
+                // Compose navigation
+                implementation(libs.jetbrains.navigation.compose)
+                // ViewModel lifecycle
+                implementation(libs.androidx.lifecycle.viewmodelCompose)
+
                 implementation(projects.libParent)
+                implementation(projects.libData)
+                implementation(projects.libNetwork)
             }
         }
     }

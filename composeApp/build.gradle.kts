@@ -29,6 +29,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
+            // Compose navigation
+            implementation(libs.jetbrains.navigation.compose)
+
             implementation(projects.libParent)
             implementation(projects.libData)
             implementation(projects.libNetwork)

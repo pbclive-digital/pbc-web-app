@@ -31,15 +31,15 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kavi.pbc.web.parent.contract.ContractServiceLocator
-import com.kavi.pbc.web.parent.contract.model.DashboardContract
+import androidx.navigation.NavHostController
+import com.kavi.pbc.web.parent.navigation.DashboardPath
 import com.kavi.pbc.web.splash.data.model.SplashUiState
 import org.jetbrains.compose.resources.painterResource
 import pbcwebapp.ui_splash.generated.resources.Res
 import pbcwebapp.ui_splash.generated.resources.image_dhamma_chakra
 
 @Composable
-fun SplashUI() {
+fun SplashUI(navController: NavHostController) {
     val viewModel: SplashViewModel = viewModel { SplashViewModel() }
 
     val splashUiState by viewModel.splashUiState.collectAsState()
@@ -68,7 +68,7 @@ fun SplashUI() {
             navigateToAuth = true
         }
         SplashUiState.ON_DASHBOARD_NAV -> {
-            ContractServiceLocator.locate(DashboardContract::class).RetrieveEntry()
+            navController.navigate(DashboardPath.ROUTE)
         }
         SplashUiState.ON_ERROR -> {}
     }

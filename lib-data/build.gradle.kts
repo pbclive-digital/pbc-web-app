@@ -30,6 +30,8 @@ kotlin {
 
                 // kotlin serialization
                 implementation(libs.kotlin.serialization)
+
+                implementation(libs.kotlinx.datetime)
             }
         }
     }

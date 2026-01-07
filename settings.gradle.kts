@@ -1,5 +1,3 @@
-import java.net.URI
-
 rootProject.name = "PBCWebApp"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
