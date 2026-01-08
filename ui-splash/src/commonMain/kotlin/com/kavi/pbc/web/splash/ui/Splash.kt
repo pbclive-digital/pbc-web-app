@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.kavi.pbc.web.parent.navigation.DashboardPath
+import com.kavi.pbc.web.parent.navigation.SplashPath
 import com.kavi.pbc.web.splash.data.model.SplashUiState
 import org.jetbrains.compose.resources.painterResource
 import pbcwebapp.ui_splash.generated.resources.Res
@@ -68,7 +69,12 @@ fun SplashUI(navController: NavHostController) {
             navigateToAuth = true
         }
         SplashUiState.ON_DASHBOARD_NAV -> {
-            navController.navigate(DashboardPath.ROUTE)
+            // Remove the splash screen from navigation stack
+            navController.navigate(DashboardPath.ROUTE) {
+                popUpTo(SplashPath.SPLASH_UI) {
+                    inclusive = true
+                }
+            }
         }
         SplashUiState.ON_ERROR -> {}
     }
