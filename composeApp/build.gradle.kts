@@ -33,6 +33,7 @@ kotlin {
             implementation(libs.jetbrains.navigation.compose)
 
             implementation(projects.libParent)
+            implementation(projects.libCommonUi)
             implementation(projects.libData)
             implementation(projects.libNetwork)
             implementation(projects.uiSplash)

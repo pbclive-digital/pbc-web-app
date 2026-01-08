@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.kavi.pbc.web.app.navigation.AppNavGraph
-import com.kavi.pbc.web.app.theme.PBCWebAppTheme
+import com.kavi.pbc.web.common.ui.theme.PBCWebAppTheme
 import com.kavi.pbc.web.dashboard.DashboardModule
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.NetConfig

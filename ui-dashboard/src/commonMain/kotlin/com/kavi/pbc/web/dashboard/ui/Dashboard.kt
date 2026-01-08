@@ -41,12 +41,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.dashboard.data.model.TabItem
 import com.kavi.pbc.web.dashboard.ui.event.EventsUI
 import com.kavi.pbc.web.dashboard.ui.home.HomeUI
 import com.kavi.pbc.web.dashboard.ui.meditation.MeditationUI
 import com.kavi.pbc.web.dashboard.ui.temple.TempleUI
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
 import pbcwebapp.ui_dashboard.generated.resources.icon_event
 import pbcwebapp.ui_dashboard.generated.resources.icon_lotus
@@ -54,6 +56,8 @@ import pbcwebapp.ui_dashboard.generated.resources.icon_meditation
 import pbcwebapp.ui_dashboard.generated.resources.icon_temple
 import pbcwebapp.ui_dashboard.generated.resources.image_dhamma_chakra
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_buddhist_center
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pittsburgh
 
 @Composable
 fun DashboardUI(navController: NavController) {
@@ -108,15 +112,15 @@ fun DashboardUI(navController: NavController) {
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
-                                text = "Pittsburgh",
-                                fontFamily = FontFamily.Default,
+                                text = stringResource(Res.string.label_dashboard_pittsburgh),
+                                fontFamily = PBCFontFamily,
                                 fontSize = 32.sp,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
 
                             Text(
-                                "Buddhist Center",
-                                fontFamily = FontFamily.Default,
+                                text = stringResource(Res.string.label_dashboard_buddhist_center),
+                                fontFamily = PBCFontFamily,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 32.sp,
                                 color = MaterialTheme.colorScheme.onPrimary,

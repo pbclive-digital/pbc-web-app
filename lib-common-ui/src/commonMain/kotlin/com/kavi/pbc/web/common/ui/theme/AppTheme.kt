@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.app.theme
+package com.kavi.pbc.web.common.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
@@ -37,7 +37,8 @@ fun PBCWebAppTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme (
-        colorScheme = lightTheme,
+        colorScheme = if (isDarkTheme) darkTheme else lightTheme,
+        typography = AppTypography,
         content = content
     )
 }

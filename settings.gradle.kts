@@ -30,6 +30,7 @@ dependencyResolutionManagement {
 
 include(":composeApp")
 include(":lib-parent")
+include(":lib-common-ui")
 include(":lib-data")
 include(":lib-network")
 include(":ui-splash")
