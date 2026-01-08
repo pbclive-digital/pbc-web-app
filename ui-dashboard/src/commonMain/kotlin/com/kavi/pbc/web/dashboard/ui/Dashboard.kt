@@ -1,16 +1,22 @@
 package com.kavi.pbc.web.dashboard.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,9 +32,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import com.kavi.pbc.web.dashboard.data.model.TabItem
 import com.kavi.pbc.web.dashboard.ui.event.EventsUI
 import com.kavi.pbc.web.dashboard.ui.home.HomeUI
@@ -40,6 +52,7 @@ import pbcwebapp.ui_dashboard.generated.resources.icon_event
 import pbcwebapp.ui_dashboard.generated.resources.icon_lotus
 import pbcwebapp.ui_dashboard.generated.resources.icon_meditation
 import pbcwebapp.ui_dashboard.generated.resources.icon_temple
+import pbcwebapp.ui_dashboard.generated.resources.image_dhamma_chakra
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
 
 @Composable
@@ -58,30 +71,105 @@ fun DashboardUI(navController: NavController) {
             .background(MaterialTheme.colorScheme.surface),
         //contentAlignment = Alignment.Center
     ) {
+        Column {
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+                    .background(MaterialTheme.colorScheme.secondary),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Row (
+                        modifier = Modifier.padding(start = 150.dp, end = 150.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box (
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surface),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .size(100.dp),
+                                painter = painterResource(Res.drawable.image_pbc),
+                                contentDescription = "PBC image with name"
+                            )
+                        }
+
+                        Column (
+                            modifier = Modifier.padding(start = 20.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = "Pittsburgh",
+                                fontFamily = FontFamily.Default,
+                                fontSize = 32.sp,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+
+                            Text(
+                                "Buddhist Center",
+                                fontFamily = FontFamily.Default,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 32.sp,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.padding(top = 12.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Box (
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape)
+                                .border(
+                                    border = BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.tertiary),
+                                    shape = CircleShape
+                                )
+                                .clickable {
+                                    //profileAction.invoke()
+                                }
+                        ) {
+                            AsyncImage(
+                                model = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg",
+                                contentDescription = "Profile Picture",
+                                contentScale = ContentScale.Crop,
+                                placeholder = painterResource(Res.drawable.image_dhamma_chakra),
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(5.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         Column (
             modifier = Modifier
-                .padding(start = 150.dp, end = 150.dp)
+                .padding(top = 160.dp, start = 150.dp, end = 150.dp)
         ) {
             Row (
                 modifier = Modifier
-                    .padding(top = 50.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    modifier = Modifier
-                        .weight(.15f)
-                        .size(100.dp),
-                    painter = painterResource(Res.drawable.image_pbc),
-                    contentDescription = "PBC image with name"
-                )
-
                 NavigationBar(
                     containerColor = MaterialTheme.colorScheme.background,
                     modifier = Modifier
                         .weight(.85f)
                         .height(120.dp)
                         .clip(RoundedCornerShape(12.dp))
+                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp), spotColor = MaterialTheme.colorScheme.scrim)
                 ) {
                     tabItemList.forEachIndexed { index, tabItem ->
                         NavigationBarItem(
