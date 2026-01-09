@@ -27,8 +27,7 @@ fun App(
     registerUiModules()
 
     // Initiate Network
-    //Network.shared.initiate(NetConfig("https", "pbc-api-staging-1f3fe32cb947.herokuapp.com"))
-    Network.shared.initiate(NetConfig("http", "localhost:8082"))
+    Network.shared.initiate(NetConfig(BuildKonfig.API_SCHEME, BuildKonfig.API_DOMAIN))
 
     val navController = rememberNavController()
 
