@@ -3,6 +3,7 @@ package com.kavi.pbc.web.common.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 
 val lightTheme = lightColorScheme(
@@ -15,7 +16,7 @@ val lightTheme = lightColorScheme(
     surface = Color(0xfffefefd),
     onBackground = Color(0xff1d1b20),
     onSurface = Color(0xff404040),
-    scrim = Color(0xff888888)
+    scrim = Color(0xff888888),
 )
 
 val darkTheme = lightColorScheme(
@@ -36,9 +37,35 @@ fun PBCWebAppTheme(
     isDarkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    MaterialTheme (
-        colorScheme = if (isDarkTheme) darkTheme else lightTheme,
-        typography = AppTypography,
-        content = content
-    )
+    val themeAdditionalColors = if (isDarkTheme) {
+        ThemeAdditionalColors (
+            base = Color(0xffb84910),
+            default = Color(0xff000000),
+            inverseDefault = Color(0xffffffff),
+            quaternary = Color(0xffff6e18),
+            shadow = Color(0xffffffff),
+            inverseOnPrimary = Color(0xfff8ede7),
+            inverseOnBackground = Color(0xff1d1b20)
+        )
+    } else {
+        ThemeAdditionalColors (
+            base = Color(0xffb84910),
+            default = Color(0xffffffff),
+            inverseDefault = Color(0xff000000),
+            quaternary = Color(0xffb84910),
+            shadow = Color(0xff888888),
+            inverseOnPrimary = Color(0xffebe8e6),
+            inverseOnBackground = Color(0xffe6e0e9)
+        )
+    }
+
+    CompositionLocalProvider(
+        LocalThemeAdditionalColors provides themeAdditionalColors
+    ) {
+        MaterialTheme (
+            colorScheme = if (isDarkTheme) darkTheme else lightTheme,
+            typography = AppTypography,
+            content = content
+        )
+    }
 }

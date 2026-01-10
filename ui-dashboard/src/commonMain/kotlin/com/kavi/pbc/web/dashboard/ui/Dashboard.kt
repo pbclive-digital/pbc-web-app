@@ -88,7 +88,7 @@ fun DashboardUI(navController: NavController) {
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Row (
-                        modifier = Modifier.padding(start = 150.dp, end = 150.dp),
+                        modifier = Modifier.padding(start = 400.dp, end = 400.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Box (
@@ -160,7 +160,7 @@ fun DashboardUI(navController: NavController) {
 
         Column (
             modifier = Modifier
-                .padding(top = 160.dp, start = 150.dp, end = 150.dp)
+                .padding(top = 160.dp, start = 400.dp, end = 400.dp)
         ) {
             Row (
                 modifier = Modifier
@@ -202,7 +202,8 @@ fun DashboardUI(navController: NavController) {
                 selectedTabIndex = selectedTabIndex,
                 modifier = Modifier
                     .padding(bottom = 50.dp)
-                    .fillMaxSize()
+                    .fillMaxSize(),
+                navController = navController
             )
         }
     }
@@ -211,10 +212,11 @@ fun DashboardUI(navController: NavController) {
 @Composable
 fun TabContent(
     selectedTabIndex: Int,
-    modifier: Modifier = Modifier.Companion
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     when (selectedTabIndex) {
-        0 -> HomeUI()
+        0 -> HomeUI(navController = navController)
         1 -> EventsUI()
         2 -> MeditationUI()
         3 -> TempleUI()
