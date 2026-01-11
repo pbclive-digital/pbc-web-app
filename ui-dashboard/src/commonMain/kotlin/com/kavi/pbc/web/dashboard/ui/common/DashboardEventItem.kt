@@ -1,6 +1,7 @@
 package com.kavi.pbc.web.dashboard.ui.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -38,7 +39,7 @@ import pbcwebapp.ui_dashboard.generated.resources.icon_pbc
 
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 @Composable
-fun DashboardEventItem(modifier: Modifier = Modifier, event: Event) {
+fun DashboardEventItem(modifier: Modifier = Modifier, event: Event, onClick: () -> Unit) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     BoxWithConstraints (
@@ -51,7 +52,10 @@ fun DashboardEventItem(modifier: Modifier = Modifier, event: Event) {
         Card(
             modifier = Modifier
                 .width(cardSize)
-                .height(cardSize),
+                .height(cardSize)
+                .clickable {
+                    onClick.invoke()
+                },
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
@@ -64,7 +68,6 @@ fun DashboardEventItem(modifier: Modifier = Modifier, event: Event) {
                         .data(event.eventImage)
                         .crossfade(true)
                         .build(),
-                    //model = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg",
                     error = painterResource(Res.drawable.icon_pbc),
                     contentDescription = null, // decorative image
                     contentScale = ContentScale.Crop,
@@ -115,8 +118,8 @@ fun DashboardEventItem(modifier: Modifier = Modifier, event: Event) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         modifier = Modifier.padding(top = 4.dp),
-                        //text = "on ${event.getFormatDate()} at ${event.getPlace()}",
-                        text = "on TT at ${event.getPlace()}",
+                        text = "on ${event.getFormatDate()} at ${event.getPlace()}",
+                        //text = "on TT at ${event.getPlace()}",
                         color = themeAdditionalColors.inverseOnBackground,
                         fontFamily = PBCFontFamily,
                         fontSize = 14.sp,

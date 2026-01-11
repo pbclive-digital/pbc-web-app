@@ -88,7 +88,7 @@ fun DashboardUI(navController: NavController) {
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Row (
-                        modifier = Modifier.padding(start = 400.dp, end = 400.dp),
+                        modifier = Modifier.padding(start = 200.dp, end = 200.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Box (
@@ -160,7 +160,7 @@ fun DashboardUI(navController: NavController) {
 
         Column (
             modifier = Modifier
-                .padding(top = 160.dp, start = 400.dp, end = 400.dp)
+                .padding(top = 160.dp, start = 200.dp, end = 200.dp)
         ) {
             Row (
                 modifier = Modifier

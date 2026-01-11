@@ -14,7 +14,7 @@ buildkonfig = "0.17.1"
 ktorVersion = "3.3.3"
 coroutinesVesion = "1.10.2"
 kotlinxSerializationVersion = "1.9.0"
-kotlinxDateTime = "0.6.1"
+kotlinxDateTime = "0.7.1"
 coilCompose = "3.3.0"
 
 [libraries]

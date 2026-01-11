@@ -2,11 +2,15 @@ package com.kavi.pbc.web.data.event
 
 import com.kavi.pbc.web.data.event.potluck.PotluckItem
 import com.kavi.pbc.web.data.event.signup.SignUpSheet
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
+import kotlin.time.Instant.Companion.fromEpochMilliseconds
 
 @Serializable
 data class Event(
@@ -33,9 +37,17 @@ data class Event(
     var signUpSheetList: MutableList<SignUpSheet>? = mutableListOf()
 ) {
     fun getFormatDate(): String {
-        val instant = Instant.fromEpochMilliseconds(eventDate)
+        val instant = fromEpochMilliseconds(eventDate)
         val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-        return "${localDateTime.year} - ${localDateTime.month} - ${localDateTime.dayOfMonth}"
+        val dateFormat = LocalDate.Format {
+            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            char(' ')
+            day()
+            char(',')
+            char(' ')
+            year()
+        }
+        return localDateTime.date.format(dateFormat)
     }
 
     fun getPlace(): String {
