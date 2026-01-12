@@ -12,10 +12,12 @@ import androidx.navigation.compose.rememberNavController
 import com.kavi.pbc.web.app.navigation.AppNavGraph
 import com.kavi.pbc.web.common.ui.theme.PBCWebAppTheme
 import com.kavi.pbc.web.dashboard.DashboardModule
+import com.kavi.pbc.web.event.EventModule
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.NetConfig
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.DashboardContract
+import com.kavi.pbc.web.parent.contract.model.EventContract
 import com.kavi.pbc.web.parent.contract.model.SplashContract
 import com.kavi.pbc.web.splash.SplashModule
 
@@ -50,4 +52,5 @@ fun App(
 fun registerUiModules() {
     ContractServiceLocator.register(SplashContract::class) { SplashModule() }
     ContractServiceLocator.register(DashboardContract::class) { DashboardModule() }
+    ContractServiceLocator.register(EventContract::class) { EventModule() }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_event_upcoming">Upcoming Events</string>
+    <string name="label_event_past">Passed Events</string>
+
+</resources>

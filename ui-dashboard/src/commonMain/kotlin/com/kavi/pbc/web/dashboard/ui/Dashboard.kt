@@ -35,7 +35,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,16 +43,16 @@ import coil3.compose.AsyncImage
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.dashboard.data.model.TabItem
 import com.kavi.pbc.web.dashboard.ui.event.EventsUI
-import com.kavi.pbc.web.dashboard.ui.home.HomeUI
-import com.kavi.pbc.web.dashboard.ui.meditation.MeditationUI
-import com.kavi.pbc.web.dashboard.ui.temple.TempleUI
+import com.kavi.pbc.web.dashboard.ui.news.NewsUI
+import com.kavi.pbc.web.dashboard.ui.appointment.AppointmentUI
+import com.kavi.pbc.web.dashboard.ui.question.QuestionUI
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
+import pbcwebapp.ui_dashboard.generated.resources.icon_appointment
+import pbcwebapp.ui_dashboard.generated.resources.icon_ask_question
 import pbcwebapp.ui_dashboard.generated.resources.icon_event
-import pbcwebapp.ui_dashboard.generated.resources.icon_lotus
-import pbcwebapp.ui_dashboard.generated.resources.icon_meditation
-import pbcwebapp.ui_dashboard.generated.resources.icon_temple
+import pbcwebapp.ui_dashboard.generated.resources.icon_news
 import pbcwebapp.ui_dashboard.generated.resources.image_dhamma_chakra
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_buddhist_center
@@ -62,10 +61,11 @@ import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pittsburgh
 @Composable
 fun DashboardUI(navController: NavController) {
     val tabItemList = listOf(
-        TabItem(name = "Home", icon = Res.drawable.icon_lotus),
+        /*TabItem(name = "Home", icon = Res.drawable.icon_lotus),*/ // TODO - Keep this for future use
         TabItem(name = "Events", icon = Res.drawable.icon_event),
-        TabItem(name = "Meditation", icon = Res.drawable.icon_meditation),
-        TabItem(name = "Temple", icon = Res.drawable.icon_temple)
+        TabItem(name = "News", icon = Res.drawable.icon_news),
+        TabItem(name = "Appointments", icon = Res.drawable.icon_appointment),
+        TabItem(name = "Questions", icon = Res.drawable.icon_ask_question)
     )
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
@@ -216,10 +216,11 @@ fun TabContent(
     navController: NavController
 ) {
     when (selectedTabIndex) {
-        0 -> HomeUI(navController = navController)
-        1 -> EventsUI()
-        2 -> MeditationUI()
-        3 -> TempleUI()
+        /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
+        0 -> EventsUI(navController = navController)
+        1 -> NewsUI()
+        2 -> AppointmentUI()
+        3 -> QuestionUI()
     }
 }
 

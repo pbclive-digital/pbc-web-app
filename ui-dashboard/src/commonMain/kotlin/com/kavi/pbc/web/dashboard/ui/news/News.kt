@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.dashboard.ui.meditation
+package com.kavi.pbc.web.dashboard.ui.news
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MeditationUI(modifier: Modifier = Modifier) {
+fun NewsUI(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("MEDITATION", fontSize = 56.sp)
+        Text("NEWS", fontSize = 56.sp)
     }
 }
