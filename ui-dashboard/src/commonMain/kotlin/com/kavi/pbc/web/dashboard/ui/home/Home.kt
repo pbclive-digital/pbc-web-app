@@ -3,8 +3,6 @@ package com.kavi.pbc.web.dashboard.ui.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,8 +17,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -47,7 +48,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
 import com.kavi.pbc.web.common.ui.component.AppLinkButton
+import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.dashboard.data.model.NewsUiState
 import com.kavi.pbc.web.dashboard.ui.common.DashboardEventItem
 import com.kavi.pbc.web.dashboard.ui.common.DashboardNewsItem
@@ -56,12 +59,22 @@ import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
+import pbcwebapp.ui_dashboard.generated.resources.icon_facebook
+import pbcwebapp.ui_dashboard.generated.resources.icon_youtube
 import pbcwebapp.ui_dashboard.generated.resources.image_buddha
 import pbcwebapp.ui_dashboard.generated.resources.image_lotus
 import pbcwebapp.ui_dashboard.generated.resources.image_pagoda
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_about_us
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_call_us
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_contact_us
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_email_us
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_follow_us
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_no_news
-import pbcwebapp.ui_dashboard.generated.resources.label_news_more
-import kotlin.text.compareTo
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_news
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_news_more
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_visit_us
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_visit_us_address
+import pbcwebapp.ui_dashboard.generated.resources.phrase_dashboard_about_us
 
 @Composable
 fun HomeUI(modifier: Modifier = Modifier, navController: NavController) {
@@ -74,25 +87,50 @@ fun HomeUI(modifier: Modifier = Modifier, navController: NavController) {
     ) {
         val maxHeight = this.maxHeight
 
-        Row (
+        Column (
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
-            Column (
-                modifier = Modifier
-                    .weight(.65f)
-                    .fillMaxHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                DailyQuoteAnimatorComponent(maxHeight, viewModel)
+            Row {
+                Column (
+                    modifier = Modifier
+                        .weight(.5f)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    DailyQuoteAnimatorComponent(maxHeight, viewModel)
 
-                DashboardEventSliderComponent(viewModel = viewModel, navController =  navController)
+                    DashboardEventSliderComponent(viewModel = viewModel, navController =  navController)
+                }
+                Column (
+                    modifier = Modifier.weight(.5f)
+                ) {
+                    NewsColum(viewModel = viewModel, navController = navController)
+                }
             }
-            Column (
-                modifier = Modifier.weight(.35f)
-            ) {
-                NewsColum(viewModel = viewModel, navController = navController)
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            HorizontalDivider(
+                modifier = Modifier.padding(2.dp),
+                thickness = 2.dp
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row {
+                Column (
+                    modifier = Modifier.weight(0.6f)
+                ) {
+                    AboutUs()
+                }
+                Column (
+                    modifier = Modifier.weight(0.4f)
+                ) {
+                    ContactUs()
+                }
             }
         }
     }
@@ -125,7 +163,7 @@ private fun DailyQuoteAnimatorComponent(maxHeight: Dp, viewModel: HomeViewModel,
         BoxWithConstraints (
             modifier = Modifier
                 .fillMaxWidth()
-                .height(maxHeight / 7)
+                .height(maxHeight / 6)
                 .padding(top = 20.dp, start = 12.dp, end = 12.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -208,8 +246,8 @@ private fun DashboardEventSliderComponent(intervalMillis: Long = 60000L,
         ) {
             AnimatedVisibility(
                 visible = visible,
-                enter = scaleIn(),
-                exit = scaleOut()
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
                 DashboardEventItem(
                     event = dashboardEvents[currentIndex],
@@ -245,7 +283,7 @@ private fun NewsColum(navController: NavController, viewModel: HomeViewModel) {
         Text(
             modifier = Modifier
                 .padding(start = 8.dp),
-            text = "News",
+            text = stringResource(Res.string.label_dashboard_news),
             textAlign = TextAlign.Justify,
             fontWeight = FontWeight.Bold,
             fontSize = 28.sp
@@ -284,7 +322,7 @@ private fun NewsColum(navController: NavController, viewModel: HomeViewModel) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 12.dp, bottom = 20.dp),
-                            label = stringResource(Res.string.label_news_more),
+                            label = stringResource(Res.string.label_dashboard_news_more),
                             color = MaterialTheme.colorScheme.secondary,
                         ) {
                             navController.navigate("dashboard/to/news/list")
@@ -309,6 +347,118 @@ private fun NewsColum(navController: NavController, viewModel: HomeViewModel) {
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun AboutUs() {
+    Column (
+        modifier = Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.Start,
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(start = 8.dp),
+            text = stringResource(Res.string.label_dashboard_about_us),
+            textAlign = TextAlign.Justify,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
+
+        Text(
+            text = stringResource(Res.string.phrase_dashboard_about_us),
+            fontFamily = PBCFontFamily,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Justify,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp)
+        )
+    }
+}
+
+@Composable
+fun ContactUs() {
+    Column (
+        modifier = Modifier.padding(top = 8.dp, end = 8.dp, bottom = 8.dp, start = 30.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
+        Text(
+            text = stringResource(Res.string.label_dashboard_contact_us),
+            textAlign = TextAlign.Justify,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
+
+        AppLinkButton(
+            modifier = Modifier.padding(top = 14.dp),
+            label = stringResource(Res.string.label_dashboard_call_us)
+        ) {
+            // Open Dialer to call to the number
+        }
+
+        AppLinkButton(
+            modifier = Modifier.padding(top = 14.dp),
+            label = stringResource(Res.string.label_dashboard_email_us)
+        ) {
+            // Open Email app to compose
+        }
+
+        Text(
+            modifier = Modifier
+                .padding(top = 30.dp),
+            text = stringResource(Res.string.label_dashboard_visit_us),
+            textAlign = TextAlign.Justify,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
+
+        AppLinkButton(
+            modifier = Modifier.padding(top = 14.dp),
+            label = stringResource(Res.string.label_dashboard_visit_us_address)
+        ) {
+            // Open Email app to compose
+        }
+
+        Text(
+            modifier = Modifier
+                .padding(top = 30.dp),
+            text = stringResource(Res.string.label_dashboard_follow_us),
+            textAlign = TextAlign.Justify,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
+
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Image(
+                painter = painterResource(Res.drawable.icon_facebook),
+                contentDescription = "Facebook icon",
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(8.dp)
+                    .clickable {
+                        //openLink("https://www.facebook.com/PittsburghBuddhistCenter", context)
+                    }
+            )
+
+            Image(
+                painter = painterResource(Res.drawable.icon_youtube),
+                contentDescription = "Youtube icon",
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(8.dp)
+                    .clickable {
+                        //openLink("https://www.youtube.com/pbclive", context)
+                    }
+            )
         }
     }
 }

@@ -3,7 +3,20 @@
     <string name="label_dashboard_pittsburgh">Pittsburgh</string>
     <string name="label_dashboard_buddhist_center">Buddhist Center</string>
 
-    <string name="label_news_read_more">Read More</string>
-    <string name="label_news_more">More News from PBC</string>
+    <string name="label_dashboard_news">News</string>
+    <string name="label_dashboard_news_read_more">Read More</string>
+    <string name="label_dashboard_news_more">More News from PBC</string>
     <string name="label_dashboard_no_news">Failed to retrieve NEWS at this time, Please try again later to see latest NEWS from PBC</string>
+
+    <string name="label_dashboard_about_us">About Us</string>
+    <string name="phrase_dashboard_about_us">Pittsburgh Buddhist Center (PBC) was established on Sept. 6, 2006, to serve the needs of Buddhists and friends of Buddhism in the greater Pittsburgh region. It offers teachings of the Buddha based on the Theravada tradition of Buddhism.\n\nPBC conducts meditation sessions, religious discussions, Buddhism classes for children, and a monthly program that includes a Dhamma talk by a Buddhist monk at PBC.\n\nWe welcome your participation in its activities, as well as your private visits to the temple. The temple is open to people of all religions.\n\nAll events, unless otherwise noted, are free to the public. Children are welcome.</string>
+
+    <string name="label_dashboard_contact_us">Contact Us</string>
+    <string name="label_dashboard_call_us">+1 724-939-3911</string>
+    <string name="label_dashboard_email_us">info@pittsburghbuddhistcenter.org</string>
+
+    <string name="label_dashboard_visit_us">Visit Us</string>
+    <string name="label_dashboard_visit_us_address">58 QSI Lane, Allison Park, PA 15101</string>
+
+    <string name="label_dashboard_follow_us">Follow Us</string>
 </resources>
