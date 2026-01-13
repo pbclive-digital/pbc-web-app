@@ -92,12 +92,13 @@ fun NewsListUI(navController: NavController) {
                     Column(
                         modifier = Modifier
                             .weight(.35f)
+                            .height(maxHeight)
                             .padding(top = 10.dp, end = 15.dp)
                     ) {
-                        LazyColumn (
+                        Column (
                             modifier = Modifier.height(maxHeight)
                         ) {
-                            itemsIndexed(activeNewsList) { index, news ->
+                            activeNewsList.forEachIndexed { index, news ->
                                 NewsItem(
                                     news = news, onReadMore = {
                                         selectedNews.value = news
@@ -178,9 +179,7 @@ private fun SelectedNews(selectedNews: MutableState<News>) {
                 thickness = 2.dp
             )
 
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
+            Column {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center

@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -39,14 +40,19 @@ import pbcwebapp.ui_event.generated.resources.icon_event_pbc
 
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 @Composable
-fun EventItem(modifier: Modifier = Modifier, event: Event, onClick: () -> Unit) {
+fun EventItem(modifier: Modifier = Modifier, screenMaxWidth: Dp, event: Event, onClick: () -> Unit) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     BoxWithConstraints (
         modifier = modifier
             .padding(8.dp)
     ) {
-        val cardSize = 400.dp
+
+        val cardSize = if (screenMaxWidth.value * 0.8 >= 400) {
+            400.dp
+        } else {
+            (screenMaxWidth.value * 0.8).dp
+        }
 
         Card(
             modifier = Modifier

@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -69,12 +72,16 @@ fun DashboardUI(navController: NavController) {
     )
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
+            .background(MaterialTheme.colorScheme.surface)
+            .verticalScroll(rememberScrollState()),
         //contentAlignment = Alignment.Center
     ) {
+        val maxWidth = this.maxWidth
+        val sidePadding = (maxWidth.value * .1).dp
+
         Column {
             Row (
                 modifier = Modifier
@@ -88,7 +95,7 @@ fun DashboardUI(navController: NavController) {
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Row (
-                        modifier = Modifier.padding(start = 200.dp, end = 200.dp),
+                        modifier = Modifier.padding(start = sidePadding, end = sidePadding),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Box (
@@ -160,7 +167,7 @@ fun DashboardUI(navController: NavController) {
 
         Column (
             modifier = Modifier
-                .padding(top = 160.dp, start = 200.dp, end = 200.dp)
+                .padding(top = 160.dp, start = sidePadding, end = sidePadding)
         ) {
             Row (
                 modifier = Modifier

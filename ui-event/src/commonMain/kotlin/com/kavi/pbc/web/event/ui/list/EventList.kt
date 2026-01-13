@@ -54,11 +54,9 @@ fun EventListUI(navController: NavController) {
         contentAlignment = Alignment.Center
     ) {
         val maxHeight = this.maxHeight
+        val maxWidth = this.maxWidth
 
-        Column (
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-        ) {
+        Column {
             Text(
                 modifier = Modifier
                     .padding(start = 8.dp),
@@ -76,7 +74,7 @@ fun EventListUI(navController: NavController) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 upcomingEventList.forEach { event ->
-                    EventItem(event = event, onClick = {})
+                    EventItem(screenMaxWidth = maxWidth, event = event, onClick = {})
                 }
             }
 
