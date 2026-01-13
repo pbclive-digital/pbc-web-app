@@ -1,0 +1,82 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy staging PBC-Web-App for testing
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-pbc-web-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Assemble the app for distribution
+        run: ./gradlew clean --no-build-cache :composeApp:wasmJsBrowserDistribution
+
+      - name: Zip Generated Archive
+        run: |
+          cd composeApp/build/dist/wasmJs/productionExecutable
+          zip -r ../../../../../pbc-web-app-staging.zip .
+
+      - name: Remove all files except assembled archive
+        run: |
+          shopt -s extglob
+          rm -rf !(pbc-web-app-staging.zip|.git)
+
+      - name: Checkout to staging-deployment
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if staging-deployment exists
+          if git ls-remote --exit-code --heads origin staging-deployment; then
+            git fetch origin staging-deployment
+            git checkout staging-deployment
+            git rm -rf .
+          else
+            git checkout --orphan staging-deployment
+          fi
+          
+      - name: Extract assembled archive
+        run: |
+          unzip pbc-web-app-staging.zip
+          rm -rf pbc-web-app-staging.zip
+          rm -rf .gradle
+
+          touch .nojekyll  # Prevent GitHub from treating it as a Jekyll site
+          git add .
+          git commit -m "Deploy PBC Web App" || echo "No changes to commit"
+
+      - name: Push Changes with SSH
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
+          git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
