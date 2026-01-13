@@ -79,4 +79,4 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
-          git push git@github.com:KvColorPalette/KvColorPicker-Android.git gh-pages
+          git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
