@@ -68,6 +68,7 @@ kotlin {
             implementation(projects.uiSplash)
             implementation(projects.uiDashboard)
             implementation(projects.uiEvent)
+            implementation(projects.uiNews)
         }
     }
 }

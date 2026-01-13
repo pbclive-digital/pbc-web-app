@@ -218,7 +218,7 @@ fun TabContent(
     when (selectedTabIndex) {
         /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
         0 -> EventsUI(navController = navController)
-        1 -> NewsUI()
+        1 -> NewsUI(navController = navController)
         2 -> AppointmentUI()
         3 -> QuestionUI()
     }
