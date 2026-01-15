@@ -49,6 +49,8 @@ import com.kavi.pbc.web.dashboard.ui.event.EventsUI
 import com.kavi.pbc.web.dashboard.ui.news.NewsUI
 import com.kavi.pbc.web.dashboard.ui.appointment.AppointmentUI
 import com.kavi.pbc.web.dashboard.ui.question.QuestionUI
+import com.kavi.pbc.web.parent.util.ScreenType
+import com.kavi.pbc.web.parent.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
@@ -59,6 +61,7 @@ import pbcwebapp.ui_dashboard.generated.resources.icon_news
 import pbcwebapp.ui_dashboard.generated.resources.image_dhamma_chakra
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_buddhist_center
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pbc
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pittsburgh
 
 @Composable
@@ -77,10 +80,15 @@ fun DashboardUI(navController: NavController) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
             .verticalScroll(rememberScrollState()),
-        //contentAlignment = Alignment.Center
     ) {
         val maxWidth = this.maxWidth
-        val sidePadding = (maxWidth.value * .1).dp
+
+        val sidePadding = when (UIUtil.screenType(maxWidth)) {
+            ScreenType.PHONE -> 8.dp
+            ScreenType.TABLET, ScreenType.COMPUTER -> {
+                (maxWidth.value * .1).dp
+            }
+        }
 
         Column {
             Row (
@@ -100,14 +108,14 @@ fun DashboardUI(navController: NavController) {
                     ) {
                         Box (
                             modifier = Modifier
-                                .size(120.dp)
+                                .size(100.dp)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.surface),
                             contentAlignment = Alignment.Center
                         ) {
                             Image(
                                 modifier = Modifier
-                                    .size(100.dp),
+                                    .size(90.dp),
                                 painter = painterResource(Res.drawable.image_pbc),
                                 contentDescription = "PBC image with name"
                             )
@@ -119,19 +127,10 @@ fun DashboardUI(navController: NavController) {
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
-                                text = stringResource(Res.string.label_dashboard_pittsburgh),
+                                text = stringResource(Res.string.label_dashboard_pbc),
                                 fontFamily = PBCFontFamily,
                                 fontSize = 32.sp,
                                 color = MaterialTheme.colorScheme.onPrimary,
-                            )
-
-                            Text(
-                                text = stringResource(Res.string.label_dashboard_buddhist_center),
-                                fontFamily = PBCFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 32.sp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.padding(top = 12.dp)
                             )
                         }
 
@@ -139,7 +138,7 @@ fun DashboardUI(navController: NavController) {
 
                         Box (
                             modifier = Modifier
-                                .size(50.dp)
+                                .size(40.dp)
                                 .clip(CircleShape)
                                 .border(
                                     border = BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.tertiary),
@@ -155,7 +154,7 @@ fun DashboardUI(navController: NavController) {
                                 contentScale = ContentScale.Crop,
                                 placeholder = painterResource(Res.drawable.image_dhamma_chakra),
                                 modifier = Modifier
-                                    .size(50.dp)
+                                    .size(40.dp)
                                     .padding(5.dp)
                                     .clip(CircleShape)
                             )

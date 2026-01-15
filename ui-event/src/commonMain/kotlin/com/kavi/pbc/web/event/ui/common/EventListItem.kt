@@ -44,7 +44,6 @@ fun EventListItem(modifier: Modifier = Modifier, event: Event) {
         Row (
             modifier = Modifier
                 .padding(4.dp)
-                .fillMaxWidth()
                 .border(1.dp, MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(8.dp))
                 .shadow(
                     elevation = 8.dp,

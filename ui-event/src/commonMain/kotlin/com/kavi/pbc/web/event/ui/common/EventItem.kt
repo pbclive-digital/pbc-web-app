@@ -75,7 +75,7 @@ fun EventItem(modifier: Modifier = Modifier, screenMaxWidth: Dp, event: Event, o
                         .build(),
                     error = painterResource(Res.drawable.icon_event_pbc),
                     contentDescription = null, // decorative image
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(color = MaterialTheme.colorScheme.background)

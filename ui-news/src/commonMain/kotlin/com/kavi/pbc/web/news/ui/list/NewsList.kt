@@ -18,9 +18,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -49,6 +51,9 @@ import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.news.News
 import com.kavi.pbc.web.news.data.model.NewsListUiState
 import com.kavi.pbc.web.news.ui.common.NewsItem
+import com.kavi.pbc.web.news.ui.sheet.NewsSelectedBottomSheetUI
+import com.kavi.pbc.web.parent.util.ScreenType
+import com.kavi.pbc.web.parent.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_news.generated.resources.Res
@@ -56,6 +61,7 @@ import pbcwebapp.ui_news.generated.resources.icon_news_pbc
 import pbcwebapp.ui_news.generated.resources.label_news_active_fetch_empty
 import pbcwebapp.ui_news.generated.resources.label_news_reference
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsListUI(navController: NavController) {
 
@@ -66,15 +72,22 @@ fun NewsListUI(navController: NavController) {
 
     val selectedNews = remember { mutableStateOf(News()) }
 
+    val selectedNewsSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    val showNewsSheet = remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         viewModel.fetchActiveNewsList()
     }
 
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         val maxHeight = this.maxHeight
+        val maxWidth = this.maxWidth
 
         when(activeNewsFetchStatus) {
             NewsListUiState.NONE -> {}
@@ -86,43 +99,82 @@ fun NewsListUI(navController: NavController) {
             }
             NewsListUiState.FAILURE -> {}
             NewsListUiState.SUCCESS -> {
-                selectedNews.value = activeNewsList[0]
-
                 Row {
-                    Column(
-                        modifier = Modifier
-                            .weight(.35f)
-                            .height(maxHeight)
-                            .padding(top = 10.dp, end = 15.dp)
-                    ) {
-                        Column (
-                            modifier = Modifier.height(maxHeight)
-                        ) {
-                            activeNewsList.forEachIndexed { index, news ->
-                                NewsItem(
-                                    news = news, onReadMore = {
-                                        selectedNews.value = news
+                    when (UIUtil.screenType(maxWidth)) {
+                        ScreenType.PHONE -> {
+                            Column(
+                                modifier = Modifier
+                                    .weight(.35f)
+                                    .height(maxHeight)
+                                    .padding(top = 10.dp, end = 15.dp)
+                            ) {
+                                Column (
+                                    modifier = Modifier.height(maxHeight)
+                                ) {
+                                    activeNewsList.forEachIndexed { index, news ->
+                                        NewsItem(
+                                            news = news, onReadMore = {
+                                                selectedNews.value = news
+                                                showNewsSheet.value = true
+                                            }
+                                        )
+                                        if (index < activeNewsList.lastIndex) {
+                                            HorizontalDivider(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                thickness = 1.dp,
+                                                color = Color.LightGray
+                                            )
+                                        }
                                     }
-                                )
-                                if (index < activeNewsList.lastIndex) {
-                                    HorizontalDivider(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        thickness = 1.dp,
-                                        color = Color.LightGray
-                                    )
                                 }
                             }
                         }
-                    }
-                    Column(
-                        modifier = Modifier
-                            .weight(.65f)
-                            .padding(top = 10.dp, start = 15.dp)
-                    ) {
-                        SelectedNews(selectedNews = selectedNews)
+                        ScreenType.TABLET, ScreenType.COMPUTER -> {
+                            selectedNews.value = activeNewsList[0]
+                            Column(
+                                modifier = Modifier
+                                    .weight(.35f)
+                                    .height(maxHeight)
+                                    .padding(top = 10.dp, end = 15.dp)
+                            ) {
+                                Column (
+                                    modifier = Modifier.height(maxHeight)
+                                ) {
+                                    activeNewsList.forEachIndexed { index, news ->
+                                        NewsItem(
+                                            news = news, onReadMore = {
+                                                selectedNews.value = news
+                                            }
+                                        )
+                                        if (index < activeNewsList.lastIndex) {
+                                            HorizontalDivider(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                thickness = 1.dp,
+                                                color = Color.LightGray
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .weight(.65f)
+                                    .padding(top = 10.dp, start = 15.dp)
+                            ) {
+                                SelectedNews(selectedNews = selectedNews)
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        if (showNewsSheet.value) {
+            NewsSelectedBottomSheetUI(
+                sheetState = selectedNewsSheetState,
+                showSheet = showNewsSheet,
+                selectedNews = selectedNews.value
+            )
         }
     }
 }

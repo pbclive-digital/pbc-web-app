@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -31,6 +34,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.kavi.pbc.web.event.ui.common.EventItem
 import com.kavi.pbc.web.event.ui.common.EventListItem
+import com.kavi.pbc.web.parent.util.ScreenType
+import com.kavi.pbc.web.parent.util.UIUtil
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
 import pbcwebapp.ui_event.generated.resources.label_event_past
@@ -53,13 +58,12 @@ fun EventListUI(navController: NavController) {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        val maxHeight = this.maxHeight
         val maxWidth = this.maxWidth
 
         Column {
             Text(
                 modifier = Modifier
-                    .padding(start = 8.dp),
+                    .padding(start = 8.dp, top = 12.dp, bottom = 12.dp),
                 text = stringResource(Res.string.label_event_upcoming),
                 textAlign = TextAlign.Justify,
                 fontWeight = FontWeight.Bold,
@@ -89,7 +93,7 @@ fun EventListUI(navController: NavController) {
 
             Text(
                 modifier = Modifier
-                    .padding(start = 8.dp),
+                    .padding(start = 8.dp, top = 12.dp, bottom = 12.dp),
                 text = stringResource(Res.string.label_event_past),
                 textAlign = TextAlign.Justify,
                 fontWeight = FontWeight.Bold,
@@ -99,19 +103,20 @@ fun EventListUI(navController: NavController) {
             Row (
                 modifier = Modifier.height(600.dp)
             ) {
-                LazyColumn (
-                    modifier = Modifier.height(maxHeight)
+                val columCount = when (UIUtil.screenType(maxWidth)) {
+                    ScreenType.PHONE -> 2
+                    ScreenType.TABLET, ScreenType.COMPUTER -> {
+                        3
+                    }
+                }
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(columCount),
                 ) {
                     items(pastEventList) { eventItem ->
                         EventListItem(
                             event = eventItem,
                             modifier = Modifier.clickable {
-                                //val tempEventKey = eventLocalDataSource.setSelectedEvent(eventItem)
-                                /**
-                                 * This is coming from ui-dashboard, because this EventList views embedded in
-                                 * ui-dashboard EventUI. Therefore, the navigation graph is still in ui-dashboard navGraph
-                                 */
-                                //navController.navigate("dashboard/to/event/$tempEventKey")
                             }
                         )
                     }
