@@ -48,4 +48,19 @@ class EventListViewModel: ViewModel() {
             }
         }
     }
+
+    fun fetchPastEventsWithLimit() {
+        viewModelScope.launch {
+            when(val response = eventRemoteRepository.getPastEventsWithLimit(limit = 5)) {
+                is ResultWrapper.NetworkError -> {}
+                is ResultWrapper.HttpError -> {}
+                is ResultWrapper.UnAuthError -> {}
+                is ResultWrapper.Success -> {
+                    response.value.body?.let {
+                        _pastEventList.value = it
+                    }
+                }
+            }
+        }
+    }
 }

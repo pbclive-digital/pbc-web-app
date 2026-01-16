@@ -14,4 +14,8 @@ class EventRemoteRepository {
     suspend fun getPastEvents(): ResultWrapper<BaseResponse<List<Event>>> {
         return Network.shared.invokeGET<List<Event>>(urlPath = "event/get/past")
     }
+
+    suspend fun getPastEventsWithLimit(limit: Int): ResultWrapper<BaseResponse<List<Event>>> {
+        return Network.shared.invokeGET<List<Event>>(urlPath = "event/get/past/${limit}")
+    }
 }

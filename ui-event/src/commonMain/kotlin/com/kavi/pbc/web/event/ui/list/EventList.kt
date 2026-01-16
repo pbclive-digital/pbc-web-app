@@ -49,16 +49,19 @@ fun EventListUI(navController: NavController) {
     val upcomingEventList by viewModel.upcomingEventList.collectAsState()
     val pastEventList by viewModel.pastEventList.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchUpcomingEvents()
-        viewModel.fetchPastEvents()
-    }
-
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         val maxWidth = this.maxWidth
+
+        LaunchedEffect(Unit) {
+            viewModel.fetchUpcomingEvents()
+            when (UIUtil.screenType(maxWidth)) {
+                ScreenType.PHONE -> viewModel.fetchPastEventsWithLimit()
+                ScreenType.TABLET, ScreenType.COMPUTER -> viewModel.fetchPastEvents()
+            }
+        }
 
         Column {
             Text(
@@ -104,7 +107,7 @@ fun EventListUI(navController: NavController) {
                 modifier = Modifier.height(600.dp)
             ) {
                 val columCount = when (UIUtil.screenType(maxWidth)) {
-                    ScreenType.PHONE -> 2
+                    ScreenType.PHONE -> 1
                     ScreenType.TABLET, ScreenType.COMPUTER -> {
                         3
                     }
