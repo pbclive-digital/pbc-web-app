@@ -66,6 +66,7 @@ kotlin {
             implementation(projects.libData)
             implementation(projects.libNetwork)
             implementation(projects.uiSplash)
+            implementation(projects.uiAuth)
             implementation(projects.uiDashboard)
             implementation(projects.uiEvent)
             implementation(projects.uiNews)

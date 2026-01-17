@@ -38,7 +38,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -49,6 +48,8 @@ import com.kavi.pbc.web.dashboard.ui.event.EventsUI
 import com.kavi.pbc.web.dashboard.ui.news.NewsUI
 import com.kavi.pbc.web.dashboard.ui.appointment.AppointmentUI
 import com.kavi.pbc.web.dashboard.ui.question.QuestionUI
+import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.util.ScreenType
 import com.kavi.pbc.web.parent.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
@@ -60,9 +61,7 @@ import pbcwebapp.ui_dashboard.generated.resources.icon_event
 import pbcwebapp.ui_dashboard.generated.resources.icon_news
 import pbcwebapp.ui_dashboard.generated.resources.image_dhamma_chakra
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_buddhist_center
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pbc
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pittsburgh
 
 @Composable
 fun DashboardUI(navController: NavController) {
@@ -146,6 +145,7 @@ fun DashboardUI(navController: NavController) {
                                 )
                                 .clickable {
                                     //profileAction.invoke()
+                                    ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
                                 }
                         ) {
                             AsyncImage(
