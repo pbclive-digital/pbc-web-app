@@ -72,6 +72,7 @@ import pbcwebapp.ui_dashboard.generated.resources.icon_ask_question
 import pbcwebapp.ui_dashboard.generated.resources.icon_dashboard_profile
 import pbcwebapp.ui_dashboard.generated.resources.icon_event
 import pbcwebapp.ui_dashboard.generated.resources.icon_news
+import pbcwebapp.ui_dashboard.generated.resources.image_dhamma_chakra_256
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pbc
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_in
@@ -180,25 +181,44 @@ fun DashboardUI(navController: NavController) {
                                     )
                                     .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                             ) {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                                        .data(Session.user?.profilePicUrl)
-                                        .crossfade(true)
-                                        .build(),
-                                    contentDescription = "Profile Picture",
-                                    contentScale = ContentScale.Crop,
-                                    placeholder = painterResource(Res.drawable.icon_dashboard_profile),
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .padding(5.dp)
-                                        .clip(CircleShape)
-                                )
+                                when(appAuthStatus) {
+                                    AppAuthStatus.SIGN_IN -> {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(LocalPlatformContext.current)
+                                                .data(Session.user?.profilePicUrl)
+                                                .crossfade(true)
+                                                .build(),
+                                            contentDescription = "Profile Picture",
+                                            contentScale = ContentScale.Crop,
+                                            placeholder = painterResource(Res.drawable.icon_dashboard_profile),
+                                            modifier = Modifier
+                                                .size(50.dp)
+                                                .padding(5.dp)
+                                                .clip(CircleShape)
+                                        )
+                                    }
+                                    else -> {
+                                        Image(
+                                            painterResource(Res.drawable.image_dhamma_chakra_256),
+                                            contentDescription = "Dhamma chakkra",
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .size(50.dp)
+                                                .padding(5.dp)
+                                                .clip(CircleShape)
+                                        )
+                                    }
+                                }
                             }
 
                             ExposedDropdownMenu(
                                 expanded = isExpanded,
-                                onDismissRequest = { isExpanded = false },
-                                modifier = Modifier.width(200.dp)
+                                onDismissRequest = {
+                                    if (isExpanded)
+                                        isExpanded = false
+                                },
+                                modifier = Modifier
+                                    .width(200.dp)
                             ) {
                                 when(appAuthStatus) {
                                     AppAuthStatus.SIGN_IN -> {
