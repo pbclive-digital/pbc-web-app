@@ -180,31 +180,6 @@ fun DashboardUI(navController: NavController) {
                                         shape = CircleShape
                                     )
                                     .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                                    /*.clickable {
-                                        // Invoke user authentication
-                                        if (Session.isLogIn()) {
-                                            // Open up profile screen
-                                            println("User already in - open up profile screen")
-                                            ContractServiceLocator.locate(AuthContract::class).signOut()
-                                        } else {
-                                            val appAuthStatus = AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS)
-                                            when(appAuthStatus) {
-                                                AppAuthStatus.SIGN_IN -> {
-                                                    ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
-                                                        // Re-login and update auth status
-                                                        AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
-                                                    }
-                                                }
-                                                AppAuthStatus.SIGN_UP_REQUIRED -> {
-                                                    // TODO: Navigate to Sign-Up screen
-                                                }
-                                                else -> {
-                                                    // Invoke sign-in with Firebase-Google
-                                                    ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
-                                                }
-                                            }
-                                        }
-                                    }*/
                             ) {
                                 AsyncImage(
                                     model = ImageRequest.Builder(LocalPlatformContext.current)
@@ -236,6 +211,7 @@ fun DashboardUI(navController: NavController) {
                                                     // Open up profile screen
                                                     println("User already in - open up profile screen")
                                                     ContractServiceLocator.locate(AuthContract::class).signOut()
+                                                    appAuthStatus = AppAuthStatus.NONE
                                                 }
 
                                                 isExpanded = false
@@ -256,7 +232,7 @@ fun DashboardUI(navController: NavController) {
                                             onClick = {
                                                 // Open up profile screen
                                                 ContractServiceLocator.locate(AuthContract::class).signOut()
-
+                                                appAuthStatus = AppAuthStatus.NONE
                                                 isExpanded = false
                                             }
                                         )
