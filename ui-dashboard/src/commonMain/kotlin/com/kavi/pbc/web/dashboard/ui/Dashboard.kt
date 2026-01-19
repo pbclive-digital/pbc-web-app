@@ -214,8 +214,8 @@ fun DashboardUI(navController: NavController) {
                             ExposedDropdownMenu(
                                 expanded = isExpanded,
                                 onDismissRequest = {
-                                    if (isExpanded)
-                                        isExpanded = false
+                                    /*if (isExpanded)
+                                        isExpanded = false*/
                                 },
                                 modifier = Modifier
                                     .width(200.dp)
