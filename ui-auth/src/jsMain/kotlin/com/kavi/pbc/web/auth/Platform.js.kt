@@ -16,3 +16,6 @@ actual fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)? {
 
 actual fun retrieveCurrentUser(onUserAvailable: (user: User?) -> Unit) {
 }
+
+actual fun signOutApp() {
+}

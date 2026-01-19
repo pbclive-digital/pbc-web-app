@@ -2,6 +2,8 @@ package com.kavi.pbc.web.auth
 
 import com.kavi.pbc.web.auth.service.auth.AuthServiceModel
 import com.kavi.pbc.web.data.auth.AppAuthStatus
+import com.kavi.pbc.web.datastore.AppLocalStore
+import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.parent.contract.model.AuthContract
 
 class AuthModule: AuthContract {
@@ -22,5 +24,10 @@ class AuthModule: AuthContract {
                 onComplete.invoke(AppAuthStatus.NONE)
             }
         }
+    }
+
+    override fun signOut() {
+        signOutApp()
+        AppLocalStore.shared.clearValue(key = DataKey.APP_USER_AUTH_STATUS)
     }
 }

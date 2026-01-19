@@ -7,3 +7,5 @@ external object FirebaseAuth {
 }
 
 external fun subscribeAuthState(callback: (JsFirebaseUser?) -> Unit): () -> Unit
+
+external fun signOutFirebase()

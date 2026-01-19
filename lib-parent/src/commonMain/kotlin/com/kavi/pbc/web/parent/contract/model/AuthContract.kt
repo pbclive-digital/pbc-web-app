@@ -8,4 +8,6 @@ interface AuthContract: CommonContract {
     fun signInWithFirebaseGoogle()
 
     fun retrieveCurrentAuthStatus(onComplete: (appAuthStatus: AppAuthStatus) -> Unit)
+
+    fun signOut()
 }

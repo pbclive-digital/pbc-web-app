@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="label_dashboard_sign_in">Sign In</string>
+    <string name="label_dashboard_sign_out">Sign Out</string>
+    <string name="label_dashboard_sign_up">Sign Up</string>
+
     <string name="label_dashboard_pittsburgh">Pittsburgh</string>
     <string name="label_dashboard_buddhist_center">Buddhist Center</string>
     <string name="label_dashboard_pbc">PBC</string>

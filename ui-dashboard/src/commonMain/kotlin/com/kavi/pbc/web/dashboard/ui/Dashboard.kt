@@ -21,6 +21,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -29,8 +33,9 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,11 +75,19 @@ import pbcwebapp.ui_dashboard.generated.resources.icon_event
 import pbcwebapp.ui_dashboard.generated.resources.icon_news
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pbc
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_in
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_out
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_up
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardUI(navController: NavController) {
 
-    val authStatus = AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS)
+    var appAuthStatus by remember {
+        mutableStateOf(AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS))
+    }
+
+    var isExpanded by remember { mutableStateOf(false) }
 
     val authTabItemList = listOf(
         /*TabItem(name = "Home", icon = Res.drawable.icon_lotus),*/ // TODO - Keep this for future use
@@ -154,52 +167,118 @@ fun DashboardUI(navController: NavController) {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Box (
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                                .border(
-                                    border = BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.tertiary),
-                                    shape = CircleShape
+                        ExposedDropdownMenuBox(
+                            expanded = isExpanded,
+                            onExpandedChange = { isExpanded = it}
+                        ) {
+                            Box (
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                                    .border(
+                                        border = BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.tertiary),
+                                        shape = CircleShape
+                                    )
+                                    .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                                    /*.clickable {
+                                        // Invoke user authentication
+                                        if (Session.isLogIn()) {
+                                            // Open up profile screen
+                                            println("User already in - open up profile screen")
+                                            ContractServiceLocator.locate(AuthContract::class).signOut()
+                                        } else {
+                                            val appAuthStatus = AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS)
+                                            when(appAuthStatus) {
+                                                AppAuthStatus.SIGN_IN -> {
+                                                    ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
+                                                        // Re-login and update auth status
+                                                        AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                                                    }
+                                                }
+                                                AppAuthStatus.SIGN_UP_REQUIRED -> {
+                                                    // TODO: Navigate to Sign-Up screen
+                                                }
+                                                else -> {
+                                                    // Invoke sign-in with Firebase-Google
+                                                    ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
+                                                }
+                                            }
+                                        }
+                                    }*/
+                            ) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                                        .data(Session.user?.profilePicUrl)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "Profile Picture",
+                                    contentScale = ContentScale.Crop,
+                                    placeholder = painterResource(Res.drawable.icon_dashboard_profile),
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .padding(5.dp)
+                                        .clip(CircleShape)
                                 )
-                                .clickable {
-                                    // Invoke user authentication
-                                    if (Session.isLogIn()) {
-                                        // Open up profile screen
-                                        println("User already in - open up profile screen")
-                                    } else {
-                                        val appAuthStatus = AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS)
-                                        when(appAuthStatus) {
-                                            AppAuthStatus.SIGN_IN -> {
+                            }
+
+                            ExposedDropdownMenu(
+                                expanded = isExpanded,
+                                onDismissRequest = { isExpanded = false },
+                                modifier = Modifier.width(200.dp)
+                            ) {
+                                when(appAuthStatus) {
+                                    AppAuthStatus.SIGN_IN -> {
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(Res.string.label_dashboard_sign_out)) },
+                                            onClick = {
+                                                // Invoke user authentication
+                                                if (Session.isLogIn()) {
+                                                    // Open up profile screen
+                                                    println("User already in - open up profile screen")
+                                                    ContractServiceLocator.locate(AuthContract::class).signOut()
+                                                }
+
+                                                isExpanded = false
+                                            }
+                                        )
+                                    }
+                                    AppAuthStatus.SIGN_UP_REQUIRED -> {
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(Res.string.label_dashboard_sign_up)) },
+                                            onClick = {
+                                                // Navigate to register screen
+
+                                                isExpanded = false
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(Res.string.label_dashboard_sign_out)) },
+                                            onClick = {
+                                                // Open up profile screen
+                                                ContractServiceLocator.locate(AuthContract::class).signOut()
+
+                                                isExpanded = false
+                                            }
+                                        )
+                                    }
+                                    else -> {
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(Res.string.label_dashboard_sign_in)) },
+                                            onClick = {
+                                                // Invoke sign-in with Firebase-Google
+                                                ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
                                                 ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
                                                     // Re-login and update auth status
                                                     AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                                                    appAuthStatus = authStatus
                                                 }
+
+                                                isExpanded = false
                                             }
-                                            AppAuthStatus.SIGN_UP_REQUIRED -> {
-                                                // TODO: Navigate to Sign-Up screen
-                                            }
-                                            else -> {
-                                                // Invoke sign-in with Firebase-Google
-                                                ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
-                                            }
-                                        }
+                                        )
                                     }
                                 }
-                        ) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalPlatformContext.current)
-                                    .data(Session.user?.profilePicUrl)
-                                    .crossfade(true)
-                                    .build(),
-                                contentDescription = "Profile Picture",
-                                contentScale = ContentScale.Crop,
-                                placeholder = painterResource(Res.drawable.icon_dashboard_profile),
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .padding(5.dp)
-                                    .clip(CircleShape)
-                            )
+                            }
                         }
                     }
                 }
@@ -223,7 +302,7 @@ fun DashboardUI(navController: NavController) {
                         .clip(RoundedCornerShape(12.dp))
                         .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp), spotColor = MaterialTheme.colorScheme.scrim)
                 ) {
-                    when(authStatus) {
+                    when(appAuthStatus) {
                         AppAuthStatus.SIGN_IN -> {
                             authTabItemList.forEachIndexed { index, tabItem ->
                                 NavigationBarItem(
@@ -274,7 +353,7 @@ fun DashboardUI(navController: NavController) {
 
             TabContent(
                 selectedTabIndex = selectedTabIndex,
-                authStatus,
+                appAuthStatus,
                 modifier = Modifier
                     .padding(bottom = 50.dp)
                     .fillMaxSize(),

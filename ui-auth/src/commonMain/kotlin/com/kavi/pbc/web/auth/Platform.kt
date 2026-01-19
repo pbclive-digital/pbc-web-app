@@ -10,3 +10,5 @@ expect fun signInWithGoogle()
 expect fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)?
 
 expect fun retrieveCurrentUser(onUserAvailable: (user: User?) -> Unit)
+
+expect fun signOutApp()
