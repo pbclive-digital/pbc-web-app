@@ -17,5 +17,6 @@ data class AuthToken(
     val userId: String? = null,
     var token: String? = null,
     val status: TokenStatus,
-    val createdTime: Long? = null
+    val createdTime: Long? = null,
+    val lastUsedAt: Long? = null
 )

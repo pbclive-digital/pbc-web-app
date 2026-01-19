@@ -42,14 +42,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.dashboard.data.model.TabItem
 import com.kavi.pbc.web.dashboard.ui.event.EventsUI
 import com.kavi.pbc.web.dashboard.ui.news.NewsUI
 import com.kavi.pbc.web.dashboard.ui.appointment.AppointmentUI
 import com.kavi.pbc.web.dashboard.ui.question.QuestionUI
-import com.kavi.pbc.web.parent.contract.ContractServiceLocator
-import com.kavi.pbc.web.parent.contract.model.AuthContract
+import com.kavi.pbc.web.data.auth.AppAuthStatus
+import com.kavi.pbc.web.datastore.AppLocalStore
+import com.kavi.pbc.web.datastore.DataKey
+import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.util.ScreenType
 import com.kavi.pbc.web.parent.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
@@ -57,21 +62,32 @@ import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
 import pbcwebapp.ui_dashboard.generated.resources.icon_appointment
 import pbcwebapp.ui_dashboard.generated.resources.icon_ask_question
+import pbcwebapp.ui_dashboard.generated.resources.icon_dashboard_profile
 import pbcwebapp.ui_dashboard.generated.resources.icon_event
 import pbcwebapp.ui_dashboard.generated.resources.icon_news
-import pbcwebapp.ui_dashboard.generated.resources.image_dhamma_chakra
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pbc
 
 @Composable
 fun DashboardUI(navController: NavController) {
-    val tabItemList = listOf(
+
+    val authStatus = AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS)
+
+    val authTabItemList = listOf(
         /*TabItem(name = "Home", icon = Res.drawable.icon_lotus),*/ // TODO - Keep this for future use
         TabItem(name = "Events", icon = Res.drawable.icon_event),
         TabItem(name = "News", icon = Res.drawable.icon_news),
         TabItem(name = "Appointments", icon = Res.drawable.icon_appointment),
         TabItem(name = "Questions", icon = Res.drawable.icon_ask_question)
     )
+
+    val unauthTabItemList = listOf(
+        /*TabItem(name = "Home", icon = Res.drawable.icon_lotus),*/ // TODO - Keep this for future use
+        TabItem(name = "Events", icon = Res.drawable.icon_event),
+        TabItem(name = "News", icon = Res.drawable.icon_news),
+        TabItem(name = "Questions", icon = Res.drawable.icon_ask_question)
+    )
+
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
     BoxWithConstraints(
@@ -137,24 +153,35 @@ fun DashboardUI(navController: NavController) {
 
                         Box (
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(50.dp)
                                 .clip(CircleShape)
                                 .border(
                                     border = BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.tertiary),
                                     shape = CircleShape
                                 )
                                 .clickable {
-                                    //profileAction.invoke()
-                                    ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
+                                    // Invoke user authentication
+                                    if (Session.isLogIn()) {
+                                        // Open up profile screen
+                                        println("User already in - open up profile screen")
+                                    } else {
+                                        /*ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
+                                        ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
+
+                                        }*/
+                                    }
                                 }
                         ) {
                             AsyncImage(
-                                model = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg",
+                                model = ImageRequest.Builder(LocalPlatformContext.current)
+                                    .data(Session.user?.profilePicUrl)
+                                    .crossfade(true)
+                                    .build(),
                                 contentDescription = "Profile Picture",
                                 contentScale = ContentScale.Crop,
-                                placeholder = painterResource(Res.drawable.image_dhamma_chakra),
+                                placeholder = painterResource(Res.drawable.icon_dashboard_profile),
                                 modifier = Modifier
-                                    .size(40.dp)
+                                    .size(50.dp)
                                     .padding(5.dp)
                                     .clip(CircleShape)
                             )
@@ -181,31 +208,58 @@ fun DashboardUI(navController: NavController) {
                         .clip(RoundedCornerShape(12.dp))
                         .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp), spotColor = MaterialTheme.colorScheme.scrim)
                 ) {
-                    tabItemList.forEachIndexed { index, tabItem ->
-                        NavigationBarItem(
-                            modifier = Modifier
-                                .padding(4.dp),
-                            colors = navigationBarColors(),
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
-                            label = { Text(tabItem.name) },
-                            icon = {
-                                Icon(
-                                    painterResource(tabItem.icon),
-                                    contentDescription = "",
+                    when(authStatus) {
+                        AppAuthStatus.SIGN_IN -> {
+                            authTabItemList.forEachIndexed { index, tabItem ->
+                                NavigationBarItem(
                                     modifier = Modifier
-                                        .width(45.dp)
-                                        .height(45.dp)
-                                        .padding(8.dp),
+                                        .padding(4.dp),
+                                    colors = navigationBarColors(),
+                                    selected = selectedTabIndex == index,
+                                    onClick = { selectedTabIndex = index },
+                                    label = { Text(tabItem.name) },
+                                    icon = {
+                                        Icon(
+                                            painterResource(tabItem.icon),
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .width(45.dp)
+                                                .height(45.dp)
+                                                .padding(8.dp),
+                                        )
+                                    }
                                 )
                             }
-                        )
+                        }
+                        else -> {
+                            unauthTabItemList.forEachIndexed { index, tabItem ->
+                                NavigationBarItem(
+                                    modifier = Modifier
+                                        .padding(4.dp),
+                                    colors = navigationBarColors(),
+                                    selected = selectedTabIndex == index,
+                                    onClick = { selectedTabIndex = index },
+                                    label = { Text(tabItem.name) },
+                                    icon = {
+                                        Icon(
+                                            painterResource(tabItem.icon),
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .width(45.dp)
+                                                .height(45.dp)
+                                                .padding(8.dp),
+                                        )
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
 
             TabContent(
                 selectedTabIndex = selectedTabIndex,
+                authStatus,
                 modifier = Modifier
                     .padding(bottom = 50.dp)
                     .fillMaxSize(),
@@ -218,15 +272,28 @@ fun DashboardUI(navController: NavController) {
 @Composable
 fun TabContent(
     selectedTabIndex: Int,
+    appAuthStatus: AppAuthStatus?,
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
-    when (selectedTabIndex) {
-        /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
-        0 -> EventsUI(navController = navController)
-        1 -> NewsUI(navController = navController)
-        2 -> AppointmentUI()
-        3 -> QuestionUI()
+    when(appAuthStatus) {
+        AppAuthStatus.SIGN_IN -> {
+            when (selectedTabIndex) {
+                /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
+                0 -> EventsUI(navController = navController)
+                1 -> NewsUI(navController = navController)
+                2 -> AppointmentUI()
+                3 -> QuestionUI()
+            }
+        }
+        else -> {
+            when (selectedTabIndex) {
+                /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
+                0 -> EventsUI(navController = navController)
+                1 -> NewsUI(navController = navController)
+                3 -> QuestionUI()
+            }
+        }
     }
 }
 

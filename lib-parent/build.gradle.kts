@@ -38,6 +38,8 @@ kotlin {
 
                 // Compose navigation
                 implementation(libs.jetbrains.navigation.compose)
+
+                implementation(projects.libData)
             }
         }
     }

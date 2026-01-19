@@ -9,3 +9,10 @@ actual fun platform(): String {
 
 actual fun signInWithGoogle() {
 }
+
+actual fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)? {
+    return null
+}
+
+actual fun retrieveCurrentUser(onUserAvailable: (user: User?) -> Unit) {
+}

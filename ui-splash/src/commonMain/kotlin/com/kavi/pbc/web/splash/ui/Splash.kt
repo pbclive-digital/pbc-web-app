@@ -32,6 +32,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.kavi.pbc.web.datastore.AppLocalStore
+import com.kavi.pbc.web.datastore.DataKey
+import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.navigation.DashboardPath
 import com.kavi.pbc.web.parent.navigation.SplashPath
 import com.kavi.pbc.web.splash.data.model.SplashUiState
@@ -49,6 +53,11 @@ fun SplashUI(navController: NavHostController) {
 
     LaunchedEffect(Unit) {
         viewModel.fetchConfig()
+
+        // Check authentication status
+        ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
+            AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+        }
     }
 
     Box(

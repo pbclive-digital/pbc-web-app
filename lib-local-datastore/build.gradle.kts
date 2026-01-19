@@ -2,8 +2,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -29,17 +28,8 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
 
-                // Compose dependencies
-                implementation(libs.compose.runtime)
-                implementation(libs.compose.foundation)
-                implementation(libs.compose.material3)
-                implementation(libs.compose.ui)
-                implementation(libs.compose.components.resources)
-                implementation(libs.compose.ui.tooling.preview)
-
-                // Async image loading
-                implementation(libs.coil3.compose)
-                implementation(libs.coil3.network.ktor)
+                // kotlin serialization
+                implementation(libs.kotlin.serialization)
 
                 implementation(projects.libData)
             }
