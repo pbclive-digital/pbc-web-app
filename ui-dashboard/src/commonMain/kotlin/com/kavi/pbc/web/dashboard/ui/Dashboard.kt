@@ -29,6 +29,7 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -55,6 +56,8 @@ import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.datastore.AppLocalStore
 import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.session.Session
+import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.util.ScreenType
 import com.kavi.pbc.web.parent.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
@@ -165,10 +168,22 @@ fun DashboardUI(navController: NavController) {
                                         // Open up profile screen
                                         println("User already in - open up profile screen")
                                     } else {
-                                        /*ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
-                                        ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
-
-                                        }*/
+                                        val appAuthStatus = AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS)
+                                        when(appAuthStatus) {
+                                            AppAuthStatus.SIGN_IN -> {
+                                                ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
+                                                    // Re-login and update auth status
+                                                    AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                                                }
+                                            }
+                                            AppAuthStatus.SIGN_UP_REQUIRED -> {
+                                                // TODO: Navigate to Sign-Up screen
+                                            }
+                                            else -> {
+                                                // Invoke sign-in with Firebase-Google
+                                                ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
+                                            }
+                                        }
                                     }
                                 }
                         ) {
