@@ -12,10 +12,6 @@ import com.kavi.pbc.web.data.user.User
 @OptIn(ExperimentalWasmJsInterop::class)
 private fun newConfig(): JsAny = js("({})")
 
-actual fun platform(): String {
-    return "wasmJsMain"
-}
-
 actual fun signInWithGoogle() {
     val config = newConfig() as GoogleInitConfig
     config.client_id = "944081515646-5i5uq60q3grjtkmtb0uvufn1102e8ucj.apps.googleusercontent.com"
