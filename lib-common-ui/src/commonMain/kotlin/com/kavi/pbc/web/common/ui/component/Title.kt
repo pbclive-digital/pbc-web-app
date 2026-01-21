@@ -43,6 +43,7 @@ fun Title(modifier: Modifier = Modifier, titleText: String) {
 @Composable
 fun TitleWithAction(modifier: Modifier = Modifier,
                     titleText: String,
+                    textSize: Int = 48,
                     actionPainter: Painter,
                     actionPainterSize: Dp = 56.dp,
                     isIcon: Boolean = false,
@@ -59,7 +60,8 @@ fun TitleWithAction(modifier: Modifier = Modifier,
             text = titleText,
             fontFamily = PBCFontFamily,
             fontWeight = FontWeight.Bold,
-            fontSize = 48.sp,
+            fontSize = textSize.sp,
+            lineHeight = textSize.sp,
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(1f))

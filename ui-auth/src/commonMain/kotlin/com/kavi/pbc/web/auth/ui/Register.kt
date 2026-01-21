@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +41,8 @@ import com.kavi.pbc.web.common.ui.component.AppOutlineMultiLineTextField
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
 import com.kavi.pbc.web.common.ui.component.TitleWithAction
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
+import com.kavi.pbc.web.parent.util.ScreenType
+import com.kavi.pbc.web.parent.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_auth.generated.resources.Res
@@ -108,16 +112,38 @@ fun RegisterUI(onAuthenticated: () -> Unit,
     BoxWithConstraints(
         contentAlignment = Alignment.Center
     ) {
+        val maxWidth = this.maxWidth
+
+        val screenType = UIUtil.screenType(maxWidth = maxWidth)
+
         Column (
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier
+                .padding(20.dp)
+                .verticalScroll(rememberScrollState())
+
         ) {
-            TitleWithAction(
-                titleText = stringResource(Res.string.label_auth_register),
-                actionPainter = painterResource(Res.drawable.icon_auth_x),
-                actionPainterSize = 40.dp,
-                isIcon = true,
-            ) {
-                onCancel.invoke()
+            when(screenType) {
+                ScreenType.PHONE -> {
+                    TitleWithAction(
+                        titleText = stringResource(Res.string.label_auth_register),
+                        textSize = 40,
+                        actionPainter = painterResource(Res.drawable.icon_auth_x),
+                        actionPainterSize = 30.dp,
+                        isIcon = true,
+                    ) {
+                        onCancel.invoke()
+                    }
+                }
+                else -> {
+                    TitleWithAction(
+                        titleText = stringResource(Res.string.label_auth_register),
+                        actionPainter = painterResource(Res.drawable.icon_auth_x),
+                        actionPainterSize = 40.dp,
+                        isIcon = true,
+                    ) {
+                        onCancel.invoke()
+                    }
+                }
             }
 
             Text(
