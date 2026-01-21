@@ -1,6 +1,5 @@
 package com.kavi.pbc.web.auth
 
-import androidx.compose.runtime.MutableState
 import com.kavi.pbc.web.auth.firebase.FirebaseAuth
 import com.kavi.pbc.web.auth.firebase.Google
 import com.kavi.pbc.web.auth.firebase.GoogleInitConfig
@@ -26,12 +25,6 @@ actual fun signInWithGoogle() {
 
     Google.accounts.id.prompt()
 }
-
-/*actual fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)? {
-    return subscribeAuthState({ jsUser ->
-        userState.value = jsUser?.toUser()
-    })
-}*/
 
 actual fun retrieveCurrentUser(onUserAvailable: (user: User?) -> Unit) {
     subscribeAuthState { jsUser ->

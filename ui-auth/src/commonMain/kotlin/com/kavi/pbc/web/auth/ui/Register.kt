@@ -105,8 +105,6 @@ fun RegisterUI(onAuthenticated: () -> Unit,
         }
     }
 
-    val isLoading by remember { mutableStateOf(false) }
-
     BoxWithConstraints(
         contentAlignment = Alignment.Center
     ) {
