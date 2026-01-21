@@ -1,6 +1,9 @@
 package com.kavi.pbc.web.auth
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import com.kavi.pbc.web.auth.service.auth.AuthServiceModel
+import com.kavi.pbc.web.auth.ui.RegisterDialog
 import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.datastore.AppLocalStore
 import com.kavi.pbc.web.datastore.DataKey
@@ -29,5 +32,12 @@ class AuthModule: AuthContract {
     override fun signOut() {
         signOutApp()
         AppLocalStore.shared.clearValue(key = DataKey.APP_USER_AUTH_STATUS)
+    }
+
+    @Composable
+    override fun ProvideRegisterUI(showDialog: MutableState<Boolean>, onAuthenticated: () -> Unit,
+                                   onCreatedWithoutAuth: () -> Unit, onCancel: () -> Unit) {
+        RegisterDialog(showDialog = showDialog, onAuthenticated = onAuthenticated,
+            onCreatedWithoutAuth = onCreatedWithoutAuth, onCancel = onCancel)
     }
 }

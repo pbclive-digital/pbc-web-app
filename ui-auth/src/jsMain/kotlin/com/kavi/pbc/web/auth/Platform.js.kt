@@ -6,9 +6,9 @@ import com.kavi.pbc.web.data.user.User
 actual fun signInWithGoogle() {
 }
 
-actual fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)? {
+/*actual fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)? {
     return null
-}
+}*/
 
 actual fun retrieveCurrentUser(onUserAvailable: (user: User?) -> Unit) {
 }

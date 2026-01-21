@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_auth_register">Create Account</string>
+    <string name="label_auth_first_name">First Name</string>
+    <string name="label_auth_last_name">Last Name</string>
+    <string name="label_auth_phone_num">Phone #</string>
+    <string name="label_auth_address">Address</string>
+    <string name="phrase_welcome_msg">We’d love to have you with us, create your account now. Create an account in PBC will help us to connect with you easily and more frequent.</string>
+</resources>

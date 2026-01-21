@@ -5,7 +5,7 @@ import com.kavi.pbc.web.data.user.User
 
 expect fun signInWithGoogle()
 
-expect fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)?
+//expect fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)?
 
 expect fun retrieveCurrentUser(onUserAvailable: (user: User?) -> Unit)
 

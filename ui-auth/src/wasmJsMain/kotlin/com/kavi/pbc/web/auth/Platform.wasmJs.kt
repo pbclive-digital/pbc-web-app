@@ -27,11 +27,11 @@ actual fun signInWithGoogle() {
     Google.accounts.id.prompt()
 }
 
-actual fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)? {
+/*actual fun retrieveCurrentUser(userState: MutableState<User?>): (() -> Unit)? {
     return subscribeAuthState({ jsUser ->
         userState.value = jsUser?.toUser()
     })
-}
+}*/
 
 actual fun retrieveCurrentUser(onUserAvailable: (user: User?) -> Unit) {
     subscribeAuthState { jsUser ->

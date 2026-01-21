@@ -88,6 +88,7 @@ fun DashboardUI(navController: NavController) {
     }
 
     var isExpanded by remember { mutableStateOf(false) }
+    val showSignUpDialog = remember { mutableStateOf(false) }
 
     val authTabItemList = listOf(
         /*TabItem(name = "Home", icon = Res.drawable.icon_lotus),*/ // TODO - Keep this for future use
@@ -242,7 +243,7 @@ fun DashboardUI(navController: NavController) {
                                             text = { Text(stringResource(Res.string.label_dashboard_sign_up)) },
                                             onClick = {
                                                 // Navigate to register screen
-
+                                                showSignUpDialog.value = true
                                                 isExpanded = false
                                             }
                                         )
@@ -278,6 +279,22 @@ fun DashboardUI(navController: NavController) {
                     }
                 }
             }
+        }
+
+        if (showSignUpDialog.value) {
+            ContractServiceLocator.locate(AuthContract::class).ProvideRegisterUI(
+                showDialog = showSignUpDialog,
+                onAuthenticated = {
+                    appAuthStatus = AppAuthStatus.SIGN_IN
+                    showSignUpDialog.value = false
+                },
+                onCreatedWithoutAuth = {
+                    showSignUpDialog.value = false
+                },
+                onCancel = {
+                    showSignUpDialog.value = false
+                }
+            )
         }
 
         Column (
