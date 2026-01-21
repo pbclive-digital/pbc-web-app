@@ -3,6 +3,7 @@
     <string name="label_dashboard_sign_in">Sign In</string>
     <string name="label_dashboard_sign_out">Sign Out</string>
     <string name="label_dashboard_sign_up">Sign Up</string>
+    <string name="label_dashboard_profile">Profile</string>
 
     <string name="label_dashboard_pittsburgh">Pittsburgh</string>
     <string name="label_dashboard_buddhist_center">Buddhist Center</string>

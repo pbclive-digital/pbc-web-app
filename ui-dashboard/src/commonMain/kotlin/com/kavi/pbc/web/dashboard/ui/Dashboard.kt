@@ -75,6 +75,7 @@ import pbcwebapp.ui_dashboard.generated.resources.icon_news
 import pbcwebapp.ui_dashboard.generated.resources.image_dhamma_chakra_256
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pbc
+import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_profile
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_in
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_out
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_up
@@ -219,10 +220,22 @@ fun DashboardUI(navController: NavController) {
                                         isExpanded = false*/
                                 },
                                 modifier = Modifier
-                                    .width(200.dp)
+                                    .width(150.dp)
                             ) {
                                 when(appAuthStatus) {
                                     AppAuthStatus.SIGN_IN -> {
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(Res.string.label_dashboard_profile)) },
+                                            onClick = {
+                                                // Invoke user authentication
+                                                if (Session.isLogIn()) {
+                                                    // Navigate to profile screen
+                                                    println("Profile Tap")
+                                                }
+
+                                                isExpanded = false
+                                            }
+                                        )
                                         DropdownMenuItem(
                                             text = { Text(stringResource(Res.string.label_dashboard_sign_out)) },
                                             onClick = {
@@ -264,9 +277,14 @@ fun DashboardUI(navController: NavController) {
                                                 // Invoke sign-in with Firebase-Google
                                                 ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
                                                 ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
-                                                    // Re-login and update auth status
-                                                    AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
                                                     appAuthStatus = authStatus
+                                                    if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
+                                                        // Navigate to register screen
+                                                        showSignUpDialog.value = true
+                                                    } else {
+                                                        // Re-login and update auth status
+                                                        AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                                                    }
                                                 }
 
                                                 isExpanded = false
@@ -286,9 +304,14 @@ fun DashboardUI(navController: NavController) {
                 showDialog = showSignUpDialog,
                 onAuthenticated = {
                     appAuthStatus = AppAuthStatus.SIGN_IN
+                    // Re-login and update auth status
+                    AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, appAuthStatus)
                     showSignUpDialog.value = false
                 },
                 onCreatedWithoutAuth = {
+                    appAuthStatus = AppAuthStatus.FAILED
+                    // Re-login and update auth status
+                    AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, appAuthStatus)
                     showSignUpDialog.value = false
                 },
                 onCancel = {
