@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kavi.pbc.web.data.pagination.PaginationRequest
-import com.kavi.pbc.web.data.question.AnswerComment
 import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.question.data.model.OpenQuestionListUiState
@@ -19,14 +18,14 @@ import kotlinx.coroutines.launch
 class OpenQuestionListViewModel: ViewModel() {
 
     val questionRemoteRepository = QuestionRemoteRepository()
-
     private val isInitialRequestFired = mutableStateOf(false)
-
     private val paginationRequest = PaginationRequest(null)
     private var isPagingReachedEnd by mutableStateOf(false)
+
+    private val _pageIndex = MutableStateFlow(0)
+    val pageIndex: StateFlow<Int> = _pageIndex
     private val _openQuestionList = MutableStateFlow<MutableList<Question>>(mutableListOf())
     val openQuestionList: StateFlow<MutableList<Question>> = _openQuestionList
-
     private val _openQuestionListUiState = MutableStateFlow(OpenQuestionListUiState.NONE)
     val openQuestionListUiState: StateFlow<OpenQuestionListUiState> = _openQuestionListUiState
 
@@ -43,7 +42,6 @@ class OpenQuestionListViewModel: ViewModel() {
 
     private fun getAllOpenQuestionList() {
         viewModelScope.launch {
-            _openQuestionListUiState.value = OpenQuestionListUiState.PENDING
             when(val response = questionRemoteRepository.getOpenQuestionList(paginationRequest = paginationRequest)) {
                 is ResultWrapper.NetworkError -> {
                     _openQuestionListUiState.value = OpenQuestionListUiState.FAILURE

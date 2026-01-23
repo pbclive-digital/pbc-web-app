@@ -15,8 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,9 +32,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -65,6 +73,7 @@ fun OpenQuestinList(navController: NavController) {
 
     val openQuestionListUiState by viewModel.openQuestionListUiState.collectAsState()
     val openQuestionList by viewModel.openQuestionList.collectAsState()
+    val pageIndex by viewModel.pageIndex.collectAsState()
 
     val selectedQuestion = remember { mutableStateOf(Question()) }
 
@@ -94,7 +103,28 @@ fun OpenQuestinList(navController: NavController) {
             OpenQuestionListUiState.SUCCESS -> {
                 Row {
                     when(screenType) {
-                        ScreenType.PHONE -> {}
+                        ScreenType.PHONE -> {
+                            Column(
+                                modifier = Modifier
+                                    .height(maxHeight)
+                                    .padding(top = 10.dp, end = 15.dp)
+                            ) {
+                                LazyColumn {
+                                    items(openQuestionList) { question ->
+                                        QuestionItem(
+                                            question = question, onClick = {
+                                                selectedQuestion.value = question
+                                            }
+                                        )
+                                    }
+                                    item {
+                                        LaunchedEffect(pageIndex) {
+                                            viewModel.fetchOpenQuestionList()
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         else -> {
                             selectedQuestion.value = openQuestionList[0]
                             Column(
@@ -103,15 +133,18 @@ fun OpenQuestinList(navController: NavController) {
                                     .height(maxHeight)
                                     .padding(top = 10.dp, end = 15.dp)
                             ) {
-                                Column (
-                                    modifier = Modifier.height(maxHeight)
-                                ) {
-                                    openQuestionList.forEach { question ->
+                                LazyColumn {
+                                    items(openQuestionList) { question ->
                                         QuestionItem(
                                             question = question, onClick = {
                                                 selectedQuestion.value = question
                                             }
                                         )
+                                    }
+                                    item {
+                                        LaunchedEffect(pageIndex) {
+                                            viewModel.fetchOpenQuestionList()
+                                        }
                                     }
                                 }
                             }
@@ -142,7 +175,9 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>) {
             .background(MaterialTheme.colorScheme.background)
             .padding(40.dp)
     ) {
-        Column {
+        Column (
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
             Title(
                 modifier = Modifier
                     .padding(start = 12.dp, end = 12.dp),

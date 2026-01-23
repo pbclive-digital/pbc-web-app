@@ -7,6 +7,7 @@ import com.kavi.pbc.web.network.session.Session
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.expectSuccess
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.HttpRequestBuilder
@@ -79,8 +80,19 @@ class Network {
                 url("${getBaseUrl()}/$urlPath")
                 setHeaders(this)
             }
-            val configRes: BaseResponse<T> = response.body<BaseResponse<T>>()
-            ResultWrapper.Success(configRes)
+            val statusCode = response.status.value
+            if (statusCode in 200..<299) {
+                val configRes: BaseResponse<T> = response.body<BaseResponse<T>>()
+                ResultWrapper.Success(configRes)
+            } else if (statusCode in 300..<599) {
+                if (statusCode == 401) {
+                    ResultWrapper.UnAuthError(statusCode)
+                } else {
+                    ResultWrapper.HttpError(statusCode)
+                }
+            } else {
+                ResultWrapper.HttpError(-1, Error("Unknown Error"))
+            }
         } catch (throwable: Exception) {
             ResultWrapper.HttpError(-1, Error(throwable.toString()))
         }
@@ -93,8 +105,19 @@ class Network {
                 setHeaders(this)
                 setBody(params)
             }
-            val configRes: BaseResponse<T> = response.body<BaseResponse<T>>()
-            ResultWrapper.Success(configRes)
+            val statusCode = response.status.value
+            if (statusCode in 200..<299) {
+                val configRes: BaseResponse<T> = response.body<BaseResponse<T>>()
+                ResultWrapper.Success(configRes)
+            } else if (statusCode in 300..<599) {
+                if (statusCode == 401) {
+                    ResultWrapper.UnAuthError(statusCode)
+                } else {
+                    ResultWrapper.HttpError(statusCode)
+                }
+            } else {
+                ResultWrapper.HttpError(-1, Error("Unknown Error"))
+            }
         } catch (throwable: Exception) {
             ResultWrapper.HttpError(-1, Error(throwable.toString()))
         }
