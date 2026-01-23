@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_question_open_question_empty">No open Questions available at this time.</string>
+
+    <string name="label_question_answers">Answers / Comments:</string>
+    <string name="label_question_your_answer">Your Answer</string>
+    <string name="label_question_add_answer_success">Successfully add your answer.</string>
+    <string name="label_question_add_answer_failure">Failed to add your answer to the question. Please try again later.</string>
+</resources>

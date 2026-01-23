@@ -22,7 +22,9 @@ import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.contract.model.DashboardContract
 import com.kavi.pbc.web.parent.contract.model.EventContract
 import com.kavi.pbc.web.parent.contract.model.NewsContract
+import com.kavi.pbc.web.parent.contract.model.QuestionContract
 import com.kavi.pbc.web.parent.contract.model.SplashContract
+import com.kavi.pbc.web.question.QuestionModule
 import com.kavi.pbc.web.splash.SplashModule
 
 @Composable
@@ -59,4 +61,5 @@ fun registerUiModules() {
     ContractServiceLocator.register(EventContract::class) { EventModule() }
     ContractServiceLocator.register(NewsContract::class) { NewsModule() }
     ContractServiceLocator.register(AuthContract::class) { AuthModule() }
+    ContractServiceLocator.register(QuestionContract::class) { QuestionModule() }
 }

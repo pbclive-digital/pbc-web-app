@@ -86,7 +86,7 @@ class Network {
         }
     }
 
-    suspend inline fun <reified T, reified E>invokePOST(urlPath: String, params: E): ResultWrapper<BaseResponse<T>> {
+    suspend inline fun <reified T, reified E>invokePOST(urlPath: String, params: E?): ResultWrapper<BaseResponse<T>> {
         return try {
             val response = getHttpClientInstance().post {
                 url("${getBaseUrl()}/$urlPath")

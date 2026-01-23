@@ -112,11 +112,11 @@ fun DashboardUI(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
-            .verticalScroll(rememberScrollState()),
     ) {
         val maxWidth = this.maxWidth
+        val screenType = UIUtil.screenType(maxWidth)
 
-        val sidePadding = when (UIUtil.screenType(maxWidth)) {
+        val sidePadding = when (screenType) {
             ScreenType.PHONE -> 8.dp
             ScreenType.TABLET, ScreenType.COMPUTER -> {
                 (maxWidth.value * .1).dp
@@ -412,7 +412,7 @@ fun TabContent(
                 0 -> EventsUI(navController = navController)
                 1 -> NewsUI(navController = navController)
                 2 -> AppointmentUI()
-                3 -> QuestionUI()
+                3 -> QuestionUI(navController = navController)
             }
         }
         else -> {
@@ -420,7 +420,7 @@ fun TabContent(
                 /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
                 0 -> EventsUI(navController = navController)
                 1 -> NewsUI(navController = navController)
-                3 -> QuestionUI()
+                3 -> QuestionUI(navController = navController)
             }
         }
     }

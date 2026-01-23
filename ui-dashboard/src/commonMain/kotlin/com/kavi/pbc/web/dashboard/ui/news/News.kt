@@ -15,6 +15,7 @@ fun NewsUI(modifier: Modifier = Modifier, navController: NavController) {
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        ContractServiceLocator.locate(NewsContract::class).GetNewsList(navController = navController)
+        ContractServiceLocator.locate(NewsContract::class)
+            .GetNewsList(navController = navController)
     }
 }

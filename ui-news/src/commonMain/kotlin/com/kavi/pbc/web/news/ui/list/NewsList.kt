@@ -11,7 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -107,19 +111,21 @@ fun NewsListUI(navController: NavController) {
                                 Column (
                                     modifier = Modifier.height(maxHeight)
                                 ) {
-                                    activeNewsList.forEachIndexed { index, news ->
-                                        NewsItem(
-                                            news = news, onReadMore = {
-                                                selectedNews.value = news
-                                                showNewsSheet.value = true
-                                            }
-                                        )
-                                        if (index < activeNewsList.lastIndex) {
-                                            HorizontalDivider(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                thickness = 1.dp,
-                                                color = Color.LightGray
+                                    LazyColumn {
+                                        itemsIndexed(activeNewsList) { index, news ->
+                                            NewsItem(
+                                                news = news, onReadMore = {
+                                                    selectedNews.value = news
+                                                    showNewsSheet.value = true
+                                                }
                                             )
+                                            if (index < activeNewsList.lastIndex) {
+                                                HorizontalDivider(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    thickness = 1.dp,
+                                                    color = Color.LightGray
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -136,18 +142,20 @@ fun NewsListUI(navController: NavController) {
                                 Column (
                                     modifier = Modifier.height(maxHeight)
                                 ) {
-                                    activeNewsList.forEachIndexed { index, news ->
-                                        NewsItem(
-                                            news = news, onReadMore = {
-                                                selectedNews.value = news
-                                            }
-                                        )
-                                        if (index < activeNewsList.lastIndex) {
-                                            HorizontalDivider(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                thickness = 1.dp,
-                                                color = Color.LightGray
+                                    LazyColumn {
+                                        itemsIndexed(activeNewsList) { index, news ->
+                                            NewsItem(
+                                                news = news, onReadMore = {
+                                                    selectedNews.value = news
+                                                }
                                             )
+                                            if (index < activeNewsList.lastIndex) {
+                                                HorizontalDivider(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    thickness = 1.dp,
+                                                    color = Color.LightGray
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -186,7 +194,9 @@ private fun SelectedNews(selectedNews: MutableState<News>) {
             .background(MaterialTheme.colorScheme.background)
             .padding(40.dp)
     ) {
-        Column {
+        Column (
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
             Text(
                 text = selectedNews.value.title,
                 fontFamily = PBCFontFamily,

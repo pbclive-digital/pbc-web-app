@@ -72,6 +72,7 @@ kotlin {
             implementation(projects.uiDashboard)
             implementation(projects.uiEvent)
             implementation(projects.uiNews)
+            implementation(projects.uiQuestion)
         }
     }
 }
