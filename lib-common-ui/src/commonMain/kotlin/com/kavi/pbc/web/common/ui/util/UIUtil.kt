@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.parent.util
+package com.kavi.pbc.web.common.ui.util
 
 import androidx.compose.ui.unit.Dp
 

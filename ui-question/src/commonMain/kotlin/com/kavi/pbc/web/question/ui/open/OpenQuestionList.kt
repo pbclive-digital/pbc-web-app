@@ -17,13 +17,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -56,8 +54,8 @@ import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.network.session.Session
-import com.kavi.pbc.web.parent.util.ScreenType
-import com.kavi.pbc.web.parent.util.UIUtil
+import com.kavi.pbc.web.common.ui.util.ScreenType
+import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.question.data.model.OpenQuestionListUiState
 import com.kavi.pbc.web.question.ui.common.AnswerCommentItem
 import com.kavi.pbc.web.question.ui.common.QuestionItem
@@ -117,7 +115,7 @@ fun OpenQuestinList(navController: NavController) {
                             Column(
                                 modifier = Modifier
                                     .height(maxHeight)
-                                    .padding(top = 10.dp, end = 15.dp)
+                                    .padding(top = 10.dp)
                             ) {
                                 LazyColumn {
                                     items(openQuestionList) { question ->

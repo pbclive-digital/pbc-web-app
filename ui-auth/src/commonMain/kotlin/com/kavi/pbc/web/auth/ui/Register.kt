@@ -41,8 +41,8 @@ import com.kavi.pbc.web.common.ui.component.AppOutlineMultiLineTextField
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
 import com.kavi.pbc.web.common.ui.component.TitleWithAction
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
-import com.kavi.pbc.web.parent.util.ScreenType
-import com.kavi.pbc.web.parent.util.UIUtil
+import com.kavi.pbc.web.common.ui.util.ScreenType
+import com.kavi.pbc.web.common.ui.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_auth.generated.resources.Res

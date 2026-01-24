@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -22,7 +23,9 @@ import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 
 @Composable
-fun Title(modifier: Modifier = Modifier, titleText: String, textSize: Int = 48) {
+fun Title(modifier: Modifier = Modifier,
+          titleText: String, textSize: Int = 48,
+          textColor: Color = MaterialTheme.colorScheme.onBackground) {
     Row (
         modifier = modifier
             .fillMaxWidth(),
@@ -34,7 +37,7 @@ fun Title(modifier: Modifier = Modifier, titleText: String, textSize: Int = 48) 
             fontWeight = FontWeight.Bold,
             lineHeight = textSize.sp,
             fontSize = textSize.sp,
-            color = MaterialTheme.colorScheme.onBackground
+            color = textColor
         )
         Spacer(modifier = Modifier.weight(1f))
     }
@@ -44,6 +47,7 @@ fun Title(modifier: Modifier = Modifier, titleText: String, textSize: Int = 48) 
 fun TitleWithAction(modifier: Modifier = Modifier,
                     titleText: String,
                     textSize: Int = 48,
+                    textColor: Color = MaterialTheme.colorScheme.onBackground,
                     actionPainter: Painter,
                     actionPainterSize: Dp = 56.dp,
                     isIcon: Boolean = false,
@@ -62,7 +66,7 @@ fun TitleWithAction(modifier: Modifier = Modifier,
             fontWeight = FontWeight.Bold,
             fontSize = textSize.sp,
             lineHeight = textSize.sp,
-            color = MaterialTheme.colorScheme.onBackground
+            color = textColor
         )
         Spacer(modifier = Modifier.weight(1f))
         if (isIcon) {

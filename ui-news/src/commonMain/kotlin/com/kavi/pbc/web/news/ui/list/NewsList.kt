@@ -52,8 +52,8 @@ import com.kavi.pbc.web.data.news.News
 import com.kavi.pbc.web.news.data.model.NewsListUiState
 import com.kavi.pbc.web.news.ui.common.NewsItem
 import com.kavi.pbc.web.news.ui.sheet.NewsSelectedBottomSheetUI
-import com.kavi.pbc.web.parent.util.ScreenType
-import com.kavi.pbc.web.parent.util.UIUtil
+import com.kavi.pbc.web.common.ui.util.ScreenType
+import com.kavi.pbc.web.common.ui.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_news.generated.resources.Res
@@ -105,7 +105,7 @@ fun NewsListUI(navController: NavController) {
                             Column(
                                 modifier = Modifier
                                     .height(maxHeight)
-                                    .padding(top = 10.dp, end = 15.dp)
+                                    .padding(top = 10.dp)
                             ) {
                                 LazyColumn {
                                     itemsIndexed(activeNewsList) { index, news ->

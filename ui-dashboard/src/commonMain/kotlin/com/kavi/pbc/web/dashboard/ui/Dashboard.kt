@@ -62,8 +62,8 @@ import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
-import com.kavi.pbc.web.parent.util.ScreenType
-import com.kavi.pbc.web.parent.util.UIUtil
+import com.kavi.pbc.web.common.ui.util.ScreenType
+import com.kavi.pbc.web.common.ui.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res

@@ -32,8 +32,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.kavi.pbc.web.event.ui.common.EventItem
 import com.kavi.pbc.web.event.ui.common.EventListItem
-import com.kavi.pbc.web.parent.util.ScreenType
-import com.kavi.pbc.web.parent.util.UIUtil
+import com.kavi.pbc.web.common.ui.util.ScreenType
+import com.kavi.pbc.web.common.ui.util.UIUtil
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
 import pbcwebapp.ui_event.generated.resources.label_event_past
