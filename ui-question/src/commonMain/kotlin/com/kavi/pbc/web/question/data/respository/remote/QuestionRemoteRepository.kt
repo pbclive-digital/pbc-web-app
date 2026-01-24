@@ -12,6 +12,6 @@ class QuestionRemoteRepository {
     suspend fun getOpenQuestionList(paginationRequest: PaginationRequest?):
             ResultWrapper<BaseResponse<PaginationResponse<Question>>> {
         return Network.shared
-            .invokePOST<PaginationResponse<Question>, PaginationRequest>(urlPath = "question/get/all", params = paginationRequest)
+            .post<PaginationResponse<Question>, PaginationRequest>(urlPath = "question/get/all", body = paginationRequest)
     }
 }

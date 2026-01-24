@@ -8,14 +8,14 @@ import com.kavi.pbc.web.network.model.ResultWrapper
 class EventRemoteRepository {
 
     suspend fun getUpcomingEvents(): ResultWrapper<BaseResponse<List<Event>>> {
-        return Network.shared.invokeGET<List<Event>>(urlPath = "event/get/upcoming")
+        return Network.shared.get<List<Event>>(urlPath = "event/get/upcoming")
     }
 
     suspend fun getPastEvents(): ResultWrapper<BaseResponse<List<Event>>> {
-        return Network.shared.invokeGET<List<Event>>(urlPath = "event/get/past")
+        return Network.shared.get<List<Event>>(urlPath = "event/get/past")
     }
 
     suspend fun getPastEventsWithLimit(limit: Int): ResultWrapper<BaseResponse<List<Event>>> {
-        return Network.shared.invokeGET<List<Event>>(urlPath = "event/get/past/${limit}")
+        return Network.shared.get<List<Event>>(urlPath = "event/get/past/${limit}")
     }
 }

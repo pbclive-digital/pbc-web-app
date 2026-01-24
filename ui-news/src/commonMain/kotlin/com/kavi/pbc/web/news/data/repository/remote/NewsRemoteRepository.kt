@@ -8,6 +8,6 @@ import com.kavi.pbc.web.network.model.ResultWrapper
 class NewsRemoteRepository {
 
     suspend fun getActiveNews(): ResultWrapper<BaseResponse<List<News>>> {
-        return Network.shared.invokeGET<List<News>>(urlPath = "news/get/active")
+        return Network.shared.get<List<News>>(urlPath = "news/get/active")
     }
 }
