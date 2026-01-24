@@ -22,18 +22,18 @@ import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 
 @Composable
-fun Title(modifier: Modifier = Modifier, titleText: String) {
+fun Title(modifier: Modifier = Modifier, titleText: String, textSize: Int = 48) {
     Row (
         modifier = modifier
             .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = titleText,
             fontFamily = PBCFontFamily,
             fontWeight = FontWeight.Bold,
-            lineHeight = 48.sp,
-            fontSize = 48.sp,
+            lineHeight = textSize.sp,
+            fontSize = textSize.sp,
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(1f))

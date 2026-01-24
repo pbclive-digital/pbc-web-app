@@ -22,9 +22,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -58,6 +60,7 @@ import com.kavi.pbc.web.parent.util.UIUtil
 import com.kavi.pbc.web.question.data.model.OpenQuestionListUiState
 import com.kavi.pbc.web.question.ui.common.AnswerCommentItem
 import com.kavi.pbc.web.question.ui.common.QuestionItem
+import com.kavi.pbc.web.question.ui.sheet.QuestionSelectedBottomSheetUI
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_question.generated.resources.Res
@@ -66,6 +69,7 @@ import pbcwebapp.ui_question.generated.resources.label_question_answers
 import pbcwebapp.ui_question.generated.resources.label_question_open_question_empty
 import pbcwebapp.ui_question.generated.resources.label_question_your_answer
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpenQuestinList(navController: NavController) {
 
@@ -76,6 +80,11 @@ fun OpenQuestinList(navController: NavController) {
     val pageIndex by viewModel.pageIndex.collectAsState()
 
     val selectedQuestion = remember { mutableStateOf(Question()) }
+
+    val selectedQuestionSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    val showQuestionSheet = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchOpenQuestionList()
@@ -114,6 +123,7 @@ fun OpenQuestinList(navController: NavController) {
                                         QuestionItem(
                                             question = question, onClick = {
                                                 selectedQuestion.value = question
+                                                showQuestionSheet.value = true
                                             }
                                         )
                                     }
@@ -159,6 +169,14 @@ fun OpenQuestinList(navController: NavController) {
                     }
                 }
             }
+        }
+
+        if (showQuestionSheet.value) {
+            QuestionSelectedBottomSheetUI(
+                sheetState = selectedQuestionSheetState,
+                showSheet = showQuestionSheet,
+                selectedQuestion = selectedQuestion.value
+            )
         }
     }
 }

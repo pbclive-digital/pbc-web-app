@@ -7,6 +7,7 @@ import com.kavi.pbc.web.dashboard.navigation.dashboardNavGraph
 import com.kavi.pbc.web.event.navigation.eventNavGraph
 import com.kavi.pbc.web.news.navigation.newsNavGraph
 import com.kavi.pbc.web.parent.navigation.SplashPath
+import com.kavi.pbc.web.question.navigation.questionNavGraph
 import com.kavi.pbc.web.splash.navigation.splashNavGraph
 
 @Composable
@@ -21,5 +22,7 @@ fun AppNavGraph(navController: NavHostController) {
         eventNavGraph(navController = navController)
         // Include news nav-graph
         newsNavGraph(navController = navController)
+        // Include question nav-graph
+        questionNavGraph(navController = navController)
     }
 }
