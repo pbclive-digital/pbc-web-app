@@ -55,6 +55,7 @@ import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
 import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.question.Question
+import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.util.ScreenType
 import com.kavi.pbc.web.parent.util.UIUtil
 import com.kavi.pbc.web.question.data.model.OpenQuestionListUiState
@@ -275,29 +276,31 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>) {
                     AnswerCommentItem(answerComment = answerComment)
                 }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AppOutlineTextField (
+                if (Session.isLogIn()) {
+                    Row(
                         modifier = Modifier
-                            .weight(1f),
-                        headingText = stringResource(Res.string.label_question_your_answer),
-                        contentText = newAnswerComment,
-                        onValueChange = { newValue ->
-                            newAnswerComment.value = newValue
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
-                    AppIconButton(
-                        modifier = Modifier.padding(top = 8.dp),
-                        icon = painterResource(Res.drawable.icon_send),
-                        buttonSize = 50.dp
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        AppOutlineTextField(
+                            modifier = Modifier
+                                .weight(1f),
+                            headingText = stringResource(Res.string.label_question_your_answer),
+                            contentText = newAnswerComment,
+                            onValueChange = { newValue ->
+                                newAnswerComment.value = newValue
+                            }
+                        )
 
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        AppIconButton(
+                            modifier = Modifier.padding(top = 8.dp),
+                            icon = painterResource(Res.drawable.icon_send),
+                            buttonSize = 50.dp
+                        ) {
+
+                        }
                     }
                 }
             }
