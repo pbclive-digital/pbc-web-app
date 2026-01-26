@@ -46,7 +46,6 @@ fun QuestionItem(modifier: Modifier = Modifier,
     BoxWithConstraints (
         modifier = modifier.padding(top = 2.dp)
     ) {
-        val maxWith = this.maxWidth
         Row (
             modifier = Modifier
                 .padding(4.dp)

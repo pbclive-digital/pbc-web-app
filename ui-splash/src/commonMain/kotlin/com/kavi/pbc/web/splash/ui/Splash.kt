@@ -49,8 +49,6 @@ fun SplashUI(navController: NavHostController) {
 
     val splashUiState by viewModel.splashUiState.collectAsState()
 
-    var navigateToAuth by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
         viewModel.fetchConfig()
 
@@ -74,9 +72,7 @@ fun SplashUI(navController: NavHostController) {
 
     when(splashUiState) {
         SplashUiState.NONE -> {}
-        SplashUiState.ON_AUTH_NAV -> {
-            navigateToAuth = true
-        }
+        SplashUiState.ON_AUTH_NAV -> {}
         SplashUiState.ON_DASHBOARD_NAV -> {
             // Remove the splash screen from navigation stack
             navController.navigate(DashboardPath.DashboardUI) {
