@@ -26,7 +26,7 @@ data class Event(
     var venue: String? = null,
     var venueAddress: String? = null,
     var meetingUrl: String? = null,
-    val creator: String,
+    val creator: String = "",
     var eventImage: String? = null,
     var eventType: EventType = EventType.DEFAULT,
     var registrationRequired: Boolean = false,
