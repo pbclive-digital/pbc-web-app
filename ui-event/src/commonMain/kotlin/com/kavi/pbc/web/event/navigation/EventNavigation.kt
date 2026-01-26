@@ -4,13 +4,26 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
+import com.kavi.pbc.web.common.ui.component.PageContainer
 import com.kavi.pbc.web.event.ui.list.EventListUI
+import com.kavi.pbc.web.event.ui.selected.SelectedEvent
 import com.kavi.pbc.web.parent.navigation.EventPath
 
 fun NavGraphBuilder.eventNavGraph(navController: NavHostController) {
-    navigation(startDestination = EventPath.EVENT_LIST_UI, route = EventPath.ROUTE) {
-        composable (route = EventPath.EVENT_LIST_UI) {
-            EventListUI(navController = navController)
+    navigation(startDestination = EventPath.EventList.toString(), route = EventPath.ROUTE) {
+        // Path: event/event-list-ui
+        composable<EventPath.EventList> {
+            PageContainer {
+                EventListUI(navController = navController)
+            }
+        }
+        // Path: event/event-selected/<event-id>
+        composable<EventPath.EventDetails> { backStackEntry ->
+            val eventArgs = backStackEntry.toRoute<EventPath.EventDetails>()
+            PageContainer {
+                SelectedEvent(navController = navController, eventId = eventArgs.eventId)
+            }
         }
     }
 }

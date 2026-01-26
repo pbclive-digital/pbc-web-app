@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -38,6 +39,8 @@ kotlin {
 
                 // Compose navigation
                 implementation(libs.jetbrains.navigation.compose)
+                // kotlin serialization
+                implementation(libs.kotlin.serialization)
 
                 implementation(projects.libData)
             }

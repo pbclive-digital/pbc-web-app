@@ -34,6 +34,7 @@ import com.kavi.pbc.web.event.ui.common.EventItem
 import com.kavi.pbc.web.event.ui.common.EventListItem
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
+import com.kavi.pbc.web.parent.navigation.EventPath
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
 import pbcwebapp.ui_event.generated.resources.label_event_past
@@ -83,7 +84,13 @@ fun EventListUI(navController: NavController) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 upcomingEventList.forEach { event ->
-                    EventItem(screenMaxWidth = maxWidth, event = event, onClick = {})
+                    EventItem(screenMaxWidth = maxWidth, event = event, onClick = {
+                        /**
+                         * Alternative way to do the same navigation as a path
+                         * navController.navigate("event/event-selected/${event.id}")
+                         */
+                        navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+                    })
                 }
             }
 
@@ -118,10 +125,15 @@ fun EventListUI(navController: NavController) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(columCount),
                 ) {
-                    items(pastEventList) { eventItem ->
+                    items(pastEventList) { event ->
                         EventListItem(
-                            event = eventItem,
+                            event = event,
                             modifier = Modifier.clickable {
+                                /**
+                                 * Alternative way to do the same navigation as a path
+                                 * navController.navigate("event/event-selected/${event.id}")
+                                 */
+                                navController.navigate(EventPath.EventDetails(eventId = event.id!!))
                             }
                         )
                     }

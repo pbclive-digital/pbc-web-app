@@ -79,7 +79,7 @@ fun SplashUI(navController: NavHostController) {
         }
         SplashUiState.ON_DASHBOARD_NAV -> {
             // Remove the splash screen from navigation stack
-            navController.navigate(DashboardPath.ROUTE) {
+            navController.navigate(DashboardPath.DashboardUI) {
                 popUpTo(SplashPath.SPLASH_UI) {
                     inclusive = true
                 }

@@ -9,8 +9,9 @@ import com.kavi.pbc.web.news.ui.list.NewsListUI
 import com.kavi.pbc.web.parent.navigation.NewsPath
 
 fun NavGraphBuilder.newsNavGraph(navController: NavHostController) {
-    navigation(startDestination = NewsPath.NEWS_LIST_UI, route = NewsPath.ROUTE) {
-        composable (route = NewsPath.NEWS_LIST_UI) {
+    navigation(startDestination = NewsPath.NewsList.toString(), route = NewsPath.ROUTE) {
+        // Path: news/news-list-ui
+        composable<NewsPath.NewsList> {
             PageContainer {
                 NewsListUI(navController = navController)
             }

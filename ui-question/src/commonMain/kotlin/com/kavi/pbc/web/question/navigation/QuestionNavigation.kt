@@ -9,8 +9,9 @@ import com.kavi.pbc.web.parent.navigation.QuestionPath
 import com.kavi.pbc.web.question.ui.open.OpenQuestinList
 
 fun NavGraphBuilder.questionNavGraph(navController: NavHostController) {
-    navigation(startDestination = QuestionPath.QUESTION_LIST_UI, route = QuestionPath.ROUTE) {
-        composable (route = QuestionPath.QUESTION_LIST_UI) {
+    navigation(startDestination = QuestionPath.QuestionList.toString(), route = QuestionPath.ROUTE) {
+        // Path: questin/question-list-ui
+        composable<QuestionPath.QuestionList>{
             PageContainer {
                 OpenQuestinList(navController = navController)
             }

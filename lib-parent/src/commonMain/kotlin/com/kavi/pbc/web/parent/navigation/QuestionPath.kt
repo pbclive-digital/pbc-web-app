@@ -1,6 +1,12 @@
 package com.kavi.pbc.web.parent.navigation
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 object QuestionPath {
     const val ROUTE = "question"
-    const val QUESTION_LIST_UI = "${ROUTE}/question-list-ui"
+
+    @Serializable
+    @SerialName("${ROUTE}/question-list-ui")
+    object QuestionList
 }
