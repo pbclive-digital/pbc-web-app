@@ -7,6 +7,7 @@ import com.kavi.pbc.web.data.event.register.EventRegistrationItem
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.ResultWrapper
+import io.ktor.http.encodeURLPath
 
 class EventRemoteRepository {
 
@@ -36,15 +37,20 @@ class EventRemoteRepository {
 
     suspend fun registerToEvent(eventId: String, eventRegistrationItem: EventRegistrationItem):
             ResultWrapper<BaseResponse<EventRegistration>> {
+
+        val encodedEventId = eventId.encodeURLPath()
+
         return Network.shared
             .post<EventRegistration, EventRegistrationItem>(
-                urlPath = "event/register/${eventId}",
+                urlPath = "event/register/${encodedEventId}",
                 body = eventRegistrationItem
             )
     }
 
     suspend fun unregisterFromEvent(eventId: String, userId: String):
             ResultWrapper<BaseResponse<EventRegistration>> {
-        return Network.shared.delete<EventRegistration>(urlPath = "event/unregister/${eventId}/${userId}")
+        val encodeEventId = eventId.encodeURLPath()
+        val encodeUserId = userId.encodeURLPath()
+        return Network.shared.delete<EventRegistration>(urlPath = "event/unregister/${encodeEventId}/${encodeUserId}")
     }
 }
