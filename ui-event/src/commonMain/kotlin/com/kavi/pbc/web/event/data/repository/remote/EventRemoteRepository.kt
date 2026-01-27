@@ -2,6 +2,8 @@ package com.kavi.pbc.web.event.data.repository.remote
 
 import com.kavi.pbc.web.data.BaseResponse
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.register.EventRegistration
+import com.kavi.pbc.web.data.event.register.EventRegistrationItem
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.ResultWrapper
@@ -26,5 +28,23 @@ class EventRemoteRepository {
 
     suspend fun getSignUpSheetList(eventId: String): ResultWrapper<BaseResponse<EventSignUpSheetList>> {
         return Network.shared.get<EventSignUpSheetList>(urlPath = "event/get/sign-up-sheet/${eventId}")
+    }
+
+    suspend fun getEventRegistration(eventId: String): ResultWrapper<BaseResponse<EventRegistration>> {
+        return Network.shared.get<EventRegistration>(urlPath = "event/get/registration/${eventId}")
+    }
+
+    suspend fun registerToEvent(eventId: String, eventRegistrationItem: EventRegistrationItem):
+            ResultWrapper<BaseResponse<EventRegistration>> {
+        return Network.shared
+            .post<EventRegistration, EventRegistrationItem>(
+                urlPath = "event/register/${eventId}",
+                body = eventRegistrationItem
+            )
+    }
+
+    suspend fun unregisterFromEvent(eventId: String, userId: String):
+            ResultWrapper<BaseResponse<EventRegistration>> {
+        return Network.shared.delete<EventRegistration>(urlPath = "event/unregister/${eventId}/${userId}")
     }
 }

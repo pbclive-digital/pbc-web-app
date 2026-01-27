@@ -65,7 +65,7 @@ import pbcwebapp.ui_event.generated.resources.label_event_from
 import pbcwebapp.ui_event.generated.resources.label_event_on
 import pbcwebapp.ui_event.generated.resources.label_event_potluck
 import pbcwebapp.ui_event.generated.resources.label_event_potluck_details
-import pbcwebapp.ui_event.generated.resources.label_event_register
+import pbcwebapp.ui_event.generated.resources.label_event_register_or_unregister
 import pbcwebapp.ui_event.generated.resources.label_event_registration
 import pbcwebapp.ui_event.generated.resources.phrase_event_additional_sign_ups
 import pbcwebapp.ui_event.generated.resources.phrase_event_potluck_details
@@ -374,7 +374,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
 
                 AppButtonWithIcon(
                     modifier = Modifier.padding(top = 8.dp),
-                    label = stringResource(Res.string.label_event_register),
+                    label = stringResource(Res.string.label_event_register_or_unregister),
                     icon = painterResource(Res.drawable.icon_event_register)
                 ) {
                     if (Session.isLogIn())
@@ -478,5 +478,13 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 }
             }
         }
+    }
+
+    if (showRegistrationSheet.value) {
+        RegistrationSheetUI(sheetState = registrationSheetState, showSheet = showRegistrationSheet, viewModel = viewModel)
+    }
+
+    if (showPotluckSheet.value) {
+
     }
 }
