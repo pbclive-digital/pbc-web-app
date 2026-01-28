@@ -45,7 +45,7 @@ class Network {
             append(HttpHeaders.Accept, "application/json")
             append("X-app-os", "web")
             Session.authToken?.token?.let {
-                append(HttpHeaders.Authorization, it)
+                append(HttpHeaders.Authorization, "Bearer $it")
             }
             Session.user?.let {
                 append("X-app-user", it.toString())
