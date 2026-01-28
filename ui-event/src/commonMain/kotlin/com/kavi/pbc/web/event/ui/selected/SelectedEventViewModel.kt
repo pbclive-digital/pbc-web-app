@@ -3,6 +3,9 @@ package com.kavi.pbc.web.event.ui.selected
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.potluck.EventPotluck
+import com.kavi.pbc.web.data.event.potluck.EventPotluckContributor
+import com.kavi.pbc.web.data.event.potluck.EventPotluckItem
 import com.kavi.pbc.web.data.event.register.EventRegistration
 import com.kavi.pbc.web.data.event.register.EventRegistrationItem
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
@@ -25,6 +28,9 @@ class SelectedEventViewModel: ViewModel() {
 
     private val _eventRegistrationData = MutableStateFlow(EventRegistration("", 0))
 
+    private val _eventPotluckData = MutableStateFlow(EventPotluck("", mutableListOf()))
+    val eventPotluckData: StateFlow<EventPotluck> = _eventPotluckData
+
     private val _eventActionUiState = MutableStateFlow(EventActionUiState.NONE)
     val eventActionUiState: StateFlow<EventActionUiState> = _eventActionUiState
 
@@ -44,6 +50,10 @@ class SelectedEventViewModel: ViewModel() {
 
                         if (_selectedEvent.value.registrationRequired) {
                             fetchRegistrationDetails()
+                        }
+
+                        if (_selectedEvent.value.potluckAvailable) {
+                            fetchPotluckDetails()
                         }
                     }
                 }
@@ -117,6 +127,60 @@ class SelectedEventViewModel: ViewModel() {
         }
     }
 
+    fun checkedCurrentUserContribution(potluckItem: EventPotluckItem): Int {
+        Session.user?.let { currentUser ->
+            val contribution = potluckItem.contributorList.filter { contributor -> contributor.contributorId == currentUser.id }
+            return contribution.size
+        }
+        return 0
+    }
+
+    fun signUpForPotluckItem(potluckItem: EventPotluckItem) {
+        Session.user?.let {
+            val eventPotluckContributor = EventPotluckContributor(
+                contributorId = it.id!!,
+                contributorName = "${it.firstName} ${it.lastName}",
+                contributorContactNumber = it.phoneNumber ?: run { "" }
+            )
+
+            viewModelScope.launch {
+                _eventActionUiState.value = EventActionUiState.PENDING
+                when(val response = eventRemoteRepository
+                    .signUpToPotluck(eventId =_selectedEvent.value.id!!, potluckItemId = potluckItem.itemId, eventPotluckContributor)) {
+                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                        _eventActionUiState.value = EventActionUiState.FAILURE
+                    }
+                    is ResultWrapper.Success -> {
+                        _eventActionUiState.value = EventActionUiState.SUCCESS
+                        response.value.body?.let { updatedEventPotluck ->
+                            _eventPotluckData.value = updatedEventPotluck
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun signOutFromPotluckItem(potluckItem: EventPotluckItem) {
+        Session.user?.let {
+            viewModelScope.launch {
+                _eventActionUiState.value = EventActionUiState.PENDING
+                when(val response = eventRemoteRepository
+                    .signOutFromPotluck(eventId =_selectedEvent.value.id!!, potluckItemId = potluckItem.itemId, contributorId = it.id!!)) {
+                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                        _eventActionUiState.value = EventActionUiState.FAILURE
+                    }
+                    is ResultWrapper.Success -> {
+                        _eventActionUiState.value = EventActionUiState.SUCCESS
+                        response.value.body?.let { updatedEventPotluck ->
+                            _eventPotluckData.value = updatedEventPotluck
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun fetchRegistrationDetails() {
         viewModelScope.launch {
             when(val response = eventRemoteRepository.getEventRegistration(_selectedEvent.value.id!!)) {
@@ -126,6 +190,21 @@ class SelectedEventViewModel: ViewModel() {
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
                         _eventRegistrationData.value = it
+                    }
+                }
+            }
+        }
+    }
+
+    private fun fetchPotluckDetails() {
+        viewModelScope.launch {
+            when(val response = eventRemoteRepository.getEventPotluck(_selectedEvent.value.id!!)) {
+                is ResultWrapper.NetworkError -> {}
+                is ResultWrapper.HttpError -> {}
+                is ResultWrapper.UnAuthError -> {}
+                is ResultWrapper.Success -> {
+                    response.value.body?.let {
+                        _eventPotluckData.value = it
                     }
                 }
             }

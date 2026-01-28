@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -34,17 +36,20 @@ import com.kavi.pbc.web.common.ui.component.AppFilledButton
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.event.data.model.EventActionUiState
+import com.kavi.pbc.web.event.ui.common.EventPotluckItemUI
 import com.kavi.pbc.web.network.session.Session
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
 import pbcwebapp.ui_event.generated.resources.icon_event_add_item
 import pbcwebapp.ui_event.generated.resources.icon_event_remove_item
+import pbcwebapp.ui_event.generated.resources.label_event_contribute_potluck
 import pbcwebapp.ui_event.generated.resources.label_event_register
 import pbcwebapp.ui_event.generated.resources.label_event_registering
 import pbcwebapp.ui_event.generated.resources.label_event_remaining_seats
 import pbcwebapp.ui_event.generated.resources.label_event_unregister
 import pbcwebapp.ui_event.generated.resources.label_event_unregistering
+import pbcwebapp.ui_event.generated.resources.phrase_event_contribute_potluck
 import pbcwebapp.ui_event.generated.resources.phrase_event_registering
 import pbcwebapp.ui_event.generated.resources.phrase_event_unregistering
 
@@ -161,6 +166,88 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
                                 viewModel.unregisterFromEvent()
                             else
                                 viewModel.registerToEvent()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PotluckSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>,
+                   viewModel: SelectedEventViewModel) {
+
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
+
+    val eventPotluckData by viewModel.eventPotluckData.collectAsState()
+
+    val potluckItemCount = eventPotluckData.potluckItemList.size
+
+    val lazyColumHeight = if (potluckItemCount <= 3) {
+        400.dp
+    } else if(potluckItemCount in 4..6) {
+        500.dp
+    } else {
+        600.dp
+    }
+
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = {
+            showSheet.value = false
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        scrimColor = themeAdditionalColors.shadow.copy(alpha = .5f)
+    ) {
+        Box (
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
+                .fillMaxWidth()
+        ) {
+            if (Session.isLogIn()) {
+                Column {
+                    Text(
+                        text = stringResource(Res.string.label_event_contribute_potluck),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(2.dp),
+                        thickness = 2.dp
+                    )
+
+                    Text(
+                        text = stringResource(Res.string.phrase_event_contribute_potluck),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Justify,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+
+                    LazyColumn (
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .height(lazyColumHeight)
+                    ) {
+                        items(eventPotluckData.potluckItemList) { potluckItem ->
+                            EventPotluckItemUI(
+                                modifier = Modifier.padding(bottom = 8.dp),
+                                viewModel = viewModel,
+                                potluckItem = potluckItem,
+                                currentUserContributions = viewModel
+                                    .checkedCurrentUserContribution(potluckItem = potluckItem)
+                            )
                         }
                     }
                 }

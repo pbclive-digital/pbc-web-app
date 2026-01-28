@@ -2,6 +2,8 @@ package com.kavi.pbc.web.event.data.repository.remote
 
 import com.kavi.pbc.web.data.BaseResponse
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.potluck.EventPotluck
+import com.kavi.pbc.web.data.event.potluck.EventPotluckContributor
 import com.kavi.pbc.web.data.event.register.EventRegistration
 import com.kavi.pbc.web.data.event.register.EventRegistrationItem
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
@@ -35,6 +37,10 @@ class EventRemoteRepository {
         return Network.shared.get<EventRegistration>(urlPath = "event/get/registration/${eventId}")
     }
 
+    suspend fun getEventPotluck(eventId: String): ResultWrapper<BaseResponse<EventPotluck>> {
+        return Network.shared.get<EventPotluck>(urlPath = "event/get/potluck/${eventId}")
+    }
+
     suspend fun registerToEvent(eventId: String, eventRegistrationItem: EventRegistrationItem):
             ResultWrapper<BaseResponse<EventRegistration>> {
 
@@ -52,5 +58,31 @@ class EventRemoteRepository {
         val encodeEventId = eventId.encodeURLPath()
         val encodeUserId = userId.encodeURLPath()
         return Network.shared.delete<EventRegistration>(urlPath = "event/unregister/${encodeEventId}/${encodeUserId}")
+    }
+
+    suspend fun signUpToPotluck(
+        eventId: String,
+        potluckItemId: String,
+        potluckContributor: EventPotluckContributor
+    ): ResultWrapper<BaseResponse<EventPotluck>> {
+
+        val encodedEventId = eventId.encodeURLPath()
+        val encodedPotluckItemId = potluckItemId.encodeURLPath()
+
+        return Network.shared
+            .post<EventPotluck, EventPotluckContributor>(
+                urlPath = "event/potluck/sign-up/${encodedEventId}/${encodedPotluckItemId}",
+                body = potluckContributor
+            )
+    }
+
+    suspend fun signOutFromPotluck(eventId: String, potluckItemId: String, contributorId: String):
+            ResultWrapper<BaseResponse<EventPotluck>> {
+        val encodeEventId = eventId.encodeURLPath()
+        val encodedPotluckItemId = potluckItemId.encodeURLPath()
+        val encodedContributorId = contributorId.encodeURLPath()
+        return Network.shared.delete<EventPotluck>(
+            urlPath = "event/potluck/sign-out/${encodeEventId}/${encodedPotluckItemId}/${encodedContributorId}"
+        )
     }
 }
