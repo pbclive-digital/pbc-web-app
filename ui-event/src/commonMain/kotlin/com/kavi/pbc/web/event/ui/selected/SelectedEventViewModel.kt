@@ -6,6 +6,7 @@ import com.kavi.pbc.web.data.event.Event
 import com.kavi.pbc.web.data.event.register.EventRegistration
 import com.kavi.pbc.web.data.event.register.EventRegistrationItem
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
+import com.kavi.pbc.web.event.data.model.EventActionUiState
 import com.kavi.pbc.web.event.data.repository.remote.EventRemoteRepository
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.network.session.Session
@@ -23,6 +24,9 @@ class SelectedEventViewModel: ViewModel() {
     val eventSignUpSheetData: StateFlow<EventSignUpSheetList> = _eventSignUpSheetData
 
     private val _eventRegistrationData = MutableStateFlow(EventRegistration("", 0))
+
+    private val _eventActionUiState = MutableStateFlow(EventActionUiState.NONE)
+    val eventActionUiState: StateFlow<EventActionUiState> = _eventActionUiState
 
     fun fetchEventDetails(eventId: String) {
         viewModelScope.launch {
@@ -77,11 +81,13 @@ class SelectedEventViewModel: ViewModel() {
             )
 
             viewModelScope.launch {
+                _eventActionUiState.value = EventActionUiState.PENDING
                 when(val response = eventRemoteRepository.registerToEvent(_selectedEvent.value.id!!, eventRegistrationItem = eventRegistrationItem)) {
-                    is ResultWrapper.NetworkError -> {}
-                    is ResultWrapper.HttpError -> {}
-                    is ResultWrapper.UnAuthError -> {}
+                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                        _eventActionUiState.value = EventActionUiState.FAILURE
+                    }
                     is ResultWrapper.Success -> {
+                        _eventActionUiState.value = EventActionUiState.SUCCESS
                         response.value.body?.let {
                             _eventRegistrationData.value = it
                         }
@@ -94,12 +100,14 @@ class SelectedEventViewModel: ViewModel() {
     fun unregisterFromEvent() {
         Session.user?.let { sessionUser ->
             viewModelScope.launch {
+                _eventActionUiState.value = EventActionUiState.PENDING
                 when(val response = eventRemoteRepository
                     .unregisterFromEvent(_selectedEvent.value.id!!, userId = sessionUser.id!!)) {
-                    is ResultWrapper.NetworkError -> {}
-                    is ResultWrapper.HttpError -> {}
-                    is ResultWrapper.UnAuthError -> {}
+                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                        _eventActionUiState.value = EventActionUiState.FAILURE
+                    }
                     is ResultWrapper.Success -> {
+                        _eventActionUiState.value = EventActionUiState.SUCCESS
                         response.value.body?.let {
                             _eventRegistrationData.value = it
                         }

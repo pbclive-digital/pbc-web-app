@@ -7,6 +7,7 @@ import com.kavi.pbc.web.network.session.Session
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
@@ -122,7 +123,7 @@ class Network {
         urlPath: String,
         query: Map<String, Any?> = emptyMap()
     ): ResultWrapper<BaseResponse<T>> = safeRequest<T> {
-        httpClientInstance.post("${getBaseUrl()}/$urlPath") {
+        httpClientInstance.delete("${getBaseUrl()}/$urlPath") {
             query.forEach { (k, v) -> parameter(k, v) }
             setHeaders(this)
         }

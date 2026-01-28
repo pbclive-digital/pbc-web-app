@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.kavi.pbc.web.common.ui.component.AppFilledButton
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
+import com.kavi.pbc.web.event.data.model.EventActionUiState
 import com.kavi.pbc.web.network.session.Session
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -55,6 +56,7 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     val givenEvent by viewModel.selectedEvent.collectAsState()
+    val eventActionUiState by viewModel.eventActionUiState.collectAsState()
     var isLoading by remember { mutableStateOf(false) }
 
     ModalBottomSheet(
@@ -137,7 +139,7 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
                             .padding(top = 8.dp)
                     )
 
-                    if (isLoading) {
+                    if (eventActionUiState == EventActionUiState.PENDING) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -151,10 +153,10 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
                         AppFilledButton(
                             modifier = Modifier.padding(top = 16.dp),
                             label = if (viewModel.isCurrentUserRegistered())
-                                stringResource(Res.string.label_event_unregister) else stringResource(Res.string.label_event_register)) {
-
-                            //isLoading = true
-
+                                stringResource(Res.string.label_event_unregister)
+                            else
+                                stringResource(Res.string.label_event_register)
+                        ) {
                             if (viewModel.isCurrentUserRegistered())
                                 viewModel.unregisterFromEvent()
                             else
