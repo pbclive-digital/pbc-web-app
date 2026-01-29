@@ -8,6 +8,7 @@ import com.kavi.pbc.web.data.event.potluck.EventPotluckContributor
 import com.kavi.pbc.web.data.event.potluck.EventPotluckItem
 import com.kavi.pbc.web.data.event.register.EventRegistration
 import com.kavi.pbc.web.data.event.register.EventRegistrationItem
+import com.kavi.pbc.web.data.event.signup.EventSignUpSheetContributor
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
 import com.kavi.pbc.web.event.data.model.EventActionUiState
 import com.kavi.pbc.web.event.data.repository.remote.EventRemoteRepository
@@ -81,6 +82,28 @@ class SelectedEventViewModel: ViewModel() {
         return remainingCount
     }
 
+    fun isCurrentUserSignUpToSignUpSheet(sheetId: String): Boolean {
+        val filteredSignUpSheetList = _eventSignUpSheetData.value.signUpSheetItemList.filter { it.sheetId == sheetId }
+        return if (filteredSignUpSheetList.isNotEmpty()) {
+            val selectedSheet = filteredSignUpSheetList[0]
+            val filtered = selectedSheet.contributorList.filter { it.contributorId == Session.user?.id }
+            filtered.isNotEmpty()
+        } else {
+            false
+        }
+    }
+
+    fun remainingSignUpCountInSignUpSheet(sheetId: String): Int {
+        val filteredSignUpSheetList = _eventSignUpSheetData.value.signUpSheetItemList.filter { it.sheetId == sheetId }
+        var remainingCount = 0
+        if (filteredSignUpSheetList.isNotEmpty()) {
+            val selectedSignUpSheet = filteredSignUpSheetList[0]
+            remainingCount = selectedSignUpSheet.availableCount - selectedSignUpSheet.contributorList.size
+        }
+
+        return remainingCount
+    }
+
     fun registerToEvent() {
         Session.user?.let { sessionUser ->
             val eventRegistrationItem = EventRegistrationItem(
@@ -120,6 +143,55 @@ class SelectedEventViewModel: ViewModel() {
                         _eventActionUiState.value = EventActionUiState.SUCCESS
                         response.value.body?.let {
                             _eventRegistrationData.value = it
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun signUpToSheet(sheetId: String, onComplete: () -> Unit) {
+        Session.user?.let { sessionUser ->
+            val sheetContributor = EventSignUpSheetContributor(
+                sessionUser.id!!,
+                "${sessionUser.firstName!!} ${sessionUser.lastName!!}",
+                sessionUser.phoneNumber
+            )
+
+            viewModelScope.launch {
+                when(val response = eventRemoteRepository.signUpToSelectedSignUpSheet(
+                    _selectedEvent.value.id!!, sheetId = sheetId, contributor = sheetContributor
+                )) {
+                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                        _eventActionUiState.value = EventActionUiState.FAILURE
+                        onComplete.invoke()
+                    }
+                    is ResultWrapper.Success -> {
+                        _eventActionUiState.value = EventActionUiState.SUCCESS
+                        onComplete.invoke()
+                        response.value.body?.let {
+                            _eventSignUpSheetData.value = it
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun signOutFromSheet(sheetId: String, onComplete: () -> Unit) {
+        Session.user?.let { sessionUser ->
+            viewModelScope.launch {
+                when(val response = eventRemoteRepository.signOutFromSelectedSignUpSheet(
+                    _selectedEvent.value.id!!, sheetId = sheetId, contributorId = sessionUser.id!!)) {
+                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                        _eventActionUiState.value = EventActionUiState.FAILURE
+                        onComplete.invoke()
+                    }
+                    is ResultWrapper.Success -> {
+                        _eventActionUiState.value = EventActionUiState.SUCCESS
+                        onComplete.invoke()
+                        response.value.body?.let {
+                            _eventSignUpSheetData.value = it
                         }
                     }
                 }
@@ -184,9 +256,7 @@ class SelectedEventViewModel: ViewModel() {
     private fun fetchRegistrationDetails() {
         viewModelScope.launch {
             when(val response = eventRemoteRepository.getEventRegistration(_selectedEvent.value.id!!)) {
-                is ResultWrapper.NetworkError -> {}
-                is ResultWrapper.HttpError -> {}
-                is ResultWrapper.UnAuthError -> {}
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {}
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
                         _eventRegistrationData.value = it
@@ -199,9 +269,7 @@ class SelectedEventViewModel: ViewModel() {
     private fun fetchPotluckDetails() {
         viewModelScope.launch {
             when(val response = eventRemoteRepository.getEventPotluck(_selectedEvent.value.id!!)) {
-                is ResultWrapper.NetworkError -> {}
-                is ResultWrapper.HttpError -> {}
-                is ResultWrapper.UnAuthError -> {}
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {}
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
                         _eventPotluckData.value = it
@@ -214,9 +282,7 @@ class SelectedEventViewModel: ViewModel() {
     private fun fetchSignUpSheetDetails() {
         viewModelScope.launch {
             when(val response = eventRemoteRepository.getSignUpSheetList(_selectedEvent.value.id!!)) {
-                is ResultWrapper.NetworkError -> {}
-                is ResultWrapper.HttpError -> {}
-                is ResultWrapper.UnAuthError -> {}
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {}
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
                         _eventSignUpSheetData.value = it

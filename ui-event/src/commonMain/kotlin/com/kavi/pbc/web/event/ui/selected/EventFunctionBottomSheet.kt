@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.kavi.pbc.web.common.ui.component.AppFilledButton
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
+import com.kavi.pbc.web.data.event.signup.EventSignUpSheet
 import com.kavi.pbc.web.event.data.model.EventActionUiState
 import com.kavi.pbc.web.event.ui.common.EventPotluckItemUI
 import com.kavi.pbc.web.network.session.Session
@@ -47,6 +48,9 @@ import pbcwebapp.ui_event.generated.resources.label_event_contribute_potluck
 import pbcwebapp.ui_event.generated.resources.label_event_register
 import pbcwebapp.ui_event.generated.resources.label_event_registering
 import pbcwebapp.ui_event.generated.resources.label_event_remaining_seats
+import pbcwebapp.ui_event.generated.resources.label_event_sign_out
+import pbcwebapp.ui_event.generated.resources.label_event_sign_up
+import pbcwebapp.ui_event.generated.resources.label_event_sign_up_sheet_title
 import pbcwebapp.ui_event.generated.resources.label_event_unregister
 import pbcwebapp.ui_event.generated.resources.label_event_unregistering
 import pbcwebapp.ui_event.generated.resources.phrase_event_contribute_potluck
@@ -248,6 +252,129 @@ fun PotluckSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>,
                                 currentUserContributions = viewModel
                                     .checkedCurrentUserContribution(potluckItem = potluckItem)
                             )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SignUpSheetBottomSheetUI(sheetState: SheetState,
+                             showSheet: MutableState<Boolean>,
+                             selectedSignUpSheet: EventSignUpSheet,
+                             viewModel: SelectedEventViewModel) {
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
+
+    val eventActionUiState by viewModel.eventActionUiState.collectAsState()
+    var isLoading by remember { mutableStateOf(false) }
+
+    if (eventActionUiState != EventActionUiState.PENDING) {
+        isLoading = false
+    }
+
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = {
+            showSheet.value = false
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        scrimColor = themeAdditionalColors.shadow.copy(alpha = .5f)
+    ) {
+        Box (
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
+                .fillMaxWidth()
+        ) {
+            if (Session.isLogIn()) {
+                val isSignUp = viewModel.isCurrentUserSignUpToSignUpSheet(selectedSignUpSheet.sheetId)
+                Column {
+                    Text(
+                        text = stringResource(Res.string.label_event_sign_up_sheet_title)
+                            .replace("%s", selectedSignUpSheet.sheetName),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(2.dp),
+                        thickness = 2.dp
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = if (isSignUp)
+                                painterResource(Res.drawable.icon_event_remove_item)
+                            else
+                                painterResource(Res.drawable.icon_event_add_item),
+                            contentDescription = "Provided icon",
+                            modifier = Modifier
+                                .size(100.dp)
+                        )
+                    }
+
+                    Text(
+                        text = selectedSignUpSheet.sheetDescription,
+                        fontFamily = PBCFontFamily,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+
+                    Text(
+                        text = stringResource(Res.string.label_event_remaining_seats)
+                            .replace("%s", viewModel.remainingSignUpCountInSignUpSheet(selectedSignUpSheet.sheetId).toString()),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+
+                    if (isLoading) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    } else {
+                        AppFilledButton(
+                            modifier = Modifier.padding(top = 16.dp),
+                            label = if (isSignUp)
+                                stringResource(Res.string.label_event_sign_out) else stringResource(
+                                Res.string.label_event_sign_up)) {
+
+                            isLoading = true
+
+                            if (isSignUp)
+                                viewModel.signOutFromSheet(selectedSignUpSheet.sheetId) {
+                                    isLoading = false
+                                }
+                            else
+                                viewModel.signUpToSheet(selectedSignUpSheet.sheetId) {
+                                    isLoading = false
+                                }
                         }
                     }
                 }

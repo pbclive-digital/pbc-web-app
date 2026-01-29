@@ -6,6 +6,7 @@ import com.kavi.pbc.web.data.event.potluck.EventPotluck
 import com.kavi.pbc.web.data.event.potluck.EventPotluckContributor
 import com.kavi.pbc.web.data.event.register.EventRegistration
 import com.kavi.pbc.web.data.event.register.EventRegistrationItem
+import com.kavi.pbc.web.data.event.signup.EventSignUpSheetContributor
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.ResultWrapper
@@ -83,6 +84,32 @@ class EventRemoteRepository {
         val encodedContributorId = contributorId.encodeURLPath()
         return Network.shared.delete<EventPotluck>(
             urlPath = "event/potluck/sign-out/${encodeEventId}/${encodedPotluckItemId}/${encodedContributorId}"
+        )
+    }
+
+    suspend fun signUpToSelectedSignUpSheet(
+        eventId: String,
+        sheetId: String,
+        contributor: EventSignUpSheetContributor
+    ): ResultWrapper<BaseResponse<EventSignUpSheetList>> {
+
+        val encodedEventId = eventId.encodeURLPath()
+        val encodedSheetId = sheetId.encodeURLPath()
+
+        return Network.shared
+            .post<EventSignUpSheetList, EventSignUpSheetContributor>(
+                urlPath = "event/sign-up-sheet/sign-up/${encodedEventId}/${encodedSheetId}",
+                body = contributor
+            )
+    }
+
+    suspend fun signOutFromSelectedSignUpSheet(eventId: String, sheetId: String, contributorId: String):
+            ResultWrapper<BaseResponse<EventSignUpSheetList>> {
+        val encodeEventId = eventId.encodeURLPath()
+        val encodedSheetId = sheetId.encodeURLPath()
+        val encodedContributorId = contributorId.encodeURLPath()
+        return Network.shared.delete<EventSignUpSheetList>(
+            urlPath = "event/sign-up-sheet/sign-out/${encodeEventId}/${encodedSheetId}/${encodedContributorId}"
         )
     }
 }

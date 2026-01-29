@@ -487,4 +487,13 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
     if (showPotluckSheet.value) {
         PotluckSheetUI(sheetState = potluckSheetState, showSheet = showPotluckSheet, viewModel = viewModel)
     }
+
+    if (showSignUpSheetBottomSheet.value) {
+        SignUpSheetBottomSheetUI(
+            sheetState = signUpSheetBottomSheetState,
+            showSheet = showSignUpSheetBottomSheet,
+            selectedSignUpSheet = selectedSignUpSheetItem.value,
+            viewModel = viewModel
+        )
+    }
 }
