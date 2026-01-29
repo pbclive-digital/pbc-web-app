@@ -160,7 +160,7 @@ fun OpenQuestinList(navController: NavController) {
                                     .weight(.65f)
                                     .padding(top = 10.dp, start = 15.dp)
                             ) {
-                                SelectedQuestion(selectedQuestion = selectedQuestion)
+                                SelectedQuestion(selectedQuestion = selectedQuestion, viewModel = viewModel)
                             }
                         }
                     }
@@ -179,9 +179,12 @@ fun OpenQuestinList(navController: NavController) {
 }
 
 @Composable
-private fun SelectedQuestion(selectedQuestion: MutableState<Question>) {
+private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel: OpenQuestionListViewModel) {
 
+    viewModel.setSelectedQuestion(selectedQuestion.value)
     val newAnswerComment = remember { mutableStateOf(TextFieldValue("")) }
+
+    val questionAnswerList by viewModel.answerCommentList.collectAsState()
 
     Box (
         modifier = Modifier
@@ -268,7 +271,7 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>) {
                     .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 30.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                selectedQuestion.value.answerList.forEach { answerComment ->
+                questionAnswerList.forEach { answerComment ->
                     AnswerCommentItem(answerComment = answerComment)
                 }
 
@@ -295,7 +298,7 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>) {
                             icon = painterResource(Res.drawable.icon_send),
                             buttonSize = 50.dp
                         ) {
-
+                            //viewModel.addAnswerCommentToQuestion(newAnswerComment.value.text)
                         }
                     }
                 }

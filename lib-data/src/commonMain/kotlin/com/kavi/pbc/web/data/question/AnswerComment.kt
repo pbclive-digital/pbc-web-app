@@ -8,12 +8,13 @@ import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
 import kotlin.time.Instant.Companion.fromEpochMilliseconds
 
 @Serializable
 data class AnswerComment(
     val comment: String,
-    val createdTime: Long,
+    val createdTime: Long = Clock.System.now().toEpochMilliseconds(),
     val author: UserSummary
 ) {
     fun getFormatDate(): String {
