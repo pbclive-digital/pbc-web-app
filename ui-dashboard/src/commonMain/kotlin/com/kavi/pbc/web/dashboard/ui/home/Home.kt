@@ -54,6 +54,7 @@ import com.kavi.pbc.web.dashboard.data.model.NewsUiState
 import com.kavi.pbc.web.dashboard.ui.common.DashboardEventItem
 import com.kavi.pbc.web.dashboard.ui.common.DashboardNewsItem
 import com.kavi.pbc.web.data.news.News
+import com.kavi.pbc.web.parent.extention.openUrl
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -444,7 +445,7 @@ fun ContactUs() {
                     .size(80.dp)
                     .padding(8.dp)
                     .clickable {
-                        //openLink("https://www.facebook.com/PittsburghBuddhistCenter", context)
+                        openUrl(url = "https://www.facebook.com/PittsburghBuddhistCenter")
                     }
             )
 
@@ -455,7 +456,7 @@ fun ContactUs() {
                     .size(80.dp)
                     .padding(8.dp)
                     .clickable {
-                        //openLink("https://www.youtube.com/pbclive", context)
+                        openUrl(url = "https://www.youtube.com/pbclive")
                     }
             )
         }

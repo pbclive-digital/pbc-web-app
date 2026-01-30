@@ -54,6 +54,7 @@ import com.kavi.pbc.web.news.ui.common.NewsItem
 import com.kavi.pbc.web.news.ui.sheet.NewsSelectedBottomSheetUI
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
+import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_news.generated.resources.Res
@@ -289,7 +290,7 @@ private fun SelectedNews(selectedNews: MutableState<News>) {
                             .fillMaxWidth()
                             .padding(top = 2.dp)
                             .clickable {
-                                //openLink(it, context)
+                                openUrl(url = it)
                             }
                     )
                 }

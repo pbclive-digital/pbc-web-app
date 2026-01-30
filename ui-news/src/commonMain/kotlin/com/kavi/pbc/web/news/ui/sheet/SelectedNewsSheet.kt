@@ -34,6 +34,7 @@ import coil3.compose.AsyncImage
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.news.News
+import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_news.generated.resources.Res
@@ -170,7 +171,7 @@ fun NewsSelectedBottomSheetUI(
                                 .fillMaxWidth()
                                 .padding(top = 2.dp)
                                 .clickable {
-                                    //openLink(it, context)
+                                    openUrl(url = it)
                                 }
                         )
                     }
