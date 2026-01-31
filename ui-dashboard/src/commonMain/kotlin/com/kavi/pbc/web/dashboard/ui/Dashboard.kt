@@ -48,6 +48,8 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kavi.pbc.web.common.ui.component.ProfileActionComponent
+import com.kavi.pbc.web.common.ui.model.ProfileActionConfig
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.dashboard.data.model.TabItem
 import com.kavi.pbc.web.dashboard.ui.event.EventsUI
@@ -167,7 +169,42 @@ fun DashboardUI(navController: NavController) {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        ExposedDropdownMenuBox(
+                        ProfileActionComponent(profileActionConfig = ProfileActionConfig(
+                            appAuthStatus = appAuthStatus,
+                            onProfileClick = {
+                                if (Session.isLogIn()) {
+                                    // Navigate to profile screen
+                                    println("Profile Tap")
+                                }
+                            },
+                            onSignOutClick = {
+                                // Invoke user authentication
+                                if (Session.isLogIn()) {
+                                    ContractServiceLocator.locate(AuthContract::class).signOut()
+                                    appAuthStatus = AppAuthStatus.NONE
+                                }
+                            },
+                            onSignUpClick = {
+                                // Navigate to register screen
+                                showSignUpDialog.value = true
+                            },
+                            onSignInClick = {
+                                // Invoke sign-in with Firebase-Google
+                                ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
+                                ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
+                                    appAuthStatus = authStatus
+                                    if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
+                                        // Navigate to register screen
+                                        showSignUpDialog.value = true
+                                    } else {
+                                        // Re-login and update auth status
+                                        AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                                    }
+                                }
+                            }
+                        ))
+
+                        /*ExposedDropdownMenuBox(
                             expanded = isExpanded,
                             onExpandedChange = { isExpanded = it}
                         ) {
@@ -214,8 +251,8 @@ fun DashboardUI(navController: NavController) {
                             ExposedDropdownMenu(
                                 expanded = isExpanded,
                                 onDismissRequest = {
-                                    /*if (isExpanded)
-                                        isExpanded = false*/
+                                    *//*if (isExpanded)
+                                        isExpanded = false*//*
                                 },
                                 modifier = Modifier
                                     .width(150.dp)
@@ -291,7 +328,7 @@ fun DashboardUI(navController: NavController) {
                                     }
                                 }
                             }
-                        }
+                        }*/
                     }
                 }
             }

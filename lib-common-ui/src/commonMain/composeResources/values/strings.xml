@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="label_common_pbc_name_short">PBC</string>
     <string name="label_common_pbc_name">Pittsburgh Buddhist Center</string>
+
+    <string name="label_common_sign_in">Sign In</string>
+    <string name="label_common_sign_out">Sign Out</string>
+    <string name="label_common_sign_up">Sign Up</string>
+    <string name="label_common_profile">Profile</string>
 </resources>
