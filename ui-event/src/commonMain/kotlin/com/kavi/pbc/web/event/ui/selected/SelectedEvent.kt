@@ -51,6 +51,7 @@ import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheet
 import com.kavi.pbc.web.event.ui.common.SignUpSheetItemUI
 import com.kavi.pbc.web.network.session.Session
+import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
@@ -312,7 +313,9 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                     buttonSize = 40.dp
                 ) {
                     selectedEvent.venueAddress?.let {
-                        //openGoogleMaps(address = it, context = context)
+                        val addressUrl = it.replace(" ", "+")
+                        val locationUrl = "https://www.google.com/maps/place/$addressUrl"
+                        openUrl(url = locationUrl)
                     }
                 }
             } else {
@@ -331,7 +334,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                     buttonSize = 40.dp
                 ) {
                     selectedEvent.meetingUrl?.let {
-                        //openMeetingLink(meetingUrl = it, context = context)
+                        openUrl(url = it)
                     }
                 }
             }
