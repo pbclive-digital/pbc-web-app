@@ -409,7 +409,7 @@ fun TabContent(
                 /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
                 0 -> EventsUI(navController = navController)
                 1 -> NewsUI(navController = navController)
-                2 -> AppointmentUI()
+                2 -> AppointmentUI(navController = navController)
                 3 -> QuestionUI(navController = navController)
             }
         }
