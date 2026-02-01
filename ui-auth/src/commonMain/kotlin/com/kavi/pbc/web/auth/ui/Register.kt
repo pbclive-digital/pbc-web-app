@@ -46,13 +46,13 @@ import com.kavi.pbc.web.common.ui.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_auth.generated.resources.Res
-import pbcwebapp.ui_auth.generated.resources.icon_auth_x
-import pbcwebapp.ui_auth.generated.resources.label_auth_address
-import pbcwebapp.ui_auth.generated.resources.label_auth_first_name
-import pbcwebapp.ui_auth.generated.resources.label_auth_last_name
-import pbcwebapp.ui_auth.generated.resources.label_auth_phone_num
-import pbcwebapp.ui_auth.generated.resources.label_auth_register
-import pbcwebapp.ui_auth.generated.resources.phrase_welcome_msg
+import pbcwebapp.ui_auth.generated.resources.auth_icon_x
+import pbcwebapp.ui_auth.generated.resources.auth_label_address
+import pbcwebapp.ui_auth.generated.resources.auth_label_first_name
+import pbcwebapp.ui_auth.generated.resources.auth_label_last_name
+import pbcwebapp.ui_auth.generated.resources.auth_label_phone_num
+import pbcwebapp.ui_auth.generated.resources.auth_label_register
+import pbcwebapp.ui_auth.generated.resources.auth_phrase_welcome_msg
 
 @Composable
 fun RegisterDialog(
@@ -125,9 +125,9 @@ fun RegisterUI(onAuthenticated: () -> Unit,
             when(screenType) {
                 ScreenType.PHONE -> {
                     TitleWithAction(
-                        titleText = stringResource(Res.string.label_auth_register),
+                        titleText = stringResource(Res.string.auth_label_register),
                         textSize = 40,
-                        actionPainter = painterResource(Res.drawable.icon_auth_x),
+                        actionPainter = painterResource(Res.drawable.auth_icon_x),
                         actionPainterSize = 30.dp,
                         isIcon = true,
                     ) {
@@ -136,8 +136,8 @@ fun RegisterUI(onAuthenticated: () -> Unit,
                 }
                 else -> {
                     TitleWithAction(
-                        titleText = stringResource(Res.string.label_auth_register),
-                        actionPainter = painterResource(Res.drawable.icon_auth_x),
+                        titleText = stringResource(Res.string.auth_label_register),
+                        actionPainter = painterResource(Res.drawable.auth_icon_x),
                         actionPainterSize = 40.dp,
                         isIcon = true,
                     ) {
@@ -147,7 +147,7 @@ fun RegisterUI(onAuthenticated: () -> Unit,
             }
 
             Text(
-                text = stringResource(Res.string.phrase_welcome_msg),
+                text = stringResource(Res.string.auth_phrase_welcome_msg),
                 fontFamily = PBCFontFamily,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Justify,
@@ -201,7 +201,7 @@ fun RegisterUI(onAuthenticated: () -> Unit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                headingText = stringResource(Res.string.label_auth_first_name).uppercase(),
+                headingText = stringResource(Res.string.auth_label_first_name).uppercase(),
                 contentText = firstName,
                 onValueChange = { newValue ->
                     firstName.value = newValue
@@ -213,7 +213,7 @@ fun RegisterUI(onAuthenticated: () -> Unit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                headingText = stringResource(Res.string.label_auth_last_name).uppercase(),
+                headingText = stringResource(Res.string.auth_label_last_name).uppercase(),
                 contentText = lastName,
                 onValueChange = { newValue ->
                     lastName.value = newValue
@@ -225,7 +225,7 @@ fun RegisterUI(onAuthenticated: () -> Unit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                headingText = stringResource(Res.string.label_auth_phone_num).uppercase(),
+                headingText = stringResource(Res.string.auth_label_phone_num).uppercase(),
                 contentText = phoneNumber,
                 onValueChange = { newValue ->
                     phoneNumber.value = newValue
@@ -237,7 +237,7 @@ fun RegisterUI(onAuthenticated: () -> Unit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                headingText = stringResource(Res.string.label_auth_address).uppercase(),
+                headingText = stringResource(Res.string.auth_label_address).uppercase(),
                 maxLines = 5,
                 contentText = address,
                 onValueChange = { newValue ->
@@ -247,7 +247,7 @@ fun RegisterUI(onAuthenticated: () -> Unit,
             )
 
             AppFilledButton(
-                label = stringResource(Res.string.label_auth_register),
+                label = stringResource(Res.string.auth_label_register),
                 modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)
             ) {
                 viewModel.registerNewUser()
