@@ -117,9 +117,8 @@ fun EventListUI(navController: NavController) {
             ) {
                 val columCount = when (UIUtil.screenType(maxWidth)) {
                     ScreenType.PHONE -> 1
-                    ScreenType.TABLET, ScreenType.COMPUTER -> {
-                        3
-                    }
+                    ScreenType.TABLET -> 2
+                    ScreenType.COMPUTER -> 3
                 }
 
                 LazyVerticalGrid(

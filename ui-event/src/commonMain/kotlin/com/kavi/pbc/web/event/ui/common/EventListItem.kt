@@ -79,11 +79,14 @@ fun EventListItem(modifier: Modifier = Modifier, event: Event) {
                         )
 
                         Text(
-                            modifier = Modifier.padding(top = 4.dp),
+                            modifier = Modifier.padding(top = 4.dp)
+                                .width((screenWidth.value * 0.65).dp),
                             text = "on ${event.getFormatDate()} at ${event.getPlace()}",
                             fontFamily = PBCFontFamily,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Light,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
 
