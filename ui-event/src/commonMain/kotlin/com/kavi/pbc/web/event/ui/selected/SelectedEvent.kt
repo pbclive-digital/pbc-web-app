@@ -55,22 +55,22 @@ import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
-import pbcwebapp.ui_event.generated.resources.icon_event_location
-import pbcwebapp.ui_event.generated.resources.icon_event_online_meeting
-import pbcwebapp.ui_event.generated.resources.icon_event_pbc
-import pbcwebapp.ui_event.generated.resources.icon_event_potluck_register
-import pbcwebapp.ui_event.generated.resources.icon_event_register
-import pbcwebapp.ui_event.generated.resources.label_event_additional_sign_ups
-import pbcwebapp.ui_event.generated.resources.label_event_at
-import pbcwebapp.ui_event.generated.resources.label_event_from
-import pbcwebapp.ui_event.generated.resources.label_event_on
-import pbcwebapp.ui_event.generated.resources.label_event_potluck
-import pbcwebapp.ui_event.generated.resources.label_event_potluck_details
-import pbcwebapp.ui_event.generated.resources.label_event_register_or_unregister
-import pbcwebapp.ui_event.generated.resources.label_event_registration
-import pbcwebapp.ui_event.generated.resources.phrase_event_additional_sign_ups
-import pbcwebapp.ui_event.generated.resources.phrase_event_potluck_details
-import pbcwebapp.ui_event.generated.resources.phrase_event_registration_details
+import pbcwebapp.ui_event.generated.resources.event_icon_location
+import pbcwebapp.ui_event.generated.resources.event_icon_online_meeting
+import pbcwebapp.ui_event.generated.resources.event_image_pbc
+import pbcwebapp.ui_event.generated.resources.event_icon_potluck_register
+import pbcwebapp.ui_event.generated.resources.event_icon_register
+import pbcwebapp.ui_event.generated.resources.event_label_additional_sign_ups
+import pbcwebapp.ui_event.generated.resources.event_label_at
+import pbcwebapp.ui_event.generated.resources.event_label_from
+import pbcwebapp.ui_event.generated.resources.event_label_on
+import pbcwebapp.ui_event.generated.resources.event_label_potluck
+import pbcwebapp.ui_event.generated.resources.event_label_potluck_details
+import pbcwebapp.ui_event.generated.resources.event_label_register_or_unregister
+import pbcwebapp.ui_event.generated.resources.event_label_registration
+import pbcwebapp.ui_event.generated.resources.event_phrase_additional_sign_ups
+import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_details
+import pbcwebapp.ui_event.generated.resources.event_phrase_registration_details
 
 @Composable
 fun SelectedEvent(navController: NavController, eventId: String) {
@@ -123,7 +123,7 @@ fun PhoneScreenUI(viewModel: SelectedEventViewModel) {
             ) {
                 AsyncImage(
                     model = selectedEvent.eventImage,
-                    error = painterResource(Res.drawable.icon_event_pbc),
+                    error = painterResource(Res.drawable.event_image_pbc),
                     contentDescription = null, // decorative image
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier
@@ -166,7 +166,7 @@ fun WebScreenUI(viewModel: SelectedEventViewModel) {
             ) {
                 AsyncImage(
                     model = selectedEvent.eventImage,
-                    error = painterResource(Res.drawable.icon_event_pbc),
+                    error = painterResource(Res.drawable.event_image_pbc),
                     contentDescription = null, // decorative image
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier
@@ -243,7 +243,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    text = stringResource(Res.string.label_event_on),
+                    text = stringResource(Res.string.event_label_on),
                     fontFamily = PBCFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 20.sp,
@@ -267,7 +267,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = stringResource(Res.string.label_event_from),
+                    text = stringResource(Res.string.event_label_from),
                     fontFamily = PBCFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 20.sp,
@@ -290,7 +290,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
         ) {
             if (selectedEvent.venueType == VenueType.PHYSICAL) {
                 Text(
-                    text = stringResource(Res.string.label_event_at),
+                    text = stringResource(Res.string.event_label_at),
                     fontFamily = PBCFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 20.sp,
@@ -309,7 +309,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 Spacer(modifier = Modifier.weight(1f))
 
                 AppIconButton(
-                    icon = painterResource(Res.drawable.icon_event_location),
+                    icon = painterResource(Res.drawable.event_icon_location),
                     buttonSize = 40.dp
                 ) {
                     selectedEvent.venueAddress?.let {
@@ -330,7 +330,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 Spacer(modifier = Modifier.weight(1f))
 
                 AppIconButton(
-                    icon = painterResource(Res.drawable.icon_event_online_meeting),
+                    icon = painterResource(Res.drawable.event_icon_online_meeting),
                     buttonSize = 40.dp
                 ) {
                     selectedEvent.meetingUrl?.let {
@@ -351,7 +351,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 modifier = Modifier.padding(top = 16.dp, bottom = registrationBottomPadding)
             ) {
                 Text(
-                    text = stringResource(Res.string.label_event_registration),
+                    text = stringResource(Res.string.event_label_registration),
                     fontFamily = PBCFontFamily,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
@@ -366,7 +366,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 )
 
                 Text(
-                    text = stringResource(Res.string.phrase_event_registration_details),
+                    text = stringResource(Res.string.event_phrase_registration_details),
                     fontFamily = PBCFontFamily,
                     fontSize = 16.sp,
                     textAlign = TextAlign.Justify,
@@ -377,8 +377,8 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
 
                 AppButtonWithIcon(
                     modifier = Modifier.padding(top = 8.dp),
-                    label = stringResource(Res.string.label_event_register_or_unregister),
-                    icon = painterResource(Res.drawable.icon_event_register)
+                    label = stringResource(Res.string.event_label_register_or_unregister),
+                    icon = painterResource(Res.drawable.event_icon_register)
                 ) {
                     if (Session.isLogIn())
                         showRegistrationSheet.value = true
@@ -398,7 +398,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 modifier = Modifier.padding(top = 20.dp, bottom = potluckBottomPadding)
             ) {
                 Text(
-                    text = stringResource(Res.string.label_event_potluck),
+                    text = stringResource(Res.string.event_label_potluck),
                     fontFamily = PBCFontFamily,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
@@ -413,7 +413,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 )
 
                 Text(
-                    text = stringResource(Res.string.phrase_event_potluck_details),
+                    text = stringResource(Res.string.event_phrase_potluck_details),
                     fontFamily = PBCFontFamily,
                     fontSize = 16.sp,
                     textAlign = TextAlign.Justify,
@@ -424,8 +424,8 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
 
                 AppButtonWithIcon(
                     modifier = Modifier.padding(top = 8.dp),
-                    label = stringResource(Res.string.label_event_potluck_details),
-                    icon = painterResource(Res.drawable.icon_event_potluck_register)
+                    label = stringResource(Res.string.event_label_potluck_details),
+                    icon = painterResource(Res.drawable.event_icon_potluck_register)
                 ) {
                     if (Session.isLogIn())
                         showPotluckSheet.value = true
@@ -440,7 +440,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 modifier = Modifier.padding(top = 20.dp, bottom = 40.dp)
             ) {
                 Text(
-                    text = stringResource(Res.string.label_event_additional_sign_ups),
+                    text = stringResource(Res.string.event_label_additional_sign_ups),
                     fontFamily = PBCFontFamily,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
@@ -455,7 +455,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 )
 
                 Text(
-                    text = stringResource(Res.string.phrase_event_additional_sign_ups),
+                    text = stringResource(Res.string.event_phrase_additional_sign_ups),
                     fontFamily = PBCFontFamily,
                     fontSize = 16.sp,
                     textAlign = TextAlign.Justify,

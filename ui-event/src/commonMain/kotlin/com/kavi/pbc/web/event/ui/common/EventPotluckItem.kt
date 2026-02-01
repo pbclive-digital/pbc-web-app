@@ -41,9 +41,9 @@ import com.kavi.pbc.web.event.ui.selected.SelectedEventViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
-import pbcwebapp.ui_event.generated.resources.icon_event_add_item
-import pbcwebapp.ui_event.generated.resources.icon_event_remove_item
-import pbcwebapp.ui_event.generated.resources.label_event_user_contribution_count
+import pbcwebapp.ui_event.generated.resources.event_icon_add_item
+import pbcwebapp.ui_event.generated.resources.event_icon_remove_item
+import pbcwebapp.ui_event.generated.resources.event_label_user_contribution_count
 
 @Composable
 fun EventPotluckItemUI(modifier: Modifier = Modifier,
@@ -98,7 +98,7 @@ fun EventPotluckItemUI(modifier: Modifier = Modifier,
                         ) {
                             if (potluckItem.availableCount > potluckItem.contributorList.size) {
                                 Image(
-                                    painter = painterResource(Res.drawable.icon_event_add_item),
+                                    painter = painterResource(Res.drawable.event_icon_add_item),
                                     contentDescription = "",
                                     modifier = Modifier
                                         .size(35.dp)
@@ -113,7 +113,7 @@ fun EventPotluckItemUI(modifier: Modifier = Modifier,
 
                             if (potluckItem.contributorList.isNotEmpty()) {
                                 Image(
-                                    painter = painterResource(Res.drawable.icon_event_remove_item),
+                                    painter = painterResource(Res.drawable.event_icon_remove_item),
                                     contentDescription = "",
                                     modifier = Modifier
                                         .size(35.dp)
@@ -169,7 +169,7 @@ fun EventPotluckItemUI(modifier: Modifier = Modifier,
                     modifier = Modifier
                         .padding(top = 4.dp, start = 4.dp, end = 4.dp)
                         .fillMaxWidth(),
-                    text = stringResource(Res.string.label_event_user_contribution_count)
+                    text = stringResource(Res.string.event_label_user_contribution_count)
                         .replace("%s", potluckItem.itemName)
                         .replace("%d", currentUserContributions.toString()),
                     color = MaterialTheme.colorScheme.onSurface,

@@ -42,20 +42,20 @@ import com.kavi.pbc.web.network.session.Session
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
-import pbcwebapp.ui_event.generated.resources.icon_event_add_item
-import pbcwebapp.ui_event.generated.resources.icon_event_remove_item
-import pbcwebapp.ui_event.generated.resources.label_event_contribute_potluck
-import pbcwebapp.ui_event.generated.resources.label_event_register
-import pbcwebapp.ui_event.generated.resources.label_event_registering
-import pbcwebapp.ui_event.generated.resources.label_event_remaining_seats
-import pbcwebapp.ui_event.generated.resources.label_event_sign_out
-import pbcwebapp.ui_event.generated.resources.label_event_sign_up
-import pbcwebapp.ui_event.generated.resources.label_event_sign_up_sheet_title
-import pbcwebapp.ui_event.generated.resources.label_event_unregister
-import pbcwebapp.ui_event.generated.resources.label_event_unregistering
-import pbcwebapp.ui_event.generated.resources.phrase_event_contribute_potluck
-import pbcwebapp.ui_event.generated.resources.phrase_event_registering
-import pbcwebapp.ui_event.generated.resources.phrase_event_unregistering
+import pbcwebapp.ui_event.generated.resources.event_icon_add_item
+import pbcwebapp.ui_event.generated.resources.event_icon_remove_item
+import pbcwebapp.ui_event.generated.resources.event_label_contribute_potluck
+import pbcwebapp.ui_event.generated.resources.event_label_register
+import pbcwebapp.ui_event.generated.resources.event_label_registering
+import pbcwebapp.ui_event.generated.resources.event_label_remaining_seats
+import pbcwebapp.ui_event.generated.resources.event_label_sign_out
+import pbcwebapp.ui_event.generated.resources.event_label_sign_up
+import pbcwebapp.ui_event.generated.resources.event_label_sign_up_sheet_title
+import pbcwebapp.ui_event.generated.resources.event_label_unregister
+import pbcwebapp.ui_event.generated.resources.event_label_unregistering
+import pbcwebapp.ui_event.generated.resources.event_phrase_contribute_potluck
+import pbcwebapp.ui_event.generated.resources.event_phrase_registering
+import pbcwebapp.ui_event.generated.resources.event_phrase_unregistering
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,9 +86,9 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
                 Column {
                     Text(
                         text = if (viewModel.isCurrentUserRegistered())
-                            stringResource(Res.string.label_event_unregistering)
+                            stringResource(Res.string.event_label_unregistering)
                         else
-                            stringResource(Res.string.label_event_registering),
+                            stringResource(Res.string.event_label_registering),
                         fontFamily = PBCFontFamily,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
@@ -110,9 +110,9 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
                     ) {
                         Image(
                             painter = if (viewModel.isCurrentUserRegistered())
-                                painterResource(Res.drawable.icon_event_remove_item)
+                                painterResource(Res.drawable.event_icon_remove_item)
                             else
-                                painterResource(Res.drawable.icon_event_add_item),
+                                painterResource(Res.drawable.event_icon_add_item),
                             contentDescription = "Provided icon",
                             modifier = Modifier
                                 .size(100.dp)
@@ -121,10 +121,10 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
 
                     Text(
                         text = if (viewModel.isCurrentUserRegistered()) {
-                            val resourceString = stringResource(Res.string.phrase_event_unregistering)
+                            val resourceString = stringResource(Res.string.event_phrase_unregistering)
                             resourceString.replace("%s", givenEvent.name)
                         } else {
-                            val resourceString = stringResource(Res.string.phrase_event_registering)
+                            val resourceString = stringResource(Res.string.event_phrase_registering)
                             resourceString.replace("%s", givenEvent.name)
                         },
                         fontFamily = PBCFontFamily,
@@ -137,7 +137,7 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
                     )
 
                     Text(
-                        text = stringResource(Res.string.label_event_remaining_seats)
+                        text = stringResource(Res.string.event_label_remaining_seats)
                             .replace("%s", viewModel.remainingSeatCountAvailable().toString()),
                         fontFamily = PBCFontFamily,
                         fontSize = 16.sp,
@@ -162,9 +162,9 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
                         AppFilledButton(
                             modifier = Modifier.padding(top = 16.dp),
                             label = if (viewModel.isCurrentUserRegistered())
-                                stringResource(Res.string.label_event_unregister)
+                                stringResource(Res.string.event_label_unregister)
                             else
-                                stringResource(Res.string.label_event_register)
+                                stringResource(Res.string.event_label_register)
                         ) {
                             if (viewModel.isCurrentUserRegistered())
                                 viewModel.unregisterFromEvent()
@@ -214,7 +214,7 @@ fun PotluckSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>,
             if (Session.isLogIn()) {
                 Column {
                     Text(
-                        text = stringResource(Res.string.label_event_contribute_potluck),
+                        text = stringResource(Res.string.event_label_contribute_potluck),
                         fontFamily = PBCFontFamily,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
@@ -229,7 +229,7 @@ fun PotluckSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>,
                     )
 
                     Text(
-                        text = stringResource(Res.string.phrase_event_contribute_potluck),
+                        text = stringResource(Res.string.event_phrase_contribute_potluck),
                         fontFamily = PBCFontFamily,
                         fontSize = 16.sp,
                         textAlign = TextAlign.Justify,
@@ -293,7 +293,7 @@ fun SignUpSheetBottomSheetUI(sheetState: SheetState,
                 val isSignUp = viewModel.isCurrentUserSignUpToSignUpSheet(selectedSignUpSheet.sheetId)
                 Column {
                     Text(
-                        text = stringResource(Res.string.label_event_sign_up_sheet_title)
+                        text = stringResource(Res.string.event_label_sign_up_sheet_title)
                             .replace("%s", selectedSignUpSheet.sheetName),
                         fontFamily = PBCFontFamily,
                         fontSize = 22.sp,
@@ -316,9 +316,9 @@ fun SignUpSheetBottomSheetUI(sheetState: SheetState,
                     ) {
                         Image(
                             painter = if (isSignUp)
-                                painterResource(Res.drawable.icon_event_remove_item)
+                                painterResource(Res.drawable.event_icon_remove_item)
                             else
-                                painterResource(Res.drawable.icon_event_add_item),
+                                painterResource(Res.drawable.event_icon_add_item),
                             contentDescription = "Provided icon",
                             modifier = Modifier
                                 .size(100.dp)
@@ -337,7 +337,7 @@ fun SignUpSheetBottomSheetUI(sheetState: SheetState,
                     )
 
                     Text(
-                        text = stringResource(Res.string.label_event_remaining_seats)
+                        text = stringResource(Res.string.event_label_remaining_seats)
                             .replace("%s", viewModel.remainingSignUpCountInSignUpSheet(selectedSignUpSheet.sheetId).toString()),
                         fontFamily = PBCFontFamily,
                         fontSize = 16.sp,
@@ -362,8 +362,8 @@ fun SignUpSheetBottomSheetUI(sheetState: SheetState,
                         AppFilledButton(
                             modifier = Modifier.padding(top = 16.dp),
                             label = if (isSignUp)
-                                stringResource(Res.string.label_event_sign_out) else stringResource(
-                                Res.string.label_event_sign_up)) {
+                                stringResource(Res.string.event_label_sign_out) else stringResource(
+                                Res.string.event_label_sign_up)) {
 
                             isLoading = true
 

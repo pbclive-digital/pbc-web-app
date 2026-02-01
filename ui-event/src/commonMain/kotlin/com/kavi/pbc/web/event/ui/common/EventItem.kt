@@ -36,7 +36,7 @@ import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.Event
 import org.jetbrains.compose.resources.painterResource
 import pbcwebapp.ui_event.generated.resources.Res
-import pbcwebapp.ui_event.generated.resources.icon_event_pbc
+import pbcwebapp.ui_event.generated.resources.event_image_pbc
 
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 @Composable
@@ -73,7 +73,7 @@ fun EventItem(modifier: Modifier = Modifier, screenMaxWidth: Dp, event: Event, o
                         .data(event.eventImage)
                         .crossfade(true)
                         .build(),
-                    error = painterResource(Res.drawable.icon_event_pbc),
+                    error = painterResource(Res.drawable.event_image_pbc),
                     contentDescription = null, // decorative image
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier

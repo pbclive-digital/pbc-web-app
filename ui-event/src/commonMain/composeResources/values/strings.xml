@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="label_event_upcoming">Upcoming Events</string>
-    <string name="label_event_past">Passed Events</string>
+    <string name="event_label_upcoming">Upcoming Events</string>
+    <string name="event_label_past">Passed Events</string>
 
-    <string name="label_event_from">From: </string>
-    <string name="label_event_to">To: </string>
-    <string name="label_event_on">On: </string>
-    <string name="label_event_at">At: </string>
+    <string name="event_label_from">From: </string>
+    <string name="event_label_to">To: </string>
+    <string name="event_label_on">On: </string>
+    <string name="event_label_at">At: </string>
 
-    <string name="label_event_registration">Registration</string>
-    <string name="phrase_event_registration_details">Because of the limited space availability, we expect you to register for this event to reserve your seat.</string>
-    <string name="label_event_register_or_unregister">Register / Un-register</string>
+    <string name="event_label_registration">Registration</string>
+    <string name="event_phrase_registration_details">Because of the limited space availability, we expect you to register for this event to reserve your seat.</string>
+    <string name="event_label_register_or_unregister">Register / Un-register</string>
 
-    <string name="label_event_register">Register</string>
-    <string name="label_event_unregister">Un-Register</string>
-    <string name="label_event_registering">Registering to Event</string>
-    <string name="label_event_unregistering">Un-Registering from Event</string>
-    <string name="label_event_remaining_seats">Remaining seats: %s</string>
-    <string name="phrase_event_registering">We are delight to have you in the event of "%s"!!! Once you register, we will reserve a space for you. For any reason, if you are not going to attend, please make sure to unregister.</string>
-    <string name="phrase_event_unregistering">We are sad not to see you in the event of "%s"!!! Once you un-register, your reservation will revoke. Thank you so much to make your space available due to your unavailability.</string>
+    <string name="event_label_register">Register</string>
+    <string name="event_label_unregister">Un-Register</string>
+    <string name="event_label_registering">Registering to Event</string>
+    <string name="event_label_unregistering">Un-Registering from Event</string>
+    <string name="event_label_remaining_seats">Remaining seats: %s</string>
+    <string name="event_phrase_registering">We are delight to have you in the event of "%s"!!! Once you register, we will reserve a space for you. For any reason, if you are not going to attend, please make sure to unregister.</string>
+    <string name="event_phrase_unregistering">We are sad not to see you in the event of "%s"!!! Once you un-register, your reservation will revoke. Thank you so much to make your space available due to your unavailability.</string>
 
-    <string name="label_event_potluck_details">Potluck Details</string>
-    <string name="label_event_potluck">Potluck</string>
-    <string name="phrase_event_potluck_details">As a part of this event. We are planing to organize a potluck. Please mark your contributions to the potluck by selecting food items from the list.</string>
-    <string name="label_event_contribute_potluck">Potluck Contribution</string>
-    <string name="phrase_event_contribute_potluck">Following are the potluck items that you can contribute on the event. By tapping on the item or tap on 'plus' icon you can sign-up for that and by tap on 'X' icon, you can sign-out.</string>
-    <string name="label_event_user_contribution_count">You have already signed %d of %s(s)</string>
+    <string name="event_label_potluck_details">Potluck Details</string>
+    <string name="event_label_potluck">Potluck</string>
+    <string name="event_phrase_potluck_details">As a part of this event. We are planing to organize a potluck. Please mark your contributions to the potluck by selecting food items from the list.</string>
+    <string name="event_label_contribute_potluck">Potluck Contribution</string>
+    <string name="event_phrase_contribute_potluck">Following are the potluck items that you can contribute on the event. By tapping on the item or tap on 'plus' icon you can sign-up for that and by tap on 'X' icon, you can sign-out.</string>
+    <string name="event_label_user_contribution_count">You have already signed %d of %s(s)</string>
 
-    <string name="label_event_additional_sign_ups">Additional Sign-up Sheet(s)</string>
-    <string name="phrase_event_additional_sign_ups">This event is having following additional sign-up sheet(s). Following sign-up sheet(s) help PBC to track devotee's participation and contributions to this events.</string>
-    <string name="label_event_sign_up_sheet_title">Sign-up sheet - %s</string>
-    <string name="label_event_sign_up">Sign-up to Sheet</string>
-    <string name="label_event_sign_out">Sign-out from Sheet</string>
+    <string name="event_label_additional_sign_ups">Additional Sign-up Sheet(s)</string>
+    <string name="event_phrase_additional_sign_ups">This event is having following additional sign-up sheet(s). Following sign-up sheet(s) help PBC to track devotee's participation and contributions to this events.</string>
+    <string name="event_label_sign_up_sheet_title">Sign-up sheet - %s</string>
+    <string name="event_label_sign_up">Sign-up to Sheet</string>
+    <string name="event_label_sign_out">Sign-out from Sheet</string>
 </resources>

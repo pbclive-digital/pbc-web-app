@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,7 +28,7 @@ import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.Event
 import org.jetbrains.compose.resources.painterResource
 import pbcwebapp.ui_event.generated.resources.Res
-import pbcwebapp.ui_event.generated.resources.icon_event_pbc
+import pbcwebapp.ui_event.generated.resources.event_image_pbc
 
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 @Composable
@@ -92,7 +91,7 @@ fun EventListItem(modifier: Modifier = Modifier, event: Event) {
 
                     AsyncImage(
                         model = event.eventImage,
-                        error = painterResource(Res.drawable.icon_event_pbc),
+                        error = painterResource(Res.drawable.event_image_pbc),
                         contentDescription = "Event image picture",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

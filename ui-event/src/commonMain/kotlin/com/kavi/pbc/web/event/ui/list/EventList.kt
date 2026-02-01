@@ -37,8 +37,8 @@ import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.parent.navigation.EventPath
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
-import pbcwebapp.ui_event.generated.resources.label_event_past
-import pbcwebapp.ui_event.generated.resources.label_event_upcoming
+import pbcwebapp.ui_event.generated.resources.event_label_past
+import pbcwebapp.ui_event.generated.resources.event_label_upcoming
 
 @Composable
 fun EventListUI(navController: NavController) {
@@ -70,7 +70,7 @@ fun EventListUI(navController: NavController) {
             Text(
                 modifier = Modifier
                     .padding(start = 8.dp, top = 12.dp, bottom = 12.dp),
-                text = stringResource(Res.string.label_event_upcoming),
+                text = stringResource(Res.string.event_label_upcoming),
                 textAlign = TextAlign.Justify,
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp
@@ -106,7 +106,7 @@ fun EventListUI(navController: NavController) {
             Text(
                 modifier = Modifier
                     .padding(start = 8.dp, top = 12.dp, bottom = 12.dp),
-                text = stringResource(Res.string.label_event_past),
+                text = stringResource(Res.string.event_label_past),
                 textAlign = TextAlign.Justify,
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp
