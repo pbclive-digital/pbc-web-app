@@ -27,8 +27,7 @@ fun Title(modifier: Modifier = Modifier,
           titleText: String, textSize: Int = 48,
           textColor: Color = MaterialTheme.colorScheme.onBackground) {
     Row (
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -39,7 +38,6 @@ fun Title(modifier: Modifier = Modifier,
             fontSize = textSize.sp,
             color = textColor
         )
-        Spacer(modifier = Modifier.weight(1f))
     }
 }
 
