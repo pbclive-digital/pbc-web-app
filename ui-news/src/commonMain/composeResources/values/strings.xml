@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="label_news_read_more">Read More</string>
-    <string name="label_news_reference">Reference</string>
-    <string name="label_news_active_fetch_empty">No active News available at this time.</string>
+    <string name="news_label_read_more">Read More</string>
+    <string name="news_label_reference">Reference</string>
+    <string name="news_label_active_fetch_empty">No active News available at this time.</string>
 
 </resources>

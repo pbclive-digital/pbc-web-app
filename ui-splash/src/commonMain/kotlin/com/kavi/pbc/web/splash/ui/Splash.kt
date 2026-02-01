@@ -41,7 +41,7 @@ import com.kavi.pbc.web.parent.navigation.SplashPath
 import com.kavi.pbc.web.splash.data.model.SplashUiState
 import org.jetbrains.compose.resources.painterResource
 import pbcwebapp.ui_splash.generated.resources.Res
-import pbcwebapp.ui_splash.generated.resources.image_dhamma_chakra
+import pbcwebapp.ui_splash.generated.resources.splash_image_dhamma_chakra
 
 @Composable
 fun SplashUI(navController: NavHostController) {
@@ -106,7 +106,7 @@ private fun PulsarIcon(pulseCount: Int = 2) {
         })
 
         Image(
-            painter = painterResource(Res.drawable.image_dhamma_chakra),
+            painter = painterResource(Res.drawable.splash_image_dhamma_chakra),
             contentDescription = "Dhamma chakra icon",
             contentScale = ContentScale.Crop,
             modifier = Modifier

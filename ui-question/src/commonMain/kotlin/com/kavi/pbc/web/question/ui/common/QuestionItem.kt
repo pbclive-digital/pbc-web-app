@@ -30,8 +30,8 @@ import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.question.Question
 import org.jetbrains.compose.resources.painterResource
 import pbcwebapp.ui_question.generated.resources.Res
-import pbcwebapp.ui_question.generated.resources.icon_question_delete
-import pbcwebapp.ui_question.generated.resources.icon_question_edit
+import pbcwebapp.ui_question.generated.resources.question_icon_delete
+import pbcwebapp.ui_question.generated.resources.question_icon_edit
 
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 @Composable
@@ -112,7 +112,7 @@ fun QuestionItem(modifier: Modifier = Modifier,
                             horizontalArrangement = Arrangement.End
                         ) {
                             Icon(
-                                painter = painterResource(Res.drawable.icon_question_edit),
+                                painter = painterResource(Res.drawable.question_icon_edit),
                                 contentDescription = "Edit Event",
                                 tint = themeAdditionalColors.shadow,
                                 modifier = Modifier
@@ -124,7 +124,7 @@ fun QuestionItem(modifier: Modifier = Modifier,
                             )
 
                             Icon(
-                                painter = painterResource(Res.drawable.icon_question_delete),
+                                painter = painterResource(Res.drawable.question_icon_delete),
                                 contentDescription = "Delete Event",
                                 tint = themeAdditionalColors.shadow,
                                 modifier = Modifier

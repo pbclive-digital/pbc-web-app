@@ -38,8 +38,8 @@ import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_news.generated.resources.Res
-import pbcwebapp.ui_news.generated.resources.icon_news_pbc
-import pbcwebapp.ui_news.generated.resources.label_news_reference
+import pbcwebapp.ui_news.generated.resources.news_icon_pbc
+import pbcwebapp.ui_news.generated.resources.news_label_reference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,7 +127,7 @@ fun NewsSelectedBottomSheetUI(
                         ) {
                             AsyncImage(
                                 model = selectedNews.newsImage,
-                                error = painterResource(Res.drawable.icon_news_pbc),
+                                error = painterResource(Res.drawable.news_icon_pbc),
                                 contentDescription = null, // decorative image
                                 contentScale = ContentScale.Fit,
                                 modifier = Modifier
@@ -149,7 +149,7 @@ fun NewsSelectedBottomSheetUI(
 
                     selectedNews.facebookLink?.let {
                         Text(
-                            text = stringResource(Res.string.label_news_reference),
+                            text = stringResource(Res.string.news_label_reference),
                             fontFamily = PBCFontFamily,
                             fontSize = 18.sp,
                             textAlign = TextAlign.Justify,

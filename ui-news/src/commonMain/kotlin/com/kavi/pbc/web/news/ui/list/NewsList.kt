@@ -58,9 +58,9 @@ import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_news.generated.resources.Res
-import pbcwebapp.ui_news.generated.resources.icon_news_pbc
-import pbcwebapp.ui_news.generated.resources.label_news_active_fetch_empty
-import pbcwebapp.ui_news.generated.resources.label_news_reference
+import pbcwebapp.ui_news.generated.resources.news_icon_pbc
+import pbcwebapp.ui_news.generated.resources.news_label_active_fetch_empty
+import pbcwebapp.ui_news.generated.resources.news_label_reference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -246,7 +246,7 @@ private fun SelectedNews(selectedNews: MutableState<News>) {
                     ) {
                         AsyncImage(
                             model = selectedNews.value.newsImage,
-                            error = painterResource(Res.drawable.icon_news_pbc),
+                            error = painterResource(Res.drawable.news_icon_pbc),
                             contentDescription = null, // decorative image
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
@@ -268,7 +268,7 @@ private fun SelectedNews(selectedNews: MutableState<News>) {
 
                 selectedNews.value.facebookLink?.let {
                     Text(
-                        text = stringResource(Res.string.label_news_reference),
+                        text = stringResource(Res.string.news_label_reference),
                         fontFamily = PBCFontFamily,
                         fontSize = 18.sp,
                         textAlign = TextAlign.Justify,
@@ -311,7 +311,7 @@ fun EmptyNewsList() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(Res.string.label_news_active_fetch_empty),
+            text = stringResource(Res.string.news_label_active_fetch_empty),
             textAlign = TextAlign.Center,
         )
     }

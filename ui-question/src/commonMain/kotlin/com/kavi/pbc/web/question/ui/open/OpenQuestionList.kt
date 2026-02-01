@@ -61,10 +61,10 @@ import com.kavi.pbc.web.question.ui.sheet.QuestionSelectedBottomSheetUI
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_question.generated.resources.Res
-import pbcwebapp.ui_question.generated.resources.icon_send
-import pbcwebapp.ui_question.generated.resources.label_question_answers
-import pbcwebapp.ui_question.generated.resources.label_question_open_question_empty
-import pbcwebapp.ui_question.generated.resources.label_question_your_answer
+import pbcwebapp.ui_question.generated.resources.question_icon_send
+import pbcwebapp.ui_question.generated.resources.question_label_answers
+import pbcwebapp.ui_question.generated.resources.question_label_open_question_empty
+import pbcwebapp.ui_question.generated.resources.question_label_your_answer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -255,7 +255,7 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel
             }
 
             Text(
-                text = stringResource(Res.string.label_question_answers),
+                text = stringResource(Res.string.question_label_answers),
                 fontFamily = PBCFontFamily,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
@@ -284,7 +284,7 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel
                         AppOutlineTextField(
                             modifier = Modifier
                                 .weight(1f),
-                            headingText = stringResource(Res.string.label_question_your_answer),
+                            headingText = stringResource(Res.string.question_label_your_answer),
                             contentText = newAnswerComment,
                             onValueChange = { newValue ->
                                 newAnswerComment.value = newValue
@@ -295,7 +295,7 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel
 
                         AppIconButton(
                             modifier = Modifier.padding(top = 8.dp),
-                            icon = painterResource(Res.drawable.icon_send),
+                            icon = painterResource(Res.drawable.question_icon_send),
                             buttonSize = 50.dp
                         ) {
                             //viewModel.addAnswerCommentToQuestion(newAnswerComment.value.text)
@@ -319,7 +319,7 @@ fun EmptyOpenQuestionList() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(Res.string.label_question_open_question_empty),
+            text = stringResource(Res.string.question_label_open_question_empty),
             textAlign = TextAlign.Center,
         )
     }
