@@ -1,9 +1,7 @@
 package com.kavi.pbc.web.dashboard.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -18,10 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -40,14 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.kavi.pbc.web.common.ui.component.ProfileActionComponent
 import com.kavi.pbc.web.common.ui.model.ProfileActionConfig
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
@@ -69,16 +59,10 @@ import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
 import pbcwebapp.ui_dashboard.generated.resources.icon_appointment
 import pbcwebapp.ui_dashboard.generated.resources.icon_ask_question
-import pbcwebapp.ui_dashboard.generated.resources.icon_dashboard_profile
 import pbcwebapp.ui_dashboard.generated.resources.icon_event
 import pbcwebapp.ui_dashboard.generated.resources.icon_news
-import pbcwebapp.ui_dashboard.generated.resources.image_dhamma_chakra_256
 import pbcwebapp.ui_dashboard.generated.resources.image_pbc
 import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pbc
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_profile
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_in
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_out
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_sign_up
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -171,6 +155,7 @@ fun DashboardUI(navController: NavController) {
 
                         ProfileActionComponent(profileActionConfig = ProfileActionConfig(
                             appAuthStatus = appAuthStatus,
+                            profileUserImageUrl = Session.user?.profilePicUrl,
                             onProfileClick = {
                                 if (Session.isLogIn()) {
                                     // Navigate to profile screen
@@ -203,132 +188,6 @@ fun DashboardUI(navController: NavController) {
                                 }
                             }
                         ))
-
-                        /*ExposedDropdownMenuBox(
-                            expanded = isExpanded,
-                            onExpandedChange = { isExpanded = it}
-                        ) {
-                            Box (
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .clip(CircleShape)
-                                    .border(
-                                        border = BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.tertiary),
-                                        shape = CircleShape
-                                    )
-                                    .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                            ) {
-                                when(appAuthStatus) {
-                                    AppAuthStatus.SIGN_IN -> {
-                                        AsyncImage(
-                                            model = ImageRequest.Builder(LocalPlatformContext.current)
-                                                .data(Session.user?.profilePicUrl)
-                                                .crossfade(true)
-                                                .build(),
-                                            contentDescription = "Profile Picture",
-                                            contentScale = ContentScale.Crop,
-                                            placeholder = painterResource(Res.drawable.icon_dashboard_profile),
-                                            modifier = Modifier
-                                                .size(50.dp)
-                                                .padding(5.dp)
-                                                .clip(CircleShape)
-                                        )
-                                    }
-                                    else -> {
-                                        Image(
-                                            painterResource(Res.drawable.image_dhamma_chakra_256),
-                                            contentDescription = "Dhamma chakkra",
-                                            contentScale = ContentScale.Crop,
-                                            modifier = Modifier
-                                                .size(50.dp)
-                                                .padding(5.dp)
-                                                .clip(CircleShape)
-                                        )
-                                    }
-                                }
-                            }
-
-                            ExposedDropdownMenu(
-                                expanded = isExpanded,
-                                onDismissRequest = {
-                                    *//*if (isExpanded)
-                                        isExpanded = false*//*
-                                },
-                                modifier = Modifier
-                                    .width(150.dp)
-                            ) {
-                                when(appAuthStatus) {
-                                    AppAuthStatus.SIGN_IN -> {
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(Res.string.label_dashboard_profile)) },
-                                            onClick = {
-                                                // Invoke user authentication
-                                                if (Session.isLogIn()) {
-                                                    // Navigate to profile screen
-                                                    println("Profile Tap")
-                                                }
-
-                                                isExpanded = false
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(Res.string.label_dashboard_sign_out)) },
-                                            onClick = {
-                                                // Invoke user authentication
-                                                if (Session.isLogIn()) {
-                                                    // Open up profile screen
-                                                    println("User already in - open up profile screen")
-                                                    ContractServiceLocator.locate(AuthContract::class).signOut()
-                                                    appAuthStatus = AppAuthStatus.NONE
-                                                }
-
-                                                isExpanded = false
-                                            }
-                                        )
-                                    }
-                                    AppAuthStatus.SIGN_UP_REQUIRED -> {
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(Res.string.label_dashboard_sign_up)) },
-                                            onClick = {
-                                                // Navigate to register screen
-                                                showSignUpDialog.value = true
-                                                isExpanded = false
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(Res.string.label_dashboard_sign_out)) },
-                                            onClick = {
-                                                // Open up profile screen
-                                                ContractServiceLocator.locate(AuthContract::class).signOut()
-                                                appAuthStatus = AppAuthStatus.NONE
-                                                isExpanded = false
-                                            }
-                                        )
-                                    }
-                                    else -> {
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(Res.string.label_dashboard_sign_in)) },
-                                            onClick = {
-                                                // Invoke sign-in with Firebase-Google
-                                                ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
-                                                ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
-                                                    appAuthStatus = authStatus
-                                                    if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
-                                                        // Navigate to register screen
-                                                        showSignUpDialog.value = true
-                                                    } else {
-                                                        // Re-login and update auth status
-                                                        AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
-                                                    }
-                                                }
-
-                                                isExpanded = false
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }*/
                     }
                 }
             }

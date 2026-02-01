@@ -48,12 +48,19 @@ import coil3.compose.AsyncImage
 import com.kavi.pbc.web.common.ui.component.AppFullScreenLoader
 import com.kavi.pbc.web.common.ui.component.AppIconButton
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
+import com.kavi.pbc.web.common.ui.component.PageContainer
 import com.kavi.pbc.web.common.ui.component.Title
+import com.kavi.pbc.web.common.ui.model.ProfileActionConfig
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
+import com.kavi.pbc.web.data.auth.AppAuthStatus
+import com.kavi.pbc.web.datastore.AppLocalStore
+import com.kavi.pbc.web.datastore.DataKey
+import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.question.data.model.OpenQuestionListUiState
 import com.kavi.pbc.web.question.ui.common.AnswerCommentItem
 import com.kavi.pbc.web.question.ui.common.QuestionItem
@@ -68,10 +75,66 @@ import pbcwebapp.ui_question.generated.resources.label_question_your_answer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OpenQuestinList(navController: NavController) {
+fun OpenQuestinList(navController: NavController, isContainerRequired: Boolean = false) {
 
     val viewModel: OpenQuestionListViewModel = viewModel { OpenQuestionListViewModel() }
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchAppAuthStatus()
+    }
+
+    val appAuthStatus by viewModel.appAuthStatus.collectAsState()
+
+    val showSignUpDialog = remember { mutableStateOf(false) }
+
+    if (isContainerRequired) {
+        PageContainer(
+            profileActionConfig = ProfileActionConfig(
+                appAuthStatus = appAuthStatus,
+                profileUserImageUrl = Session.user?.profilePicUrl,
+                onProfileClick = {
+                    if (Session.isLogIn()) {
+                        // Navigate to profile screen
+                        println("Profile Tap")
+                    }
+                },
+                onSignOutClick = {
+                    // Invoke user authentication
+                    if (Session.isLogIn()) {
+                        ContractServiceLocator.locate(AuthContract::class).signOut()
+                        viewModel.updateAuthStatus(AppAuthStatus.NONE)
+                    }
+                },
+                onSignUpClick = {
+                    // Navigate to register screen
+                    showSignUpDialog.value = true
+                },
+                onSignInClick = {
+                    // Invoke sign-in with Firebase-Google
+                    ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
+                    ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
+                        viewModel.updateAuthStatus(authStatus)
+                        if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
+                            // Navigate to register screen
+                            showSignUpDialog.value = true
+                        } else {
+                            // Re-login and update auth status
+                            AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                        }
+                    }
+                }
+            )
+        ) {
+            PageContent(viewModel = viewModel)
+        }
+    } else {
+        PageContent(viewModel = viewModel)
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun PageContent(viewModel: OpenQuestionListViewModel) {
     val openQuestionListUiState by viewModel.openQuestionListUiState.collectAsState()
     val openQuestionList by viewModel.openQuestionList.collectAsState()
     val pageIndex by viewModel.pageIndex.collectAsState()

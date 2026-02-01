@@ -47,6 +47,7 @@ kotlin {
 
                 implementation(projects.libParent)
                 implementation(projects.libCommonUi)
+                implementation(projects.libLocalDatastore)
                 implementation(projects.libData)
                 implementation(projects.libNetwork)
             }

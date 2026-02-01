@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.data.pagination.PaginationRequest
 import com.kavi.pbc.web.data.question.AnswerComment
 import com.kavi.pbc.web.data.question.Question
@@ -13,6 +14,7 @@ import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.question.data.model.AddAnswerStatus
 import com.kavi.pbc.web.question.data.model.OpenQuestionListUiState
+import com.kavi.pbc.web.question.data.respository.local.QuestionLocalRepository
 import com.kavi.pbc.web.question.data.respository.remote.QuestionRemoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,10 +25,13 @@ import kotlin.time.Clock
 class OpenQuestionListViewModel: ViewModel() {
 
     val questionRemoteRepository = QuestionRemoteRepository()
+    val questionLocalRepository = QuestionLocalRepository()
     private val isInitialRequestFired = mutableStateOf(false)
     private val paginationRequest = PaginationRequest(null)
     private var isPagingReachedEnd by mutableStateOf(false)
 
+    private val _appAuthStatus = MutableStateFlow(AppAuthStatus.NONE)
+    val appAuthStatus: StateFlow<AppAuthStatus> = _appAuthStatus
     private val _pageIndex = MutableStateFlow(0)
     val pageIndex: StateFlow<Int> = _pageIndex
     private val _openQuestionList = MutableStateFlow<MutableList<Question>>(mutableListOf())
@@ -42,6 +47,14 @@ class OpenQuestionListViewModel: ViewModel() {
 
     private val _addAnswerStatus = MutableStateFlow(AddAnswerStatus.NONE)
     val addAnswerStatus: StateFlow<AddAnswerStatus> = _addAnswerStatus
+
+    fun fetchAppAuthStatus() {
+        _appAuthStatus.value = questionLocalRepository.getAppAuthStatus()
+    }
+
+    fun updateAuthStatus(authStatus: AppAuthStatus) {
+        _appAuthStatus.value = authStatus
+    }
 
     fun fetchOpenQuestionList() {
         if (!isPagingReachedEnd) {

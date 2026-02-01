@@ -43,14 +43,21 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
 import com.kavi.pbc.web.common.ui.component.AppIconButton
+import com.kavi.pbc.web.common.ui.component.PageContainer
+import com.kavi.pbc.web.common.ui.model.ProfileActionConfig
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
+import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.data.event.EventStatus
 import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheet
+import com.kavi.pbc.web.datastore.AppLocalStore
+import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.event.ui.common.SignUpSheetItemUI
 import com.kavi.pbc.web.network.session.Session
+import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -77,22 +84,68 @@ fun SelectedEvent(navController: NavController, eventId: String) {
 
     val viewModel: SelectedEventViewModel = viewModel { SelectedEventViewModel() }
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchAppAuthStatus()
+    }
+
+    val appAuthStatus by viewModel.appAuthStatus.collectAsState()
+
+    val showSignUpDialog = remember { mutableStateOf(false) }
+
     var screenType by remember { mutableStateOf(ScreenType.COMPUTER) }
 
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    PageContainer(
+        profileActionConfig = ProfileActionConfig(
+            appAuthStatus = appAuthStatus,
+            profileUserImageUrl = Session.user?.profilePicUrl,
+            onProfileClick = {
+                if (Session.isLogIn()) {
+                    // Navigate to profile screen
+                    println("Profile Tap")
+                }
+            },
+            onSignOutClick = {
+                // Invoke user authentication
+                if (Session.isLogIn()) {
+                    ContractServiceLocator.locate(AuthContract::class).signOut()
+                    viewModel.updateAuthStatus(AppAuthStatus.NONE)
+                }
+            },
+            onSignUpClick = {
+                // Navigate to register screen
+                showSignUpDialog.value = true
+            },
+            onSignInClick = {
+                // Invoke sign-in with Firebase-Google
+                ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
+                ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
+                    viewModel.updateAuthStatus(authStatus)
+                    if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
+                        // Navigate to register screen
+                        showSignUpDialog.value = true
+                    } else {
+                        // Re-login and update auth status
+                        AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                    }
+                }
+            }
+        )
     ) {
-        val maxWidth = this.maxWidth
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            val maxWidth = this.maxWidth
 
-        LaunchedEffect(Unit) {
-            viewModel.fetchEventDetails(eventId = eventId)
-            screenType = UIUtil.screenType(maxWidth)
-        }
+            LaunchedEffect(Unit) {
+                viewModel.fetchEventDetails(eventId = eventId)
+                screenType = UIUtil.screenType(maxWidth)
+            }
 
-        when(screenType) {
-            ScreenType.PHONE -> PhoneScreenUI(viewModel = viewModel)
-            else -> WebScreenUI(viewModel = viewModel)
+            when(screenType) {
+                ScreenType.PHONE -> PhoneScreenUI(viewModel = viewModel)
+                else -> WebScreenUI(viewModel = viewModel)
+            }
         }
     }
 }
