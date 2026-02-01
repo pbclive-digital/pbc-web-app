@@ -53,10 +53,6 @@ import com.kavi.pbc.web.pbc.container.ui.ProfileActionComponent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.lib_pbc_container.generated.resources.Res
-import pbcwebapp.lib_pbc_container.generated.resources.icon_container_appointment
-import pbcwebapp.lib_pbc_container.generated.resources.icon_container_ask_question
-import pbcwebapp.lib_pbc_container.generated.resources.icon_container_event
-import pbcwebapp.lib_pbc_container.generated.resources.icon_container_news
 import pbcwebapp.lib_pbc_container.generated.resources.image_container_pbc
 import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name
 import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name_short
@@ -65,6 +61,8 @@ import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name_
 @OptIn(ExperimentalMaterial3Api::class)
 fun PBCDashboardContainer(
     modifier: Modifier = Modifier,
+    authTabItemList: List<TabItem>,
+    unAuthTabItemList: List<TabItem>,
     tabContent: @Composable (selectedTabIndex: Int, appAuthStatus: AppAuthStatus?) -> Unit
 ) {
     val showSignUpDialog = remember { mutableStateOf(false) }
@@ -111,21 +109,6 @@ fun PBCDashboardContainer(
                     }
                 }
         }
-    )
-
-    val authTabItemList = listOf(
-        /*TabItem(name = "Home", icon = Res.drawable.icon_container_lotus),*/ // TODO - Keep this for future use
-        TabItem(name = "Events", icon = Res.drawable.icon_container_event),
-        TabItem(name = "News", icon = Res.drawable.icon_container_news),
-        TabItem(name = "Appointments", icon = Res.drawable.icon_container_appointment),
-        TabItem(name = "Questions", icon = Res.drawable.icon_container_ask_question)
-    )
-
-    val unauthTabItemList = listOf(
-        /*TabItem(name = "Home", icon = Res.drawable.icon_container_lotus),*/ // TODO - Keep this for future use
-        TabItem(name = "Events", icon = Res.drawable.icon_container_event),
-        TabItem(name = "News", icon = Res.drawable.icon_container_news),
-        TabItem(name = "Questions", icon = Res.drawable.icon_container_ask_question)
     )
 
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -270,7 +253,7 @@ fun PBCDashboardContainer(
                             }
                         }
                         else -> {
-                            unauthTabItemList.forEachIndexed { index, tabItem ->
+                            unAuthTabItemList.forEachIndexed { index, tabItem ->
                                 NavigationBarItem(
                                     modifier = Modifier
                                         .padding(4.dp),
@@ -294,15 +277,6 @@ fun PBCDashboardContainer(
                     }
                 }
             }
-
-            /*TabContent(
-                selectedTabIndex = selectedTabIndex,
-                appAuthStatus,
-                modifier = Modifier
-                    .padding(bottom = 50.dp)
-                    .fillMaxSize(),
-                navController = navController
-            )*/
 
             tabContent(selectedTabIndex, appAuthStatus)
         }

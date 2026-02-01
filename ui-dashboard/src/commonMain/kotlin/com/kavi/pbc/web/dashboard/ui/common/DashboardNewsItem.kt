@@ -20,7 +20,7 @@ import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.news.News
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_news_read_more
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_news_read_more
 
 @Composable
 fun DashboardNewsItem(modifier: Modifier = Modifier, news: News, onReadMore: () -> Unit) {
@@ -61,7 +61,7 @@ fun DashboardNewsItem(modifier: Modifier = Modifier, news: News, onReadMore: () 
             )
             Spacer(modifier = Modifier.weight(1f))
             AppLinkButton(
-                label = stringResource(Res.string.label_dashboard_news_read_more),
+                label = stringResource(Res.string.dashboard_label_news_read_more),
                 color = MaterialTheme.colorScheme.secondary,
             ) {
                 onReadMore.invoke()

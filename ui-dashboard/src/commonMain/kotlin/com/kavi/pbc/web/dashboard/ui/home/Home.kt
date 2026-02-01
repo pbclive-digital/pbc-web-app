@@ -59,22 +59,22 @@ import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
-import pbcwebapp.ui_dashboard.generated.resources.icon_facebook
-import pbcwebapp.ui_dashboard.generated.resources.icon_youtube
-import pbcwebapp.ui_dashboard.generated.resources.image_buddha
-import pbcwebapp.ui_dashboard.generated.resources.image_lotus
-import pbcwebapp.ui_dashboard.generated.resources.image_pagoda
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_about_us
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_call_us
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_contact_us
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_email_us
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_follow_us
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_no_news
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_news
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_news_more
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_visit_us
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_visit_us_address
-import pbcwebapp.ui_dashboard.generated.resources.phrase_dashboard_about_us
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_icon_facebook
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_icon_youtube
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_image_buddha
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_image_lotus
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_image_pagoda
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_about_us
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_call_us
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_contact_us
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_email_us
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_follow_us
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_no_news
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_news
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_news_more
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_visit_us
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_visit_us_address
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_phrase_about_us
 
 @Composable
 fun HomeUI(modifier: Modifier = Modifier, navController: NavController) {
@@ -143,7 +143,7 @@ private fun DailyQuoteAnimatorComponent(maxHeight: Dp, viewModel: HomeViewModel,
     var visible by remember { mutableStateOf(true) }
     val dashboardQuoteList by viewModel.dashboardQuoteList.collectAsState()
     val imageList = listOf(
-        Res.drawable.image_lotus, Res.drawable.image_buddha, Res.drawable.image_pagoda
+        Res.drawable.dashboard_image_lotus, Res.drawable.dashboard_image_buddha, Res.drawable.dashboard_image_pagoda
     )
 
     LaunchedEffect(Unit) {
@@ -283,7 +283,7 @@ private fun NewsColum(navController: NavController, viewModel: HomeViewModel) {
         Text(
             modifier = Modifier
                 .padding(start = 8.dp),
-            text = stringResource(Res.string.label_dashboard_news),
+            text = stringResource(Res.string.dashboard_label_news),
             textAlign = TextAlign.Justify,
             fontWeight = FontWeight.Bold,
             fontSize = 28.sp
@@ -322,7 +322,7 @@ private fun NewsColum(navController: NavController, viewModel: HomeViewModel) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 12.dp, bottom = 20.dp),
-                            label = stringResource(Res.string.label_dashboard_news_more),
+                            label = stringResource(Res.string.dashboard_label_news_more),
                             color = MaterialTheme.colorScheme.secondary,
                         ) {
                             navController.navigate("dashboard/to/news/list")
@@ -341,7 +341,7 @@ private fun NewsColum(navController: NavController, viewModel: HomeViewModel) {
                     ) {
                         Text(
                             modifier = Modifier.padding(12.dp),
-                            text = stringResource(Res.string.label_dashboard_no_news),
+                            text = stringResource(Res.string.dashboard_label_no_news),
                             textAlign = TextAlign.Center
                         )
                     }
@@ -360,14 +360,14 @@ fun AboutUs() {
         Text(
             modifier = Modifier
                 .padding(start = 8.dp),
-            text = stringResource(Res.string.label_dashboard_about_us),
+            text = stringResource(Res.string.dashboard_label_about_us),
             textAlign = TextAlign.Justify,
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp
         )
 
         Text(
-            text = stringResource(Res.string.phrase_dashboard_about_us),
+            text = stringResource(Res.string.dashboard_phrase_about_us),
             fontFamily = PBCFontFamily,
             fontSize = 16.sp,
             textAlign = TextAlign.Justify,
@@ -386,7 +386,7 @@ fun ContactUs() {
         horizontalAlignment = Alignment.Start
     ) {
         Text(
-            text = stringResource(Res.string.label_dashboard_contact_us),
+            text = stringResource(Res.string.dashboard_label_contact_us),
             textAlign = TextAlign.Justify,
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp
@@ -394,14 +394,14 @@ fun ContactUs() {
 
         AppLinkButton(
             modifier = Modifier.padding(top = 14.dp),
-            label = stringResource(Res.string.label_dashboard_call_us)
+            label = stringResource(Res.string.dashboard_label_call_us)
         ) {
             // Open Dialer to call to the number
         }
 
         AppLinkButton(
             modifier = Modifier.padding(top = 14.dp),
-            label = stringResource(Res.string.label_dashboard_email_us)
+            label = stringResource(Res.string.dashboard_label_email_us)
         ) {
             // Open Email app to compose
         }
@@ -409,7 +409,7 @@ fun ContactUs() {
         Text(
             modifier = Modifier
                 .padding(top = 30.dp),
-            text = stringResource(Res.string.label_dashboard_visit_us),
+            text = stringResource(Res.string.dashboard_label_visit_us),
             textAlign = TextAlign.Justify,
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp
@@ -417,7 +417,7 @@ fun ContactUs() {
 
         AppLinkButton(
             modifier = Modifier.padding(top = 14.dp),
-            label = stringResource(Res.string.label_dashboard_visit_us_address)
+            label = stringResource(Res.string.dashboard_label_visit_us_address)
         ) {
             // Open Email app to compose
         }
@@ -425,7 +425,7 @@ fun ContactUs() {
         Text(
             modifier = Modifier
                 .padding(top = 30.dp),
-            text = stringResource(Res.string.label_dashboard_follow_us),
+            text = stringResource(Res.string.dashboard_label_follow_us),
             textAlign = TextAlign.Justify,
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp
@@ -439,7 +439,7 @@ fun ContactUs() {
             horizontalArrangement = Arrangement.Start
         ) {
             Image(
-                painter = painterResource(Res.drawable.icon_facebook),
+                painter = painterResource(Res.drawable.dashboard_icon_facebook),
                 contentDescription = "Facebook icon",
                 modifier = Modifier
                     .size(80.dp)
@@ -450,7 +450,7 @@ fun ContactUs() {
             )
 
             Image(
-                painter = painterResource(Res.drawable.icon_youtube),
+                painter = painterResource(Res.drawable.dashboard_icon_youtube),
                 contentDescription = "Youtube icon",
                 modifier = Modifier
                     .size(80.dp)
