@@ -51,6 +51,7 @@ kotlin {
                 implementation(projects.libLocalDatastore)
                 implementation(projects.libNetwork)
                 implementation(projects.libLocalDatastore)
+                implementation(projects.libPbcContainer)
             }
         }
     }

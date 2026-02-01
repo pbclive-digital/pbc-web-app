@@ -15,23 +15,12 @@ import kotlinx.coroutines.launch
 class NewsListViewModel: ViewModel() {
 
     val newsRemoteRepository = NewsRemoteRepository()
-    val newsLocalRepository = NewsLocalRepository()
 
-    private val _appAuthStatus = MutableStateFlow(AppAuthStatus.NONE)
-    val appAuthStatus: StateFlow<AppAuthStatus> = _appAuthStatus
     private val _activeNewsList = MutableStateFlow<List<News>>(mutableListOf())
     val activeNewsList: StateFlow<List<News>> = _activeNewsList
 
     private val _activeNewsFetchStatus = MutableStateFlow(NewsListUiState.NONE)
     val activeNewsFetchStatus: StateFlow<NewsListUiState> = _activeNewsFetchStatus
-
-    fun fetchAppAuthStatus() {
-        _appAuthStatus.value = newsLocalRepository.getAppAuthStatus()
-    }
-
-    fun updateAuthStatus(authStatus: AppAuthStatus) {
-        _appAuthStatus.value = authStatus
-    }
 
     fun fetchActiveNewsList() {
         _activeNewsFetchStatus.value = NewsListUiState.PENDING

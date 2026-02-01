@@ -46,8 +46,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kavi.pbc.web.common.ui.component.AppFullScreenLoader
-import com.kavi.pbc.web.common.ui.component.PageContainer
-import com.kavi.pbc.web.common.ui.model.ProfileActionConfig
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.news.News
@@ -56,12 +54,6 @@ import com.kavi.pbc.web.news.ui.common.NewsItem
 import com.kavi.pbc.web.news.ui.sheet.NewsSelectedBottomSheetUI
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
-import com.kavi.pbc.web.data.auth.AppAuthStatus
-import com.kavi.pbc.web.datastore.AppLocalStore
-import com.kavi.pbc.web.datastore.DataKey
-import com.kavi.pbc.web.network.session.Session
-import com.kavi.pbc.web.parent.contract.ContractServiceLocator
-import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -72,66 +64,10 @@ import pbcwebapp.ui_news.generated.resources.label_news_reference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewsListUI(navController: NavController, isContainerRequired: Boolean = false) {
+fun NewsListUI(navController: NavController) {
 
     val viewModel: NewsListViewModel = viewModel { NewsListViewModel() }
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchAppAuthStatus()
-    }
-
-    val appAuthStatus by viewModel.appAuthStatus.collectAsState()
-
-    val showSignUpDialog = remember { mutableStateOf(false) }
-
-    if (isContainerRequired) {
-        PageContainer(
-            profileActionConfig = ProfileActionConfig(
-                appAuthStatus = appAuthStatus,
-                profileUserImageUrl = Session.user?.profilePicUrl,
-                onProfileClick = {
-                    if (Session.isLogIn()) {
-                        // Navigate to profile screen
-                        println("Profile Tap")
-                    }
-                },
-                onSignOutClick = {
-                    // Invoke user authentication
-                    if (Session.isLogIn()) {
-                        ContractServiceLocator.locate(AuthContract::class).signOut()
-                        viewModel.updateAuthStatus(AppAuthStatus.NONE)
-                    }
-                },
-                onSignUpClick = {
-                    // Navigate to register screen
-                    showSignUpDialog.value = true
-                },
-                onSignInClick = {
-                    // Invoke sign-in with Firebase-Google
-                    ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
-                    ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
-                        viewModel.updateAuthStatus(authStatus)
-                        if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
-                            // Navigate to register screen
-                            showSignUpDialog.value = true
-                        } else {
-                            // Re-login and update auth status
-                            AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
-                        }
-                    }
-                }
-            )
-        ) {
-            PageContent(viewModel = viewModel)
-        }
-    } else {
-        PageContent(viewModel = viewModel)
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun PageContent(viewModel: NewsListViewModel) {
     val activeNewsFetchStatus by viewModel.activeNewsFetchStatus.collectAsState()
     val activeNewsList by viewModel.activeNewsList.collectAsState()
 

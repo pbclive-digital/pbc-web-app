@@ -22,8 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -32,18 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.kavi.pbc.web.common.ui.component.PageContainer
-import com.kavi.pbc.web.common.ui.model.ProfileActionConfig
 import com.kavi.pbc.web.event.ui.common.EventItem
 import com.kavi.pbc.web.event.ui.common.EventListItem
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
-import com.kavi.pbc.web.data.auth.AppAuthStatus
-import com.kavi.pbc.web.datastore.AppLocalStore
-import com.kavi.pbc.web.datastore.DataKey
-import com.kavi.pbc.web.network.session.Session
-import com.kavi.pbc.web.parent.contract.ContractServiceLocator
-import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.navigation.EventPath
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
@@ -51,69 +41,9 @@ import pbcwebapp.ui_event.generated.resources.label_event_past
 import pbcwebapp.ui_event.generated.resources.label_event_upcoming
 
 @Composable
-fun EventListUI(navController: NavController, isContainerRequired: Boolean = false) {
+fun EventListUI(navController: NavController) {
 
     val viewModel: EventListViewModel = viewModel { EventListViewModel() }
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchAppAuthStatus()
-    }
-
-    val appAuthStatus by viewModel.appAuthStatus.collectAsState()
-
-    val showSignUpDialog = remember { mutableStateOf(false) }
-
-    if (isContainerRequired) {
-        PageContainer(
-            profileActionConfig = ProfileActionConfig(
-                appAuthStatus = appAuthStatus,
-                profileUserImageUrl = Session.user?.profilePicUrl,
-                onProfileClick = {
-                    if (Session.isLogIn()) {
-                        // Navigate to profile screen
-                        println("Profile Tap")
-                    }
-                },
-                onSignOutClick = {
-                    // Invoke user authentication
-                    if (Session.isLogIn()) {
-                        ContractServiceLocator.locate(AuthContract::class).signOut()
-                        viewModel.updateAuthStatus(AppAuthStatus.NONE)
-                    }
-                },
-                onSignUpClick = {
-                    // Navigate to register screen
-                    showSignUpDialog.value = true
-                },
-                onSignInClick = {
-                    // Invoke sign-in with Firebase-Google
-                    ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
-                    ContractServiceLocator.locate(AuthContract::class)
-                        .retrieveCurrentAuthStatus { authStatus ->
-                            viewModel.updateAuthStatus(authStatus)
-                            if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
-                                // Navigate to register screen
-                                showSignUpDialog.value = true
-                            } else {
-                                // Re-login and update auth status
-                                AppLocalStore.shared.storeValue(
-                                    DataKey.APP_USER_AUTH_STATUS,
-                                    authStatus
-                                )
-                            }
-                        }
-                }
-            )
-        ) {
-            PageContent(navController = navController, viewModel = viewModel)
-        }
-    } else {
-        PageContent(navController = navController, viewModel = viewModel)
-    }
-}
-
-@Composable
-private fun PageContent(navController: NavController, viewModel: EventListViewModel) {
 
     val upcomingEventList by viewModel.upcomingEventList.collectAsState()
     val pastEventList by viewModel.pastEventList.collectAsState()

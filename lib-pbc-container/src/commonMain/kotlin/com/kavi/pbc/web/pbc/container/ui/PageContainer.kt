@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.common.ui.component
+package com.kavi.pbc.web.pbc.container.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,15 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.kavi.pbc.web.common.ui.model.ProfileActionConfig
+import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
+import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import pbcwebapp.lib_common_ui.generated.resources.Res
-import pbcwebapp.lib_common_ui.generated.resources.image_common_pbc
-import pbcwebapp.lib_common_ui.generated.resources.label_common_pbc_name
-import pbcwebapp.lib_common_ui.generated.resources.label_common_pbc_name_short
+import pbcwebapp.lib_pbc_container.generated.resources.Res
+import pbcwebapp.lib_pbc_container.generated.resources.image_container_pbc
+import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name
+import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name_short
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +78,7 @@ fun PageContainer(
                             Image(
                                 modifier = Modifier
                                     .size(90.dp),
-                                painter = painterResource(Res.drawable.image_common_pbc),
+                                painter = painterResource(Res.drawable.image_container_pbc),
                                 contentDescription = "PBC image with name"
                             )
                         }
@@ -90,14 +91,14 @@ fun PageContainer(
                             when (screenType) {
                                 ScreenType.PHONE -> {
                                     Title(
-                                        titleText = stringResource(Res.string.label_common_pbc_name_short),
+                                        titleText = stringResource(Res.string.label_container_pbc_name_short),
                                         textSize = 32,
                                         textColor = MaterialTheme.colorScheme.onPrimary,
                                     )
                                 }
                                 else -> {
                                     Title(
-                                        titleText = stringResource(Res.string.label_common_pbc_name),
+                                        titleText = stringResource(Res.string.label_container_pbc_name),
                                         textSize = 32,
                                         textColor = MaterialTheme.colorScheme.onPrimary,
                                     )

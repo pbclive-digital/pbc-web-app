@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.common.ui.model
+package com.kavi.pbc.web.pbc.container.model
 
 import com.kavi.pbc.web.data.auth.AppAuthStatus
 

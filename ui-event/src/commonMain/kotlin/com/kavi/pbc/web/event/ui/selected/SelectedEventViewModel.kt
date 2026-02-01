@@ -12,7 +12,6 @@ import com.kavi.pbc.web.data.event.register.EventRegistrationItem
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetContributor
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
 import com.kavi.pbc.web.event.data.model.EventActionUiState
-import com.kavi.pbc.web.event.data.repository.local.EventLocalRepository
 import com.kavi.pbc.web.event.data.repository.remote.EventRemoteRepository
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.network.session.Session
@@ -22,10 +21,6 @@ import kotlinx.coroutines.launch
 
 class SelectedEventViewModel: ViewModel() {
     val eventRemoteRepository = EventRemoteRepository()
-    val eventLocalRepository = EventLocalRepository()
-
-    private val _appAuthStatus = MutableStateFlow(AppAuthStatus.NONE)
-    val appAuthStatus: StateFlow<AppAuthStatus> = _appAuthStatus
 
     private val _selectedEvent = MutableStateFlow<Event>(Event())
     val selectedEvent: StateFlow<Event> = _selectedEvent
@@ -40,14 +35,6 @@ class SelectedEventViewModel: ViewModel() {
 
     private val _eventActionUiState = MutableStateFlow(EventActionUiState.NONE)
     val eventActionUiState: StateFlow<EventActionUiState> = _eventActionUiState
-
-    fun fetchAppAuthStatus() {
-        _appAuthStatus.value = eventLocalRepository.getAppAuthStatus()
-    }
-
-    fun updateAuthStatus(authStatus: AppAuthStatus) {
-        _appAuthStatus.value = authStatus
-    }
 
     fun fetchEventDetails(eventId: String) {
         viewModelScope.launch {

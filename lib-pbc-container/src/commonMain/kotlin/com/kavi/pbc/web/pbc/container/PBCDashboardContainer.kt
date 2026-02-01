@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.dashboard.ui
+package com.kavi.pbc.web.pbc.container
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,64 +37,122 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
-import com.kavi.pbc.web.dashboard.data.model.TabItem
-import com.kavi.pbc.web.dashboard.ui.event.EventsUI
-import com.kavi.pbc.web.dashboard.ui.news.NewsUI
-import com.kavi.pbc.web.dashboard.ui.appointment.AppointmentUI
-import com.kavi.pbc.web.dashboard.ui.question.QuestionUI
+import com.kavi.pbc.web.common.ui.util.ScreenType
+import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.datastore.AppLocalStore
 import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
-import com.kavi.pbc.web.common.ui.util.ScreenType
-import com.kavi.pbc.web.common.ui.util.UIUtil
-import com.kavi.pbc.web.pbc.container.PBCDashboardContainer
 import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
+import com.kavi.pbc.web.pbc.container.model.TabItem
 import com.kavi.pbc.web.pbc.container.ui.ProfileActionComponent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import pbcwebapp.ui_dashboard.generated.resources.Res
-import pbcwebapp.ui_dashboard.generated.resources.icon_appointment
-import pbcwebapp.ui_dashboard.generated.resources.icon_ask_question
-import pbcwebapp.ui_dashboard.generated.resources.icon_event
-import pbcwebapp.ui_dashboard.generated.resources.icon_news
-import pbcwebapp.ui_dashboard.generated.resources.image_pbc
-import pbcwebapp.ui_dashboard.generated.resources.label_dashboard_pbc
+import pbcwebapp.lib_pbc_container.generated.resources.Res
+import pbcwebapp.lib_pbc_container.generated.resources.icon_container_appointment
+import pbcwebapp.lib_pbc_container.generated.resources.icon_container_ask_question
+import pbcwebapp.lib_pbc_container.generated.resources.icon_container_event
+import pbcwebapp.lib_pbc_container.generated.resources.icon_container_news
+import pbcwebapp.lib_pbc_container.generated.resources.image_container_pbc
+import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name
+import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name_short
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardUI(navController: NavController) {
-
-    /*var appAuthStatus by remember {
-        mutableStateOf(AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS))
-    }
-
-    var isExpanded by remember { mutableStateOf(false) }
+@OptIn(ExperimentalMaterial3Api::class)
+fun PBCDashboardContainer(
+    modifier: Modifier = Modifier,
+    tabContent: @Composable (selectedTabIndex: Int, appAuthStatus: AppAuthStatus?) -> Unit
+) {
     val showSignUpDialog = remember { mutableStateOf(false) }
 
+    var appAuthStatus by remember {
+        mutableStateOf(
+            AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS)
+                ?: run { AppAuthStatus.NONE }
+        )
+    }
+
+    val profileActionConfig = ProfileActionConfig(
+        appAuthStatus = appAuthStatus,
+        profileUserImageUrl = Session.user?.profilePicUrl,
+        onProfileClick = {
+            if (Session.isLogIn()) {
+                // Navigate to profile screen
+                println("Profile Tap")
+            }
+        },
+        onSignOutClick = {
+            // Invoke user authentication
+            if (Session.isLogIn()) {
+                ContractServiceLocator.locate(AuthContract::class).signOut()
+                appAuthStatus = AppAuthStatus.NONE
+            }
+        },
+        onSignUpClick = {
+            // Navigate to register screen
+            showSignUpDialog.value = true
+        },
+        onSignInClick = {
+            // Invoke sign-in with Firebase-Google
+            ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
+            ContractServiceLocator.locate(AuthContract::class)
+                .retrieveCurrentAuthStatus { authStatus ->
+                    appAuthStatus = authStatus
+                    if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
+                        // Navigate to register screen
+                        showSignUpDialog.value = true
+                    } else {
+                        // Re-login and update auth status
+                        AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                    }
+                }
+        }
+    )
+
     val authTabItemList = listOf(
-        *//*TabItem(name = "Home", icon = Res.drawable.icon_lotus),*//* // TODO - Keep this for future use
-        TabItem(name = "Events", icon = Res.drawable.icon_event),
-        TabItem(name = "News", icon = Res.drawable.icon_news),
-        TabItem(name = "Appointments", icon = Res.drawable.icon_appointment),
-        TabItem(name = "Questions", icon = Res.drawable.icon_ask_question)
+        /*TabItem(name = "Home", icon = Res.drawable.icon_container_lotus),*/ // TODO - Keep this for future use
+        TabItem(name = "Events", icon = Res.drawable.icon_container_event),
+        TabItem(name = "News", icon = Res.drawable.icon_container_news),
+        TabItem(name = "Appointments", icon = Res.drawable.icon_container_appointment),
+        TabItem(name = "Questions", icon = Res.drawable.icon_container_ask_question)
     )
 
     val unauthTabItemList = listOf(
-        *//*TabItem(name = "Home", icon = Res.drawable.icon_lotus),*//* // TODO - Keep this for future use
-        TabItem(name = "Events", icon = Res.drawable.icon_event),
-        TabItem(name = "News", icon = Res.drawable.icon_news),
-        TabItem(name = "Questions", icon = Res.drawable.icon_ask_question)
+        /*TabItem(name = "Home", icon = Res.drawable.icon_container_lotus),*/ // TODO - Keep this for future use
+        TabItem(name = "Events", icon = Res.drawable.icon_container_event),
+        TabItem(name = "News", icon = Res.drawable.icon_container_news),
+        TabItem(name = "Questions", icon = Res.drawable.icon_container_ask_question)
     )
 
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
+    if (showSignUpDialog.value) {
+        ContractServiceLocator.locate(AuthContract::class).ProvideRegisterUI(
+            showDialog = showSignUpDialog,
+            onAuthenticated = {
+                appAuthStatus = AppAuthStatus.SIGN_IN
+                // Re-login and update auth status
+                AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, appAuthStatus)
+                showSignUpDialog.value = false
+            },
+            onCreatedWithoutAuth = {
+                appAuthStatus = AppAuthStatus.FAILED
+                // Re-login and update auth status
+                AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, appAuthStatus)
+                showSignUpDialog.value = false
+            },
+            onCancel = {
+                showSignUpDialog.value = false
+            }
+        )
+    }
+
     BoxWithConstraints(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
@@ -109,7 +167,7 @@ fun DashboardUI(navController: NavController) {
         }
 
         Column {
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp)
@@ -120,11 +178,11 @@ fun DashboardUI(navController: NavController) {
                 Column {
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Row (
+                    Row(
                         modifier = Modifier.padding(start = sidePadding, end = sidePadding),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Box (
+                        Box(
                             modifier = Modifier
                                 .size(100.dp)
                                 .clip(CircleShape)
@@ -134,90 +192,41 @@ fun DashboardUI(navController: NavController) {
                             Image(
                                 modifier = Modifier
                                     .size(90.dp),
-                                painter = painterResource(Res.drawable.image_pbc),
+                                painter = painterResource(Res.drawable.image_container_pbc),
                                 contentDescription = "PBC image with name"
                             )
                         }
 
-                        Column (
+                        Column(
                             modifier = Modifier.padding(start = 20.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.Start
                         ) {
-                            Text(
-                                text = stringResource(Res.string.label_dashboard_pbc),
-                                fontFamily = PBCFontFamily,
-                                fontSize = 32.sp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
+                            when (screenType) {
+                                ScreenType.PHONE -> {
+                                    Title(
+                                        titleText = stringResource(Res.string.label_container_pbc_name_short),
+                                        textSize = 32,
+                                        textColor = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+
+                                else -> {
+                                    Title(
+                                        titleText = stringResource(Res.string.label_container_pbc_name),
+                                        textSize = 32,
+                                        textColor = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        ProfileActionComponent(profileActionConfig = ProfileActionConfig(
-                            appAuthStatus = appAuthStatus,
-                            profileUserImageUrl = Session.user?.profilePicUrl,
-                            onProfileClick = {
-                                if (Session.isLogIn()) {
-                                    // Navigate to profile screen
-                                    println("Profile Tap")
-                                }
-                            },
-                            onSignOutClick = {
-                                // Invoke user authentication
-                                if (Session.isLogIn()) {
-                                    ContractServiceLocator.locate(AuthContract::class).signOut()
-                                    appAuthStatus = AppAuthStatus.NONE
-                                }
-                            },
-                            onSignUpClick = {
-                                // Navigate to register screen
-                                showSignUpDialog.value = true
-                            },
-                            onSignInClick = {
-                                // Invoke sign-in with Firebase-Google
-                                ContractServiceLocator.locate(AuthContract::class)
-                                    .signInWithFirebaseGoogle()
-                                ContractServiceLocator.locate(AuthContract::class)
-                                    .retrieveCurrentAuthStatus { authStatus ->
-                                        appAuthStatus = authStatus
-                                        if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
-                                            // Navigate to register screen
-                                            showSignUpDialog.value = true
-                                        } else {
-                                            // Re-login and update auth status
-                                            AppLocalStore.shared.storeValue(
-                                                DataKey.APP_USER_AUTH_STATUS,
-                                                authStatus
-                                            )
-                                        }
-                                    }
-                            }
-                        ))
+                        ProfileActionComponent(profileActionConfig = profileActionConfig)
                     }
                 }
             }
-        }
-
-        if (showSignUpDialog.value) {
-            ContractServiceLocator.locate(AuthContract::class).ProvideRegisterUI(
-                showDialog = showSignUpDialog,
-                onAuthenticated = {
-                    appAuthStatus = AppAuthStatus.SIGN_IN
-                    // Re-login and update auth status
-                    AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, appAuthStatus)
-                    showSignUpDialog.value = false
-                },
-                onCreatedWithoutAuth = {
-                    appAuthStatus = AppAuthStatus.FAILED
-                    // Re-login and update auth status
-                    AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, appAuthStatus)
-                    showSignUpDialog.value = false
-                },
-                onCancel = {
-                    showSignUpDialog.value = false
-                }
-            )
         }
 
         Column (
@@ -286,68 +295,20 @@ fun DashboardUI(navController: NavController) {
                 }
             }
 
-            TabContent(
+            /*TabContent(
                 selectedTabIndex = selectedTabIndex,
                 appAuthStatus,
                 modifier = Modifier
                     .padding(bottom = 50.dp)
                     .fillMaxSize(),
                 navController = navController
-            )
-        }
-    }*/
+            )*/
 
-    PBCDashboardContainer { selectedTabIndex, appAuthStatus ->
-        when(appAuthStatus) {
-            AppAuthStatus.SIGN_IN -> {
-                when (selectedTabIndex) {
-                    /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
-                    0 -> EventsUI(navController = navController)
-                    1 -> NewsUI(navController = navController)
-                    2 -> AppointmentUI(navController = navController)
-                    3 -> QuestionUI(navController = navController)
-                }
-            }
-            else -> {
-                when (selectedTabIndex) {
-                    /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
-                    0 -> EventsUI(navController = navController)
-                    1 -> NewsUI(navController = navController)
-                    2 -> QuestionUI(navController = navController)
-                }
-            }
+            tabContent(selectedTabIndex, appAuthStatus)
         }
     }
 }
 
-/*@Composable
-fun TabContent(
-    selectedTabIndex: Int,
-    appAuthStatus: AppAuthStatus?,
-    navController: NavController
-) {
-    when(appAuthStatus) {
-        AppAuthStatus.SIGN_IN -> {
-            when (selectedTabIndex) {
-                *//*0 -> HomeUI(navController = navController)*//* // TODO - Keep this for future
-                0 -> EventsUI(navController = navController)
-                1 -> NewsUI(navController = navController)
-                2 -> AppointmentUI(navController = navController)
-                3 -> QuestionUI(navController = navController)
-            }
-        }
-        else -> {
-            when (selectedTabIndex) {
-                *//*0 -> HomeUI(navController = navController)*//* // TODO - Keep this for future
-                0 -> EventsUI(navController = navController)
-                1 -> NewsUI(navController = navController)
-                2 -> QuestionUI(navController = navController)
-            }
-        }
-    }
-}*/
-
-/*
 @Composable
 fun navigationBarColors(): NavigationBarItemColors {
     return NavigationBarItemColors(
@@ -359,4 +320,4 @@ fun navigationBarColors(): NavigationBarItemColors {
         disabledIconColor = Color.Gray,
         disabledTextColor = Color.Gray,
     )
-}*/
+}
