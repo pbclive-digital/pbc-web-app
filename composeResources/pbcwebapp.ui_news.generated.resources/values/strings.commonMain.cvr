@@ -1,4 +1,4 @@
 version:0
-string|label_news_active_fetch_empty|Tm8gYWN0aXZlIE5ld3MgYXZhaWxhYmxlIGF0IHRoaXMgdGltZS4=
-string|label_news_read_more|UmVhZCBNb3Jl
-string|label_news_reference|UmVmZXJlbmNl
+string|news_label_active_fetch_empty|Tm8gYWN0aXZlIE5ld3MgYXZhaWxhYmxlIGF0IHRoaXMgdGltZS4=
+string|news_label_read_more|UmVhZCBNb3Jl
+string|news_label_reference|UmVmZXJlbmNl
