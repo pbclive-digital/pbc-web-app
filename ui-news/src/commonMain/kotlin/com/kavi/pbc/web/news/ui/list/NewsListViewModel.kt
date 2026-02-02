@@ -2,11 +2,9 @@ package com.kavi.pbc.web.news.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.data.news.News
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.news.data.model.NewsListUiState
-import com.kavi.pbc.web.news.data.repository.local.NewsLocalRepository
 import com.kavi.pbc.web.news.data.repository.remote.NewsRemoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

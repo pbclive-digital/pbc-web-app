@@ -25,7 +25,7 @@ import pbcwebapp.ui_news.generated.resources.news_label_read_more
 @Composable
 fun NewsItem(modifier: Modifier = Modifier, news: News, onReadMore: () -> Unit) {
     Column (
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {

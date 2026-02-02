@@ -66,7 +66,6 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
 
     val givenEvent by viewModel.selectedEvent.collectAsState()
     val eventActionUiState by viewModel.eventActionUiState.collectAsState()
-    var isLoading by remember { mutableStateOf(false) }
 
     ModalBottomSheet(
         sheetState = sheetState,

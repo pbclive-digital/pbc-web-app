@@ -2,7 +2,6 @@ package com.kavi.pbc.web.event.ui.selected
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.data.event.Event
 import com.kavi.pbc.web.data.event.potluck.EventPotluck
 import com.kavi.pbc.web.data.event.potluck.EventPotluckContributor

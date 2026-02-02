@@ -25,7 +25,7 @@ import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_news_read_more
 @Composable
 fun DashboardNewsItem(modifier: Modifier = Modifier, news: News, onReadMore: () -> Unit) {
     Column (
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
