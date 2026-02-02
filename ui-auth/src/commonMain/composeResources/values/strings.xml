@@ -6,4 +6,9 @@
     <string name="auth_label_phone_num">Phone #</string>
     <string name="auth_label_address">Address</string>
     <string name="auth_phrase_welcome_msg">We’d love to have you with us, create your account now. Create an account in PBC will help us to connect with you easily and more frequent.</string>
+
+    <string name="auth_label_join_us">Join with us</string>
+    <string name="auth_label_close">Close</string>
+    <string name="auth_phrase_join_us">Pittsburgh Buddhist Center warmly welcome you to join with us on this spiritual journey by registering here.</string>
+    <string name="auth_phrase_join_us_guide">Join us by clicking on the Dhamma Chakkra icon on Top-Right corner.</string>
 </resources>

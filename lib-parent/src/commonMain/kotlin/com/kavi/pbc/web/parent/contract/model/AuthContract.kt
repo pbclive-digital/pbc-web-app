@@ -16,4 +16,7 @@ interface AuthContract: CommonContract {
     @Composable
     fun ProvideRegisterUI(showDialog: MutableState<Boolean>, onAuthenticated: () -> Unit,
                           onCreatedWithoutAuth: () -> Unit, onCancel: () -> Unit)
+
+    @Composable
+    fun ProvideSignUpInviteUI(showDialog: MutableState<Boolean>, onCancel: () -> Unit)
 }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +21,7 @@ import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 @Composable
 fun AppBasicDialog(
+    modifier: Modifier = Modifier,
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
     content: @Composable () -> Unit
@@ -36,7 +36,7 @@ fun AppBasicDialog(
             )
         ) {
             BoxWithConstraints (
-                modifier = Modifier.fillMaxSize(),
+                modifier = modifier,
                 contentAlignment = Alignment.Center
             ) {
                 val screenWidth = this.maxWidth

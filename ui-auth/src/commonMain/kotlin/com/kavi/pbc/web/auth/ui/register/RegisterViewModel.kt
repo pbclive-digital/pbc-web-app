@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.auth.ui
+package com.kavi.pbc.web.auth.ui.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

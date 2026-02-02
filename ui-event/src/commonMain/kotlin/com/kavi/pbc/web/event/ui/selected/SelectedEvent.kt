@@ -51,6 +51,8 @@ import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheet
 import com.kavi.pbc.web.event.ui.common.SignUpSheetItemUI
 import com.kavi.pbc.web.network.session.Session
+import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -193,10 +195,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
     val selectedEvent by viewModel.selectedEvent.collectAsState()
     val eventSignUpSheetData by viewModel.eventSignUpSheetData.collectAsState()
 
-    val authInviteSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-    val showAuthInviteSheet = remember { mutableStateOf(false) }
+    val showAuthInviteDialog = remember { mutableStateOf(false) }
 
     val registrationSheetState = rememberModalBottomSheetState()
     val showRegistrationSheet = remember { mutableStateOf(false) }
@@ -383,7 +382,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                     if (Session.isLogIn())
                         showRegistrationSheet.value = true
                     else
-                        showAuthInviteSheet.value = true
+                        showAuthInviteDialog.value = true
                 }
             }
         }
@@ -430,7 +429,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                     if (Session.isLogIn())
                         showPotluckSheet.value = true
                     else
-                        showAuthInviteSheet.value = true
+                        showAuthInviteDialog.value = true
                 }
             }
         }
@@ -474,13 +473,22 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                                     selectedSignUpSheetItem.value = signUpSheetItem
                                     showSignUpSheetBottomSheet.value = true
                                 } else
-                                    showAuthInviteSheet.value = true
+                                    showAuthInviteDialog.value = true
                             },
                         signUpSheet = signUpSheetItem
                     )
                 }
             }
         }
+    }
+
+    if (showAuthInviteDialog.value) {
+        ContractServiceLocator.locate(AuthContract::class).ProvideSignUpInviteUI(
+            showDialog = showAuthInviteDialog,
+            onCancel = {
+                showAuthInviteDialog.value = false
+            }
+        )
     }
 
     if (showRegistrationSheet.value) {
