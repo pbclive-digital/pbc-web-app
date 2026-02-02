@@ -32,12 +32,12 @@ import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.lib_pbc_container.generated.resources.Res
-import pbcwebapp.lib_pbc_container.generated.resources.icon_container_profile
-import pbcwebapp.lib_pbc_container.generated.resources.image_container_dhamma_chakra_256
-import pbcwebapp.lib_pbc_container.generated.resources.label_container_profile
-import pbcwebapp.lib_pbc_container.generated.resources.label_container_sign_in
-import pbcwebapp.lib_pbc_container.generated.resources.label_container_sign_out
-import pbcwebapp.lib_pbc_container.generated.resources.label_container_sign_up
+import pbcwebapp.lib_pbc_container.generated.resources.container_icon_profile
+import pbcwebapp.lib_pbc_container.generated.resources.container_image_dhamma_chakra_256
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_profile
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_sign_in
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_sign_out
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_sign_up
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +69,7 @@ fun ProfileActionComponent(
                             .build(),
                         contentDescription = "Profile Picture",
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(Res.drawable.icon_container_profile),
+                        placeholder = painterResource(Res.drawable.container_icon_profile),
                         modifier = Modifier
                             .size(50.dp)
                             .padding(5.dp)
@@ -78,7 +78,7 @@ fun ProfileActionComponent(
                 }
                 else -> {
                     Image(
-                        painterResource(Res.drawable.image_container_dhamma_chakra_256),
+                        painterResource(Res.drawable.container_image_dhamma_chakra_256),
                         contentDescription = "Dhamma chakkra",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -102,14 +102,14 @@ fun ProfileActionComponent(
             when(profileActionConfig.appAuthStatus) {
                 AppAuthStatus.SIGN_IN -> {
                     DropdownMenuItem(
-                        text = { Text(stringResource(Res.string.label_container_profile)) },
+                        text = { Text(stringResource(Res.string.container_label_profile)) },
                         onClick = {
                             profileActionConfig.onProfileClick.invoke()
                             isExpanded = false
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text(stringResource(Res.string.label_container_sign_out)) },
+                        text = { Text(stringResource(Res.string.container_label_sign_out)) },
                         onClick = {
                             profileActionConfig.onSignOutClick.invoke()
                             isExpanded = false
@@ -118,7 +118,7 @@ fun ProfileActionComponent(
                 }
                 AppAuthStatus.SIGN_UP_REQUIRED -> {
                     DropdownMenuItem(
-                        text = { Text(stringResource(Res.string.label_container_sign_up)) },
+                        text = { Text(stringResource(Res.string.container_label_sign_up)) },
                         onClick = {
                             // Navigate to register screen
                             profileActionConfig.onSignUpClick.invoke()
@@ -126,7 +126,7 @@ fun ProfileActionComponent(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text(stringResource(Res.string.label_container_sign_out)) },
+                        text = { Text(stringResource(Res.string.container_label_sign_out)) },
                         onClick = {
                             profileActionConfig.onSignOutClick.invoke()
                             isExpanded = false
@@ -135,7 +135,7 @@ fun ProfileActionComponent(
                 }
                 else -> {
                     DropdownMenuItem(
-                        text = { Text(stringResource(Res.string.label_container_sign_in)) },
+                        text = { Text(stringResource(Res.string.container_label_sign_in)) },
                         onClick = {
                             // Invoke sign-in with Firebase-Google
                             profileActionConfig.onSignInClick.invoke()

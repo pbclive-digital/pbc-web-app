@@ -28,9 +28,9 @@ import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.lib_pbc_container.generated.resources.Res
-import pbcwebapp.lib_pbc_container.generated.resources.image_container_pbc
-import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name
-import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name_short
+import pbcwebapp.lib_pbc_container.generated.resources.container_image_pbc
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_pbc_name
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_pbc_name_short
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,7 +78,7 @@ fun PageContainer(
                             Image(
                                 modifier = Modifier
                                     .size(90.dp),
-                                painter = painterResource(Res.drawable.image_container_pbc),
+                                painter = painterResource(Res.drawable.container_image_pbc),
                                 contentDescription = "PBC image with name"
                             )
                         }
@@ -91,14 +91,14 @@ fun PageContainer(
                             when (screenType) {
                                 ScreenType.PHONE -> {
                                     Title(
-                                        titleText = stringResource(Res.string.label_container_pbc_name_short),
+                                        titleText = stringResource(Res.string.container_label_pbc_name_short),
                                         textSize = 32,
                                         textColor = MaterialTheme.colorScheme.onPrimary,
                                     )
                                 }
                                 else -> {
                                     Title(
-                                        titleText = stringResource(Res.string.label_container_pbc_name),
+                                        titleText = stringResource(Res.string.container_label_pbc_name),
                                         textSize = 32,
                                         textColor = MaterialTheme.colorScheme.onPrimary,
                                     )

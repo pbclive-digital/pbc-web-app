@@ -36,9 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kavi.pbc.web.common.ui.component.Title
-import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.auth.AppAuthStatus
@@ -53,9 +51,9 @@ import com.kavi.pbc.web.pbc.container.ui.ProfileActionComponent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.lib_pbc_container.generated.resources.Res
-import pbcwebapp.lib_pbc_container.generated.resources.image_container_pbc
-import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name
-import pbcwebapp.lib_pbc_container.generated.resources.label_container_pbc_name_short
+import pbcwebapp.lib_pbc_container.generated.resources.container_image_pbc
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_pbc_name
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_pbc_name_short
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -175,7 +173,7 @@ fun PBCDashboardContainer(
                             Image(
                                 modifier = Modifier
                                     .size(90.dp),
-                                painter = painterResource(Res.drawable.image_container_pbc),
+                                painter = painterResource(Res.drawable.container_image_pbc),
                                 contentDescription = "PBC image with name"
                             )
                         }
@@ -188,7 +186,7 @@ fun PBCDashboardContainer(
                             when (screenType) {
                                 ScreenType.PHONE -> {
                                     Title(
-                                        titleText = stringResource(Res.string.label_container_pbc_name_short),
+                                        titleText = stringResource(Res.string.container_label_pbc_name_short),
                                         textSize = 32,
                                         textColor = MaterialTheme.colorScheme.onPrimary,
                                     )
@@ -196,7 +194,7 @@ fun PBCDashboardContainer(
 
                                 else -> {
                                     Title(
-                                        titleText = stringResource(Res.string.label_container_pbc_name),
+                                        titleText = stringResource(Res.string.container_label_pbc_name),
                                         textSize = 32,
                                         textColor = MaterialTheme.colorScheme.onPrimary,
                                     )
