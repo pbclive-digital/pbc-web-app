@@ -2,7 +2,11 @@ package com.kavi.pbc.web.splash.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kavi.pbc.web.datastore.AppLocalStore
+import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.model.ResultWrapper
+import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.splash.data.model.SplashUiState
 import com.kavi.pbc.web.splash.data.repository.remote.SplashRemoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +27,11 @@ class SplashViewModel: ViewModel() {
                     _splashUiState.value = SplashUiState.ON_ERROR
                 }
                 is ResultWrapper.Success -> {
-                    _splashUiState.value = SplashUiState.ON_DASHBOARD_NAV
+                    // Check authentication status
+                    ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
+                        AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                        _splashUiState.value = SplashUiState.ON_DASHBOARD_NAV
+                    }
                 }
             }
         }

@@ -51,11 +51,6 @@ fun SplashUI(navController: NavHostController) {
 
     LaunchedEffect(Unit) {
         viewModel.fetchConfig()
-
-        // Check authentication status
-        ContractServiceLocator.locate(AuthContract::class).retrieveCurrentAuthStatus { authStatus ->
-            AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
-        }
     }
 
     Box(
@@ -72,7 +67,6 @@ fun SplashUI(navController: NavHostController) {
 
     when(splashUiState) {
         SplashUiState.NONE -> {}
-        SplashUiState.ON_AUTH_NAV -> {}
         SplashUiState.ON_DASHBOARD_NAV -> {
             // Remove the splash screen from navigation stack
             navController.navigate(DashboardPath.DashboardUI) {
