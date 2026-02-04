@@ -32,8 +32,11 @@ class SelectedEventViewModel: ViewModel() {
     private val _eventPotluckData = MutableStateFlow(EventPotluck("", mutableListOf()))
     val eventPotluckData: StateFlow<EventPotluck> = _eventPotluckData
 
-    private val _eventActionUiState = MutableStateFlow(EventActionUiState.NONE)
+    private val _eventActionUiState = MutableStateFlow(EventActionUiState.INITIAL)
     val eventActionUiState: StateFlow<EventActionUiState> = _eventActionUiState
+
+    private val _eventRegUnRegUiState = MutableStateFlow(EventActionUiState.INITIAL)
+    val eventRegUnRegUiState: StateFlow<EventActionUiState> = _eventRegUnRegUiState
 
     fun fetchEventDetails(eventId: String) {
         viewModelScope.launch {
@@ -114,13 +117,13 @@ class SelectedEventViewModel: ViewModel() {
             )
 
             viewModelScope.launch {
-                _eventActionUiState.value = EventActionUiState.PENDING
+                _eventRegUnRegUiState.value = EventActionUiState.PENDING
                 when(val response = eventRemoteRepository.registerToEvent(_selectedEvent.value.id!!, eventRegistrationItem = eventRegistrationItem)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _eventActionUiState.value = EventActionUiState.FAILURE
+                        _eventRegUnRegUiState.value = EventActionUiState.FAILURE
                     }
                     is ResultWrapper.Success -> {
-                        _eventActionUiState.value = EventActionUiState.SUCCESS
+                        _eventRegUnRegUiState.value = EventActionUiState.SUCCESS
                         response.value.body?.let {
                             _eventRegistrationData.value = it
                         }
@@ -133,14 +136,14 @@ class SelectedEventViewModel: ViewModel() {
     fun unregisterFromEvent() {
         Session.user?.let { sessionUser ->
             viewModelScope.launch {
-                _eventActionUiState.value = EventActionUiState.PENDING
+                _eventRegUnRegUiState.value = EventActionUiState.PENDING
                 when(val response = eventRemoteRepository
                     .unregisterFromEvent(_selectedEvent.value.id!!, userId = sessionUser.id!!)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _eventActionUiState.value = EventActionUiState.FAILURE
+                        _eventRegUnRegUiState.value = EventActionUiState.FAILURE
                     }
                     is ResultWrapper.Success -> {
-                        _eventActionUiState.value = EventActionUiState.SUCCESS
+                        _eventRegUnRegUiState.value = EventActionUiState.SUCCESS
                         response.value.body?.let {
                             _eventRegistrationData.value = it
                         }
@@ -148,6 +151,10 @@ class SelectedEventViewModel: ViewModel() {
                 }
             }
         }
+    }
+
+    fun revokeRegUnRegUiState() {
+        _eventRegUnRegUiState.value = EventActionUiState.INITIAL
     }
 
     fun signUpToSheet(sheetId: String, onComplete: () -> Unit) {

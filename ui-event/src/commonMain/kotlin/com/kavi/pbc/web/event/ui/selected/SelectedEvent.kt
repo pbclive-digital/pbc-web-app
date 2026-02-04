@@ -50,6 +50,7 @@ import com.kavi.pbc.web.data.event.EventStatus
 import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheet
 import com.kavi.pbc.web.event.ui.common.SignUpSheetItemUI
+import com.kavi.pbc.web.event.ui.selected.action.RegistrationSheetUI
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract

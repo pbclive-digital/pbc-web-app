@@ -19,6 +19,13 @@
     <string name="event_label_remaining_seats">Remaining seats: %s</string>
     <string name="event_phrase_registering">We are delight to have you in the event of "%s"!!! Once you register, we will reserve a space for you. For any reason, if you are not going to attend, please make sure to unregister.</string>
     <string name="event_phrase_unregistering">We are sad not to see you in the event of "%s"!!! Once you un-register, your reservation will revoke. Thank you so much to make your space available due to your unavailability.</string>
+    <string name="event_label_reg_success">Successfully Registered to the Event</string>
+    <string name="event_phrase_reg_success">You have successfully registered to this event. At any time you can unregister from this event.</string>
+    <string name="event_label_un_reg_success">Successfully Un-Registered from the Event</string>
+    <string name="event_phrase_un_reg_success">You have successfully un-registered from this event. At any time you can register back to this event.</string>
+    <string name="event_label_reg_un_reg_failure">Failed to process your request</string>
+    <string name="event_phrase_reg_un_reg_failure">At this time, PBC failed to process your request. Please try again later. Sorry for the incontinence</string>
+    <string name="event_label_close">Close</string>
 
     <string name="event_label_potluck_details">Potluck Details</string>
     <string name="event_label_potluck">Potluck</string>
