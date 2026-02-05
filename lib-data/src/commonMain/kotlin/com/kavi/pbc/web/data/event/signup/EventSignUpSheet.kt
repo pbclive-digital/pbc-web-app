@@ -8,5 +8,6 @@ data class EventSignUpSheet(
     val sheetName: String = "",
     val sheetDescription: String = "",
     val availableCount: Int = 0,
+    val allowMultiSignUps: Boolean = false,
     val contributorList: MutableList<EventSignUpSheetContributor> = mutableListOf()
 )

@@ -9,5 +9,6 @@ data class SignUpSheet @OptIn(ExperimentalUuidApi::class) constructor(
     val sheetId: String = Uuid.random().toString(),
     val sheetName: String = "",
     val sheetDescription: String = "",
-    val availableCount: Int = 0
+    val availableCount: Int = 0,
+    val allowMultiSignUps: Boolean = false,
 )
