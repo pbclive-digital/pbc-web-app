@@ -54,9 +54,9 @@ fun EventPotluckItemUI(modifier: Modifier = Modifier,
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     var isLoading by remember { mutableStateOf(false) }
-    val eventActionUiState by viewModel.eventActionUiState.collectAsState()
+    val potluckItemRegUnRegUiState by viewModel.potluckItemRegUnRegUiState.collectAsState()
 
-    if (eventActionUiState != EventActionUiState.PENDING) {
+    if (potluckItemRegUnRegUiState != EventActionUiState.PENDING) {
         isLoading = false
     }
 

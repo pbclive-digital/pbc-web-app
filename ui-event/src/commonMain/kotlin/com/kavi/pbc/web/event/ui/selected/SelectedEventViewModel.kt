@@ -11,6 +11,7 @@ import com.kavi.pbc.web.data.event.register.EventRegistrationItem
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetContributor
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
 import com.kavi.pbc.web.event.data.model.EventActionUiState
+import com.kavi.pbc.web.event.data.model.SignUpSheetRegUnRegUiStatus
 import com.kavi.pbc.web.event.data.repository.remote.EventRemoteRepository
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.network.session.Session
@@ -24,19 +25,22 @@ class SelectedEventViewModel: ViewModel() {
     private val _selectedEvent = MutableStateFlow<Event>(Event())
     val selectedEvent: StateFlow<Event> = _selectedEvent
 
-    private val _eventSignUpSheetData = MutableStateFlow(EventSignUpSheetList(""))
-    val eventSignUpSheetData: StateFlow<EventSignUpSheetList> = _eventSignUpSheetData
-
     private val _eventRegistrationData = MutableStateFlow(EventRegistration("", 0))
 
     private val _eventPotluckData = MutableStateFlow(EventPotluck("", mutableListOf()))
     val eventPotluckData: StateFlow<EventPotluck> = _eventPotluckData
 
-    private val _eventActionUiState = MutableStateFlow(EventActionUiState.INITIAL)
-    val eventActionUiState: StateFlow<EventActionUiState> = _eventActionUiState
+    private val _eventSignUpSheetData = MutableStateFlow(EventSignUpSheetList(""))
+    val eventSignUpSheetData: StateFlow<EventSignUpSheetList> = _eventSignUpSheetData
+
+    private val _potluckItemRegUnRegUiState = MutableStateFlow(EventActionUiState.INITIAL)
+    val potluckItemRegUnRegUiState: StateFlow<EventActionUiState> = _potluckItemRegUnRegUiState
 
     private val _eventRegUnRegUiState = MutableStateFlow(EventActionUiState.INITIAL)
     val eventRegUnRegUiState: StateFlow<EventActionUiState> = _eventRegUnRegUiState
+
+    private val _signUpSheetRegUnRegStatus = MutableStateFlow(SignUpSheetRegUnRegUiStatus.INITIAL)
+    val signUpSheetRegUnRegStatus: StateFlow<SignUpSheetRegUnRegUiStatus> = _signUpSheetRegUnRegStatus
 
     fun fetchEventDetails(eventId: String) {
         viewModelScope.launch {
@@ -93,6 +97,17 @@ class SelectedEventViewModel: ViewModel() {
             filtered.isNotEmpty()
         } else {
             false
+        }
+    }
+
+    fun currentUserSignUpCountToSignUpSheet(sheetId: String): Int {
+        val filteredSignUpSheetList = _eventSignUpSheetData.value.signUpSheetItemList.filter { it.sheetId == sheetId }
+        return if (filteredSignUpSheetList.isNotEmpty()) {
+            val selectedSheet = filteredSignUpSheetList[0]
+            val filtered = selectedSheet.contributorList.filter { it.contributorId == Session.user?.id }
+            filtered.size
+        } else {
+            0
         }
     }
 
@@ -157,7 +172,7 @@ class SelectedEventViewModel: ViewModel() {
         _eventRegUnRegUiState.value = EventActionUiState.INITIAL
     }
 
-    fun signUpToSheet(sheetId: String, onComplete: () -> Unit) {
+    fun signUpToSheet(sheetId: String) {
         Session.user?.let { sessionUser ->
             val sheetContributor = EventSignUpSheetContributor(
                 sessionUser.id!!,
@@ -166,16 +181,15 @@ class SelectedEventViewModel: ViewModel() {
             )
 
             viewModelScope.launch {
+                _signUpSheetRegUnRegStatus.value = SignUpSheetRegUnRegUiStatus.PENDING
                 when(val response = eventRemoteRepository.signUpToSelectedSignUpSheet(
                     _selectedEvent.value.id!!, sheetId = sheetId, contributor = sheetContributor
                 )) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _eventActionUiState.value = EventActionUiState.FAILURE
-                        onComplete.invoke()
+                        _signUpSheetRegUnRegStatus.value = SignUpSheetRegUnRegUiStatus.FAILURE
                     }
                     is ResultWrapper.Success -> {
-                        _eventActionUiState.value = EventActionUiState.SUCCESS
-                        onComplete.invoke()
+                        _signUpSheetRegUnRegStatus.value = SignUpSheetRegUnRegUiStatus.REG_SUCCESS
                         response.value.body?.let {
                             _eventSignUpSheetData.value = it
                         }
@@ -185,18 +199,17 @@ class SelectedEventViewModel: ViewModel() {
         }
     }
 
-    fun signOutFromSheet(sheetId: String, onComplete: () -> Unit) {
+    fun signOutFromSheet(sheetId: String) {
         Session.user?.let { sessionUser ->
             viewModelScope.launch {
+                _signUpSheetRegUnRegStatus.value = SignUpSheetRegUnRegUiStatus.PENDING
                 when(val response = eventRemoteRepository.signOutFromSelectedSignUpSheet(
                     _selectedEvent.value.id!!, sheetId = sheetId, contributorId = sessionUser.id!!)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _eventActionUiState.value = EventActionUiState.FAILURE
-                        onComplete.invoke()
+                        _signUpSheetRegUnRegStatus.value = SignUpSheetRegUnRegUiStatus.FAILURE
                     }
                     is ResultWrapper.Success -> {
-                        _eventActionUiState.value = EventActionUiState.SUCCESS
-                        onComplete.invoke()
+                        _signUpSheetRegUnRegStatus.value = SignUpSheetRegUnRegUiStatus.UN_REG_SUCCESS
                         response.value.body?.let {
                             _eventSignUpSheetData.value = it
                         }
@@ -204,6 +217,10 @@ class SelectedEventViewModel: ViewModel() {
                 }
             }
         }
+    }
+
+    fun revokeSignUpSheetRegUnRegStatus() {
+        _signUpSheetRegUnRegStatus.value = SignUpSheetRegUnRegUiStatus.INITIAL
     }
 
     fun checkedCurrentUserContribution(potluckItem: EventPotluckItem): Int {
@@ -223,14 +240,14 @@ class SelectedEventViewModel: ViewModel() {
             )
 
             viewModelScope.launch {
-                _eventActionUiState.value = EventActionUiState.PENDING
+                _potluckItemRegUnRegUiState.value = EventActionUiState.PENDING
                 when(val response = eventRemoteRepository
                     .signUpToPotluck(eventId =_selectedEvent.value.id!!, potluckItemId = potluckItem.itemId, eventPotluckContributor)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _eventActionUiState.value = EventActionUiState.FAILURE
+                        _potluckItemRegUnRegUiState.value = EventActionUiState.FAILURE
                     }
                     is ResultWrapper.Success -> {
-                        _eventActionUiState.value = EventActionUiState.SUCCESS
+                        _potluckItemRegUnRegUiState.value = EventActionUiState.SUCCESS
                         response.value.body?.let { updatedEventPotluck ->
                             _eventPotluckData.value = updatedEventPotluck
                         }
@@ -243,14 +260,14 @@ class SelectedEventViewModel: ViewModel() {
     fun signOutFromPotluckItem(potluckItem: EventPotluckItem) {
         Session.user?.let {
             viewModelScope.launch {
-                _eventActionUiState.value = EventActionUiState.PENDING
+                _potluckItemRegUnRegUiState.value = EventActionUiState.PENDING
                 when(val response = eventRemoteRepository
                     .signOutFromPotluck(eventId =_selectedEvent.value.id!!, potluckItemId = potluckItem.itemId, contributorId = it.id!!)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _eventActionUiState.value = EventActionUiState.FAILURE
+                        _potluckItemRegUnRegUiState.value = EventActionUiState.FAILURE
                     }
                     is ResultWrapper.Success -> {
-                        _eventActionUiState.value = EventActionUiState.SUCCESS
+                        _potluckItemRegUnRegUiState.value = EventActionUiState.SUCCESS
                         response.value.body?.let { updatedEventPotluck ->
                             _eventPotluckData.value = updatedEventPotluck
                         }

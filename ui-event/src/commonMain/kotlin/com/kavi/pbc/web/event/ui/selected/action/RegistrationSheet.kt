@@ -32,6 +32,7 @@ import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.Event
 import com.kavi.pbc.web.event.data.model.EventActionUiState
+import com.kavi.pbc.web.event.data.model.RegUnRegType
 import com.kavi.pbc.web.event.ui.selected.SelectedEventViewModel
 import com.kavi.pbc.web.network.session.Session
 import org.jetbrains.compose.resources.painterResource
@@ -56,10 +57,6 @@ import pbcwebapp.ui_event.generated.resources.event_phrase_reg_un_reg_failure
 import pbcwebapp.ui_event.generated.resources.event_phrase_registering
 import pbcwebapp.ui_event.generated.resources.event_phrase_un_reg_success
 import pbcwebapp.ui_event.generated.resources.event_phrase_unregistering
-
-enum class RegUnRegType {
-    REGISTER, UNREGISTER
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
