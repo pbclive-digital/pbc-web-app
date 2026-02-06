@@ -206,7 +206,7 @@ fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUp
                     .padding(top = 8.dp)
             )
 
-            if (selectedSignUpSheet.allowMultiSignUps) {
+            if (selectedSignUpSheet.allowMultiSignUps && signUpCount > 0) {
                 Text(
                     text = stringResource(Res.string.event_label_user_sign_up_count)
                         .replace("%s", signUpCount.toString()),
@@ -232,7 +232,7 @@ fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUp
                             .padding(end = 4.dp)
                             .weight(.5f),
                         label = stringResource(Res.string.event_label_sign_out),
-                        labelTextSize = 12.sp
+                        labelTextSize = 10.sp
                     ) {
                         viewModel.signOutFromSheet(selectedSignUpSheet.sheetId)
                     }
@@ -241,7 +241,7 @@ fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUp
                             .padding(start = 4.dp)
                             .weight(.5f),
                         label = stringResource(Res.string.event_label_sign_up),
-                        labelTextSize = 12.sp
+                        labelTextSize = 10.sp
                     ) {
                         viewModel.signUpToSheet(selectedSignUpSheet.sheetId)
                     }
