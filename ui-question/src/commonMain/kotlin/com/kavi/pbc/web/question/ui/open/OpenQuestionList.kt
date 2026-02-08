@@ -17,10 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -54,6 +53,8 @@ import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
+import com.kavi.pbc.web.parent.extention.copy
+import com.kavi.pbc.web.question.data.model.AddAnswerStatus
 import com.kavi.pbc.web.question.data.model.OpenQuestionListUiState
 import com.kavi.pbc.web.question.ui.common.AnswerCommentItem
 import com.kavi.pbc.web.question.ui.common.QuestionItem
@@ -185,6 +186,7 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel
     val newAnswerComment = remember { mutableStateOf(TextFieldValue("")) }
 
     val questionAnswerList by viewModel.answerCommentList.collectAsState()
+    val addAnswerStatus by viewModel.addAnswerStatus.collectAsState()
 
     Box (
         modifier = Modifier
@@ -193,9 +195,7 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel
             .background(MaterialTheme.colorScheme.background)
             .padding(40.dp)
     ) {
-        Column (
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
+        Column {
             Title(
                 modifier = Modifier
                     .padding(start = 12.dp, end = 12.dp),
@@ -265,40 +265,52 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel
                     .fillMaxWidth()
             )
 
-            Column (
+            LazyColumn (
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 30.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                questionAnswerList.forEach { answerComment ->
+                items(questionAnswerList) { answerComment ->
                     AnswerCommentItem(answerComment = answerComment)
                 }
-
-                if (Session.isLogIn()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AppOutlineTextField(
+                item {
+                    if (Session.isLogIn()) {
+                        Row(
                             modifier = Modifier
-                                .weight(1f),
-                            headingText = stringResource(Res.string.question_label_your_answer),
-                            contentText = newAnswerComment,
-                            onValueChange = { newValue ->
-                                newAnswerComment.value = newValue
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.width(4.dp))
-
-                        AppIconButton(
-                            modifier = Modifier.padding(top = 8.dp),
-                            icon = painterResource(Res.drawable.question_icon_send),
-                            buttonSize = 50.dp
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            //viewModel.addAnswerCommentToQuestion(newAnswerComment.value.text)
+                            AppOutlineTextField(
+                                modifier = Modifier
+                                    .weight(1f),
+                                headingText = stringResource(Res.string.question_label_your_answer),
+                                contentText = newAnswerComment,
+                                onValueChange = { newValue ->
+                                    newAnswerComment.value = newValue
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.width(4.dp))
+
+                            if (addAnswerStatus == AddAnswerStatus.PENDING) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            } else {
+                                AppIconButton(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    icon = painterResource(Res.drawable.question_icon_send),
+                                    buttonSize = 50.dp
+                                ) {
+                                    val answer = newAnswerComment.value.text.copy()
+                                    newAnswerComment.value = TextFieldValue("")
+                                    viewModel.addAnswerCommentToQuestion(answer)
+                                }
+                            }
                         }
                     }
                 }

@@ -88,6 +88,10 @@ class OpenQuestionListViewModel: ViewModel() {
         }
     }
 
+    fun revokeAddAnswerStatus() {
+        _addAnswerStatus.value = AddAnswerStatus.NONE
+    }
+
     private fun getAllOpenQuestionList() {
         viewModelScope.launch {
             when(val response = questionRemoteRepository.getOpenQuestionList(paginationRequest = paginationRequest)) {
