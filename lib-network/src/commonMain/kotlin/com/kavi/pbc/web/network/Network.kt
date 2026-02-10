@@ -21,6 +21,7 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -50,7 +51,7 @@ class Network {
                 append(HttpHeaders.Authorization, "Bearer $it")
             }
             Session.user?.let {
-                append("X-app-user", it.toString())
+                append("X-app-user", Json.encodeToString(it))
             }
         }
         httpRequestBuilder.contentType(ContentType.Application.Json)

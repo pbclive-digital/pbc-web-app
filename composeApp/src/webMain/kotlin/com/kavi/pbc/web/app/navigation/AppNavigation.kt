@@ -3,6 +3,7 @@ package com.kavi.pbc.web.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.kavi.pbc.web.appointment.navigation.appointmentNavGraph
 import com.kavi.pbc.web.dashboard.navigation.dashboardNavGraph
 import com.kavi.pbc.web.event.navigation.eventNavGraph
 import com.kavi.pbc.web.news.navigation.newsNavGraph
@@ -24,5 +25,7 @@ fun AppNavGraph(navController: NavHostController) {
         newsNavGraph(navController = navController)
         // Include question nav-graph
         questionNavGraph(navController = navController)
+        // Include appointment nav-graph
+        appointmentNavGraph(navController = navController)
     }
 }

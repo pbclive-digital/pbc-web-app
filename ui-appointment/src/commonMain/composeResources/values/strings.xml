@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appointment_label_create_request">Create Appointment Request</string>
+    <string name="appointment_label_with">With</string>
+    <string name="appointment_label_any_monk">Any Resident Bhanthe</string>
+
+    <string name="appointment_label_request">Appointment Requests</string>
+    <string name="appointment_label_accepted">Accepted Appointments</string>
+</resources>
