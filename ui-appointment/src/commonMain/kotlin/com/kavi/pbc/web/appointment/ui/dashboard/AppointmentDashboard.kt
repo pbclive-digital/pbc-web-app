@@ -5,13 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -38,8 +38,7 @@ import androidx.navigation.NavController
 import com.kavi.pbc.web.appointment.data.model.SelectedType
 import com.kavi.pbc.web.appointment.ui.common.AppointmentItem
 import com.kavi.pbc.web.appointment.ui.common.AppointmentReqItem
-import com.kavi.pbc.web.appointment.ui.common.CreateWithComponent
-import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
+import com.kavi.pbc.web.appointment.ui.common.WithComponent
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
@@ -50,6 +49,7 @@ import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_appointment.generated.resources.Res
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_accepted
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_create_request
+import pbcwebapp.ui_appointment.generated.resources.appointment_label_details
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_request
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_with
 
@@ -88,7 +88,7 @@ fun AppointmentDashboardUI(navController: NavController) {
                 else -> {
                     Column (
                         modifier = Modifier
-                            .weight(.25f)
+                            .weight(.2f)
                             .height(maxHeight)
                             .padding(top = 10.dp, end = 15.dp)
                     ) {
@@ -119,12 +119,12 @@ fun AppointmentDashboardUI(navController: NavController) {
 
                         LazyColumn {
                             item {
-                                CreateWithComponent {
+                                WithComponent {
                                     // TODO: Create with any monk - open create dialog
                                 }
                             }
                             items(residentMonkList) { monk ->
-                                CreateWithComponent (user = monk) {
+                                WithComponent (user = monk) {
                                     // TODO: Create with selected monk - open create dialog
                                 }
                             }
@@ -144,10 +144,9 @@ fun AppointmentDashboardUI(navController: NavController) {
                                     text = stringResource(Res.string.appointment_label_request),
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontFamily = PBCFontFamily,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    maxLines = 3,
-                                    overflow = TextOverflow.Ellipsis,
+                                    fontWeight = FontWeight.Bold,
+                                    lineHeight = 24.sp,
+                                    fontSize = 24.sp,
                                     textAlign = TextAlign.Start
                                 )
 
@@ -171,10 +170,9 @@ fun AppointmentDashboardUI(navController: NavController) {
                                     text = stringResource(Res.string.appointment_label_accepted),
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontFamily = PBCFontFamily,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    maxLines = 3,
-                                    overflow = TextOverflow.Ellipsis,
+                                    fontWeight = FontWeight.Bold,
+                                    lineHeight = 24.sp,
+                                    fontSize = 24.sp,
                                     textAlign = TextAlign.Start
                                 )
 
@@ -195,14 +193,30 @@ fun AppointmentDashboardUI(navController: NavController) {
 
                     Column (
                         modifier = Modifier
-                            .weight(.4f)
+                            .weight(.45f)
                             .height(maxHeight)
-                            .padding(top = 10.dp, end = 15.dp)
+                            .padding(top = 10.dp)
                     ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(Res.string.appointment_label_details),
+                            fontFamily = PBCFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            lineHeight = 24.sp,
+                            fontSize = 24.sp,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            textAlign = TextAlign.Start
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.padding(2.dp),
+                            thickness = 2.dp
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
                         when(selectedType) {
-                            SelectedType.NONE -> {
-                                // Nothing to do
-                            }
+                            SelectedType.NONE -> { /*Nothing to do*/ }
                             SelectedType.APPOINTMENT_REQ -> SelectedAppointmentReq(selectedAppointmentReq)
                             SelectedType.APPOINTMENT -> SelectedAppointment(selectedAppointment)
                         }
@@ -215,56 +229,115 @@ fun AppointmentDashboardUI(navController: NavController) {
 
 @Composable
 fun SelectedAppointment(selectedAppointment: Appointment) {
-    val themeAdditionalColors = LocalThemeAdditionalColors.current
-
     Box (
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.background)
-            .padding(40.dp)
+            .padding(20.dp)
     ) {
-        Column (
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                text = selectedAppointment.title,
-                fontFamily = PBCFontFamily,
-                fontSize = 36.sp,
-                lineHeight = 36.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
+        Row {
+            Column (modifier = Modifier.weight(.25f)) {
+                selectedAppointment.selectedMonk?.let {
+                    WithComponent(user = it)
+                }?: run {
+                    WithComponent()
+                }
+            }
+            Column (
                 modifier = Modifier
-                    .fillMaxWidth()
-            )
+                    .weight(.75f)
+                    .padding(start = 8.dp, top = 8.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = selectedAppointment.title,
+                    fontFamily = PBCFontFamily,
+                    fontSize = 28.sp,
+                    lineHeight = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = selectedAppointment.reason,
+                    fontFamily = PBCFontFamily,
+                    fontSize = 18.sp,
+                    lineHeight = 18.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "on ${selectedAppointment.getFormatDate()} at ${selectedAppointment.time}",
+                    fontFamily = PBCFontFamily,
+                    fontSize = 18.sp,
+                    lineHeight = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
         }
     }
 }
 
 @Composable
 fun SelectedAppointmentReq(selectedAppointmentRequest: AppointmentRequest) {
-    val themeAdditionalColors = LocalThemeAdditionalColors.current
-
     Box (
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.background)
-            .padding(40.dp)
+            .padding(20.dp)
     ) {
-        Column (
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                text = selectedAppointmentRequest.title,
-                fontFamily = PBCFontFamily,
-                fontSize = 36.sp,
-                lineHeight = 36.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
+        Row {
+            Column (modifier = Modifier.weight(.25f)) {
+                selectedAppointmentRequest.selectedMonk?.let {
+                    WithComponent(user = it)
+                }?: run {
+                    WithComponent()
+                }
+            }
+            Column (
                 modifier = Modifier
-                    .fillMaxWidth()
-            )
+                    .weight(.75f)
+                    .padding(start = 8.dp, top = 8.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = selectedAppointmentRequest.title,
+                    fontFamily = PBCFontFamily,
+                    fontSize = 28.sp,
+                    lineHeight = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = selectedAppointmentRequest.reason,
+                    fontFamily = PBCFontFamily,
+                    fontSize = 18.sp,
+                    lineHeight = 18.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
         }
     }
 }

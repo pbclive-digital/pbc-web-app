@@ -30,6 +30,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.user.User
+import com.kavi.pbc.web.data.user.UserType
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_appointment.generated.resources.Res
@@ -38,7 +39,7 @@ import pbcwebapp.ui_appointment.generated.resources.appointment_image_pbc
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_any_monk
 
 @Composable
-fun CreateWithComponent(modifier: Modifier = Modifier, user: User? = null, onSelect: () -> Unit) {
+fun WithComponent(modifier: Modifier = Modifier, user: User? = null, onSelect: (() -> Unit)? = null) {
     user?.let {
         Column (
             modifier = modifier
@@ -56,7 +57,7 @@ fun CreateWithComponent(modifier: Modifier = Modifier, user: User? = null, onSel
                         shape = CircleShape
                     )
                     .clickable {
-                        onSelect.invoke()
+                        onSelect?.invoke()
                     }
             ) {
                 AsyncImage(
@@ -74,8 +75,13 @@ fun CreateWithComponent(modifier: Modifier = Modifier, user: User? = null, onSel
                 )
             }
 
+            val name = if (it.userType == UserType.MONK) {
+                "Bhanthe ${it.firstName} ${it.lastName}"
+            } else {
+                "${it.firstName} ${it.lastName}"
+            }
             Text(
-                text = "Bhanthe ${it.firstName} ${it.lastName}",
+                text = name,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = PBCFontFamily,
                 fontSize = 16.sp,
@@ -99,7 +105,7 @@ fun CreateWithComponent(modifier: Modifier = Modifier, user: User? = null, onSel
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surface)
                     .clickable {
-                        onSelect.invoke()
+                        onSelect?.invoke()
                     },
                 contentAlignment = Alignment.Center
             ) {
