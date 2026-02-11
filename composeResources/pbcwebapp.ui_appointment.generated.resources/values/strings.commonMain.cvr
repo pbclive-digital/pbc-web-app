@@ -1,0 +1,8 @@
+version:0
+string|appointment_label_accepted|QWNjZXB0ZWQgQXBwb2ludG1lbnRz
+string|appointment_label_any_monk|QW55IFJlc2lkZW50IEJoYW50aGU=
+string|appointment_label_create_request|Q3JlYXRlIEFwcG9pbnRtZW50IFJlcXVlc3Q=
+string|appointment_label_details|RGV0YWlscw==
+string|appointment_label_empty_selection|Tm8gQXBwb2ludG1lbnQgUmVxdWVzdCAvIEFwcG9pbnRtZW50IHNlbGVjdGVkIGZvciBkZXRhaWxzLg==
+string|appointment_label_request|QXBwb2ludG1lbnQgUmVxdWVzdHM=
+string|appointment_label_with|V2l0aA==
