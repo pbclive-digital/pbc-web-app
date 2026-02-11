@@ -1,6 +1,7 @@
 package com.kavi.pbc.web.appointment.ui.dashboard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -50,6 +52,7 @@ import pbcwebapp.ui_appointment.generated.resources.Res
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_accepted
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_create_request
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_details
+import pbcwebapp.ui_appointment.generated.resources.appointment_label_empty_selection
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_request
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_with
 
@@ -216,13 +219,43 @@ fun AppointmentDashboardUI(navController: NavController) {
                         Spacer(modifier = Modifier.height(8.dp))
 
                         when(selectedType) {
-                            SelectedType.NONE -> { /*Nothing to do*/ }
+                            SelectedType.NONE -> EmptySelection()
                             SelectedType.APPOINTMENT_REQ -> SelectedAppointmentReq(selectedAppointmentReq)
                             SelectedType.APPOINTMENT -> SelectedAppointment(selectedAppointment)
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun EmptySelection() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.background)
+            .padding(20.dp)
+    ) {
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(Res.string.appointment_label_empty_selection),
+                fontFamily = PBCFontFamily,
+                fontSize = 22.sp,
+                lineHeight = 22.sp,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

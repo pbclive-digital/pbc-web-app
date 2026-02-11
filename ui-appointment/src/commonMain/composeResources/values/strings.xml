@@ -8,4 +8,5 @@
     <string name="appointment_label_accepted">Accepted Appointments</string>
 
     <string name="appointment_label_details">Details</string>
+    <string name="appointment_label_empty_selection">No Appointment Request / Appointment selected for details.</string>
 </resources>
