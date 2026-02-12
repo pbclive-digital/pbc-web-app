@@ -5,7 +5,9 @@
     <string name="appointment_label_any_monk">Any Resident Bhanthe</string>
 
     <string name="appointment_label_request">Appointment Requests</string>
+    <string name="appointment_label_request_phone">Requests</string>
     <string name="appointment_label_accepted">Accepted Appointments</string>
+    <string name="appointment_label_accepted_phone">Appointments</string>
 
     <string name="appointment_label_details">Details</string>
     <string name="appointment_label_empty_selection">No Appointment Request / Appointment selected for details.</string>
