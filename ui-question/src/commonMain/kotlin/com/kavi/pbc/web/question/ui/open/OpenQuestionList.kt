@@ -3,9 +3,12 @@ package com.kavi.pbc.web.question.ui.open
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,6 +20,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,8 +34,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +47,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,6 +57,7 @@ import com.kavi.pbc.web.common.ui.component.AppFullScreenLoader
 import com.kavi.pbc.web.common.ui.component.AppIconButton
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
 import com.kavi.pbc.web.common.ui.component.Title
+import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.network.session.Session
@@ -61,10 +71,13 @@ import com.kavi.pbc.web.question.ui.common.QuestionItem
 import com.kavi.pbc.web.question.ui.sheet.QuestionSelectedBottomSheetUI
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.skia.Color
 import pbcwebapp.ui_question.generated.resources.Res
 import pbcwebapp.ui_question.generated.resources.question_icon_send
 import pbcwebapp.ui_question.generated.resources.question_label_answers
+import pbcwebapp.ui_question.generated.resources.question_label_open_question
 import pbcwebapp.ui_question.generated.resources.question_label_open_question_empty
+import pbcwebapp.ui_question.generated.resources.question_label_personal_question
 import pbcwebapp.ui_question.generated.resources.question_label_your_answer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,12 +99,15 @@ fun OpenQuestinList(navController: NavController) {
 
     LaunchedEffect(Unit) {
         viewModel.fetchOpenQuestionList()
+        if (Session.isLogIn()){
+            viewModel.fetchPersonalQuestionList()
+        }
     }
 
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopCenter
     ) {
         val maxHeight = this.maxHeight
         val maxWidth = this.maxWidth
@@ -116,45 +132,31 @@ fun OpenQuestinList(navController: NavController) {
                                     .height(maxHeight)
                                     .padding(top = 10.dp)
                             ) {
-                                LazyColumn {
-                                    items(openQuestionList) { question ->
-                                        QuestionItem(
-                                            question = question, onClick = {
-                                                selectedQuestion.value = question
-                                                showQuestionSheet.value = true
-                                            }
-                                        )
+                                QuestionListPager(
+                                    screenWidth = maxWidth,
+                                    selectedQuestion = selectedQuestion,
+                                    viewModel = viewModel,
+                                    onQuestionSelect = { question ->
+                                        selectedQuestion.value = question
+                                        showQuestionSheet.value = true
                                     }
-                                    item {
-                                        LaunchedEffect(pageIndex) {
-                                            viewModel.fetchOpenQuestionList()
-                                        }
-                                    }
-                                }
+                                )
                             }
                         }
                         else -> {
-                            selectedQuestion.value = openQuestionList[0]
-                            Column(
+                            Column (
                                 modifier = Modifier
                                     .weight(.35f)
-                                    .height(maxHeight)
-                                    .padding(top = 10.dp, end = 15.dp)
+                                    .padding(top = 20.dp, start = 15.dp)
                             ) {
-                                LazyColumn {
-                                    items(openQuestionList) { question ->
-                                        QuestionItem(
-                                            question = question, onClick = {
-                                                selectedQuestion.value = question
-                                            }
-                                        )
+                                QuestionListPager(
+                                    screenWidth = (maxWidth.value * (.35)).dp,
+                                    selectedQuestion = selectedQuestion,
+                                    viewModel = viewModel,
+                                    onQuestionSelect = { question ->
+                                        selectedQuestion.value = question
                                     }
-                                    item {
-                                        LaunchedEffect(pageIndex) {
-                                            viewModel.fetchOpenQuestionList()
-                                        }
-                                    }
-                                }
+                                )
                             }
                             Column(
                                 modifier = Modifier
@@ -175,6 +177,161 @@ fun OpenQuestinList(navController: NavController) {
                 showSheet = showQuestionSheet,
                 selectedQuestion = selectedQuestion.value
             )
+        }
+    }
+}
+
+@Composable
+private fun QuestionListPager(
+    screenWidth: Dp,
+    selectedQuestion: MutableState<Question>,
+    viewModel: OpenQuestionListViewModel,
+    onQuestionSelect: (question: Question) -> Unit
+) {
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
+
+    var selectedPagerIndex by rememberSaveable { mutableIntStateOf(0) }
+    val state = rememberPagerState {
+        if (Session.isLogIn()) 2 else 1
+    }
+
+    LaunchedEffect(selectedPagerIndex) {
+        state.animateScrollToPage(selectedPagerIndex)
+    }
+
+    Column {
+        Row {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        selectedPagerIndex = 0
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(Res.string.question_label_open_question),
+                    fontFamily = PBCFontFamily,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            if (Session.isLogIn()) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            selectedPagerIndex = 1
+                        },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(Res.string.question_label_personal_question),
+                        fontFamily = PBCFontFamily,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+        }
+
+        Row {
+            repeat(state.pageCount) { iteration ->
+                val color = if (state.currentPage == iteration)
+                    themeAdditionalColors.quaternary else MaterialTheme.colorScheme.surface
+
+                val indicatorWidth = if (Session.isLogIn()) screenWidth / 2 else screenWidth
+
+                Box(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .height(5.dp)
+                        .width(indicatorWidth)
+                        .background(color)
+                )
+            }
+        }
+
+        HorizontalPager(
+            state = state,
+            modifier = Modifier
+                .padding(top = 10.dp),
+            contentPadding = PaddingValues(horizontal = 0.dp),
+            snapPosition = SnapPosition.Center
+        ) { page ->
+            when (page) {
+                0 -> OpenQuestionListComponent(
+                    modifier = Modifier,
+                    selectedQuestion = selectedQuestion,
+                    pageIndex = selectedPagerIndex,
+                    viewModel = viewModel,
+                    onQuestionSelect = onQuestionSelect
+                )
+                1 -> PersonalQuestionList(
+                    modifier = Modifier,
+                    viewModel = viewModel,
+                    onQuestionSelect = onQuestionSelect
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun OpenQuestionListComponent(
+    modifier: Modifier,
+    selectedQuestion: MutableState<Question>,
+    pageIndex: Int,
+    viewModel: OpenQuestionListViewModel,
+    onQuestionSelect: (question: Question) -> Unit
+) {
+
+    val openQuestionList by viewModel.openQuestionList.collectAsState()
+
+    selectedQuestion.value = openQuestionList[0]
+    Column(
+        modifier = modifier
+            .padding(top = 10.dp, end = 15.dp)
+    ) {
+        LazyColumn {
+            items(openQuestionList) { question ->
+                QuestionItem(
+                    question = question, onClick = {
+                        onQuestionSelect.invoke(question)
+                        //selectedQuestion.value = question
+                    }
+                )
+            }
+            item {
+                LaunchedEffect(pageIndex) {
+                    viewModel.fetchOpenQuestionList()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PersonalQuestionList(
+    modifier: Modifier,
+    viewModel: OpenQuestionListViewModel,
+    onQuestionSelect: (question: Question) -> Unit
+) {
+    val personalQuestionList by viewModel.personalQuestionList.collectAsState()
+
+    Column(
+        modifier = modifier
+            .padding(top = 10.dp, end = 15.dp)
+    ) {
+        LazyColumn {
+            items(personalQuestionList) { question ->
+                QuestionItem(
+                    question = question, onClick = {
+                        onQuestionSelect.invoke(question)
+                    }
+                )
+            }
         }
     }
 }

@@ -17,6 +17,10 @@ class QuestionRemoteRepository {
             .post<PaginationResponse<Question>, PaginationRequest>(urlPath = "question/get/all", body = paginationRequest)
     }
 
+    suspend fun getPersonalQuestionList(userId: String): ResultWrapper<BaseResponse<MutableList<Question>>> {
+        return Network.shared.get<MutableList<Question>>(urlPath = "question/get/user/$userId")
+    }
+
     suspend fun createNewAnswer(questionId: String, answerComment: AnswerComment):
             ResultWrapper<BaseResponse<Question>> {
 

@@ -30,6 +30,10 @@ class OpenQuestionListViewModel: ViewModel() {
     val pageIndex: StateFlow<Int> = _pageIndex
     private val _openQuestionList = MutableStateFlow<MutableList<Question>>(mutableListOf())
     val openQuestionList: StateFlow<MutableList<Question>> = _openQuestionList
+
+    private val _personalQuestionList = MutableStateFlow<MutableList<Question>>(mutableListOf())
+    val personalQuestionList: StateFlow<MutableList<Question>> = _personalQuestionList
+
     private val _openQuestionListUiState = MutableStateFlow(OpenQuestionListUiState.NONE)
     val openQuestionListUiState: StateFlow<OpenQuestionListUiState> = _openQuestionListUiState
 
@@ -49,6 +53,21 @@ class OpenQuestionListViewModel: ViewModel() {
                 getAllOpenQuestionList()
             } else if (isInitialRequestFired.value && paginationRequest.previousPageLastDocKey != null) {
                 getAllOpenQuestionList()
+            }
+        }
+    }
+
+    fun fetchPersonalQuestionList() {
+        Session.user?.let { user ->
+            viewModelScope.launch {
+                when(val response = questionRemoteRepository.getPersonalQuestionList(userId = user.id!!)) {
+                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {}
+                    is ResultWrapper.Success -> {
+                        response.value.body?.let {
+                            _personalQuestionList.value = it
+                        }
+                    }
+                }
             }
         }
     }
