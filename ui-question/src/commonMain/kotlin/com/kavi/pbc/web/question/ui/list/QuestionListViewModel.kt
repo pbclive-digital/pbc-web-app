@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.question.ui.open
+package com.kavi.pbc.web.question.ui.list
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,14 +12,14 @@ import com.kavi.pbc.web.data.user.UserSummary
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.question.data.model.AddAnswerStatus
-import com.kavi.pbc.web.question.data.model.OpenQuestionListUiState
+import com.kavi.pbc.web.question.data.model.QuestionListUiState
 import com.kavi.pbc.web.question.data.respository.remote.QuestionRemoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class OpenQuestionListViewModel: ViewModel() {
+class QuestionListViewModel: ViewModel() {
 
     val questionRemoteRepository = QuestionRemoteRepository()
     private val isInitialRequestFired = mutableStateOf(false)
@@ -31,11 +31,14 @@ class OpenQuestionListViewModel: ViewModel() {
     private val _openQuestionList = MutableStateFlow<MutableList<Question>>(mutableListOf())
     val openQuestionList: StateFlow<MutableList<Question>> = _openQuestionList
 
+    private val _openQuestionListUiState = MutableStateFlow(QuestionListUiState.NONE)
+    val openQuestionListUiState: StateFlow<QuestionListUiState> = _openQuestionListUiState
+
     private val _personalQuestionList = MutableStateFlow<MutableList<Question>>(mutableListOf())
     val personalQuestionList: StateFlow<MutableList<Question>> = _personalQuestionList
 
-    private val _openQuestionListUiState = MutableStateFlow(OpenQuestionListUiState.NONE)
-    val openQuestionListUiState: StateFlow<OpenQuestionListUiState> = _openQuestionListUiState
+    private val _personalQuestionListUiState = MutableStateFlow(QuestionListUiState.NONE)
+    val personalQuestionListUiState: StateFlow<QuestionListUiState> = _personalQuestionListUiState
 
     private val _selectedQuestion = MutableStateFlow(Question())
     val selectedQuestion: StateFlow<Question> = _selectedQuestion
@@ -61,14 +64,19 @@ class OpenQuestionListViewModel: ViewModel() {
         Session.user?.let { user ->
             viewModelScope.launch {
                 when(val response = questionRemoteRepository.getPersonalQuestionList(userId = user.id!!)) {
-                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {}
+                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                        _personalQuestionListUiState.value = QuestionListUiState.EMPTY
+                    }
                     is ResultWrapper.Success -> {
+                        _personalQuestionListUiState.value = QuestionListUiState.SUCCESS
                         response.value.body?.let {
                             _personalQuestionList.value = it
                         }
                     }
                 }
             }
+        }?: run {
+            _personalQuestionListUiState.value = QuestionListUiState.EMPTY
         }
     }
 
@@ -115,7 +123,7 @@ class OpenQuestionListViewModel: ViewModel() {
         viewModelScope.launch {
             when(val response = questionRemoteRepository.getOpenQuestionList(paginationRequest = paginationRequest)) {
                 is ResultWrapper.NetworkError -> {
-                    _openQuestionListUiState.value = OpenQuestionListUiState.FAILURE
+                    _openQuestionListUiState.value = QuestionListUiState.FAILURE
                 }
                 is ResultWrapper.HttpError -> {
                     if (response.code == 404) {
@@ -125,7 +133,7 @@ class OpenQuestionListViewModel: ViewModel() {
                 is ResultWrapper.UnAuthError -> {}
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
-                        _openQuestionListUiState.value = OpenQuestionListUiState.SUCCESS
+                        _openQuestionListUiState.value = QuestionListUiState.SUCCESS
                         _openQuestionList.update { currentList ->
                             (currentList + it.entityList).toMutableList()
                         }

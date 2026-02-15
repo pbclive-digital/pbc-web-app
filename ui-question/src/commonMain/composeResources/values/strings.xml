@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="question_label_open_question_empty">No open Questions available at this time.</string>
+    <string name="question_label_personal_question_empty">No personal Questions available at this time.</string>
 
     <string name="question_label_open_question">Open</string>
     <string name="question_label_personal_question">Personal</string>
+    <string name="question_label_create_question">Ask from Bhanthe</string>
 
     <string name="question_label_answers">Answers / Comments:</string>
     <string name="question_label_your_answer">Your Answer</string>

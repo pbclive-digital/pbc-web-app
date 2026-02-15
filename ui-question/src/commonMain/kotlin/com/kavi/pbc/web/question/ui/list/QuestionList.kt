@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.question.ui.open
+package com.kavi.pbc.web.question.ui.list
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.kavi.pbc.web.common.ui.component.AppFilledButton
 import com.kavi.pbc.web.common.ui.component.AppFullScreenLoader
 import com.kavi.pbc.web.common.ui.component.AppIconButton
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
@@ -65,30 +66,30 @@ import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.parent.extention.copy
 import com.kavi.pbc.web.question.data.model.AddAnswerStatus
-import com.kavi.pbc.web.question.data.model.OpenQuestionListUiState
+import com.kavi.pbc.web.question.data.model.QuestionListUiState
 import com.kavi.pbc.web.question.ui.common.AnswerCommentItem
 import com.kavi.pbc.web.question.ui.common.QuestionItem
+import com.kavi.pbc.web.question.ui.common.SelectedQuestion
 import com.kavi.pbc.web.question.ui.sheet.QuestionSelectedBottomSheetUI
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.skia.Color
 import pbcwebapp.ui_question.generated.resources.Res
 import pbcwebapp.ui_question.generated.resources.question_icon_send
 import pbcwebapp.ui_question.generated.resources.question_label_answers
+import pbcwebapp.ui_question.generated.resources.question_label_create_question
 import pbcwebapp.ui_question.generated.resources.question_label_open_question
 import pbcwebapp.ui_question.generated.resources.question_label_open_question_empty
 import pbcwebapp.ui_question.generated.resources.question_label_personal_question
+import pbcwebapp.ui_question.generated.resources.question_label_personal_question_empty
 import pbcwebapp.ui_question.generated.resources.question_label_your_answer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpenQuestinList(navController: NavController) {
 
-    val viewModel: OpenQuestionListViewModel = viewModel { OpenQuestionListViewModel() }
+    val viewModel: QuestionListViewModel = viewModel { QuestionListViewModel() }
 
     val openQuestionListUiState by viewModel.openQuestionListUiState.collectAsState()
-    val openQuestionList by viewModel.openQuestionList.collectAsState()
-    val pageIndex by viewModel.pageIndex.collectAsState()
 
     val selectedQuestion = remember { mutableStateOf(Question()) }
 
@@ -99,9 +100,7 @@ fun OpenQuestinList(navController: NavController) {
 
     LaunchedEffect(Unit) {
         viewModel.fetchOpenQuestionList()
-        if (Session.isLogIn()){
-            viewModel.fetchPersonalQuestionList()
-        }
+        viewModel.fetchPersonalQuestionList()
     }
 
     BoxWithConstraints(
@@ -115,15 +114,17 @@ fun OpenQuestinList(navController: NavController) {
         val screenType = UIUtil.screenType(maxWidth = maxWidth)
 
         when(openQuestionListUiState) {
-            OpenQuestionListUiState.NONE -> {}
-            OpenQuestionListUiState.EMPTY -> {
-                EmptyOpenQuestionList()
+            QuestionListUiState.NONE -> {}
+            QuestionListUiState.EMPTY -> {
+                EmptyQuestionList(
+                    emptyMessage = stringResource(Res.string.question_label_open_question_empty)
+                )
             }
-            OpenQuestionListUiState.PENDING -> {
+            QuestionListUiState.PENDING -> {
                 AppFullScreenLoader(isWithBackground = false)
             }
-            OpenQuestionListUiState.FAILURE -> {}
-            OpenQuestionListUiState.SUCCESS -> {
+            QuestionListUiState.FAILURE -> {}
+            QuestionListUiState.SUCCESS -> {
                 Row {
                     when(screenType) {
                         ScreenType.PHONE -> {
@@ -175,7 +176,8 @@ fun OpenQuestinList(navController: NavController) {
             QuestionSelectedBottomSheetUI(
                 sheetState = selectedQuestionSheetState,
                 showSheet = showQuestionSheet,
-                selectedQuestion = selectedQuestion.value
+                selectedQuestion = selectedQuestion,
+                viewModel = viewModel
             )
         }
     }
@@ -185,15 +187,13 @@ fun OpenQuestinList(navController: NavController) {
 private fun QuestionListPager(
     screenWidth: Dp,
     selectedQuestion: MutableState<Question>,
-    viewModel: OpenQuestionListViewModel,
+    viewModel: QuestionListViewModel,
     onQuestionSelect: (question: Question) -> Unit
 ) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     var selectedPagerIndex by rememberSaveable { mutableIntStateOf(0) }
-    val state = rememberPagerState {
-        if (Session.isLogIn()) 2 else 1
-    }
+    val state = rememberPagerState { 2 }
 
     LaunchedEffect(selectedPagerIndex) {
         state.animateScrollToPage(selectedPagerIndex)
@@ -217,22 +217,20 @@ private fun QuestionListPager(
                 )
             }
 
-            if (Session.isLogIn()) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable {
-                            selectedPagerIndex = 1
-                        },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(Res.string.question_label_personal_question),
-                        fontFamily = PBCFontFamily,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        selectedPagerIndex = 1
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(Res.string.question_label_personal_question),
+                    fontFamily = PBCFontFamily,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
 
@@ -241,13 +239,11 @@ private fun QuestionListPager(
                 val color = if (state.currentPage == iteration)
                     themeAdditionalColors.quaternary else MaterialTheme.colorScheme.surface
 
-                val indicatorWidth = if (Session.isLogIn()) screenWidth / 2 else screenWidth
-
                 Box(
                     modifier = Modifier
                         .padding(top = 12.dp)
                         .height(5.dp)
-                        .width(indicatorWidth)
+                        .width(screenWidth / 2)
                         .background(color)
                 )
             }
@@ -283,7 +279,7 @@ private fun OpenQuestionListComponent(
     modifier: Modifier,
     selectedQuestion: MutableState<Question>,
     pageIndex: Int,
-    viewModel: OpenQuestionListViewModel,
+    viewModel: QuestionListViewModel,
     onQuestionSelect: (question: Question) -> Unit
 ) {
 
@@ -299,7 +295,6 @@ private fun OpenQuestionListComponent(
                 QuestionItem(
                     question = question, onClick = {
                         onQuestionSelect.invoke(question)
-                        //selectedQuestion.value = question
                     }
                 )
             }
@@ -315,29 +310,46 @@ private fun OpenQuestionListComponent(
 @Composable
 private fun PersonalQuestionList(
     modifier: Modifier,
-    viewModel: OpenQuestionListViewModel,
+    viewModel: QuestionListViewModel,
     onQuestionSelect: (question: Question) -> Unit
 ) {
+    val personalQuestionUiState by viewModel.personalQuestionListUiState.collectAsState()
     val personalQuestionList by viewModel.personalQuestionList.collectAsState()
 
     Column(
         modifier = modifier
             .padding(top = 10.dp, end = 15.dp)
     ) {
-        LazyColumn {
-            items(personalQuestionList) { question ->
-                QuestionItem(
-                    question = question, onClick = {
-                        onQuestionSelect.invoke(question)
-                    }
+        AppFilledButton(label = stringResource(Res.string.question_label_create_question)) {
+
+        }
+
+        when (personalQuestionUiState) {
+            QuestionListUiState.NONE, QuestionListUiState.FAILURE -> {}
+            QuestionListUiState.EMPTY -> {
+                EmptyPersonalQuestionList(
+                    emptyMessage = stringResource(Res.string.question_label_personal_question_empty)
                 )
+            }
+
+            QuestionListUiState.PENDING -> {}
+            QuestionListUiState.SUCCESS -> {
+                LazyColumn {
+                    items(personalQuestionList) { question ->
+                        QuestionItem(
+                            question = question, onClick = {
+                                onQuestionSelect.invoke(question)
+                            }
+                        )
+                    }
+                }
             }
         }
     }
 }
 
-@Composable
-private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel: OpenQuestionListViewModel) {
+/*@Composable
+private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel: QuestionListViewModel) {
 
     viewModel.setSelectedQuestion(selectedQuestion.value)
     val newAnswerComment = remember { mutableStateOf(TextFieldValue("")) }
@@ -474,21 +486,41 @@ private fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel
             }
         }
     }
-}
+}*/
 
 @Composable
-fun EmptyOpenQuestionList() {
+fun EmptyQuestionList(emptyMessage: String) {
     Box (
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth()
-            .padding(top = 130.dp, start = 16.dp, end = 16.dp, bottom = 30.dp)
+            .padding(top = 20.dp, start = 16.dp, end = 16.dp, bottom = 30.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(Res.string.question_label_open_question_empty),
+            modifier = Modifier.padding(10.dp),
+            text = emptyMessage,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+fun EmptyPersonalQuestionList(emptyMessage: String) {
+    Box (
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+            .padding(top = 20.dp, bottom = 30.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(10.dp),
+            text = emptyMessage,
             textAlign = TextAlign.Center,
         )
     }
