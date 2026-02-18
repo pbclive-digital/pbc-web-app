@@ -11,4 +11,12 @@
     <string name="question_label_your_answer">Your Answer</string>
     <string name="question_label_add_answer_success">Successfully add your answer.</string>
     <string name="question_label_add_answer_failure">Failed to add your answer to the question. Please try again later.</string>
+
+    <string name="question_label_create">Create Question</string>
+    <string name="question_label_modify">Modify Question</string>
+    <string name="question_label_create_new_question">New Question</string>
+    <string name="question_label_question_title">Question Title</string>
+    <string name="question_label_question_content">Question Content</string>
+    <string name="question_label_question_privacy">Question Privacy On/Off</string>
+    <string name="question_phrase_question_privacy">Once you turn on privacy, you question will treat as a private question and only Bhathes can see and answer to your question. If you keep your question as public, then devotees also can see and answer for your question.</string>
 </resources>

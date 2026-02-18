@@ -29,4 +29,14 @@ class QuestionRemoteRepository {
         return Network.shared
             .put<Question, AnswerComment>(urlPath = "question/add/comment/${encodedQuestionId}", body = answerComment)
     }
+
+    suspend fun createNewQuestion(question: Question): ResultWrapper<BaseResponse<String>> {
+        return Network.shared.post<String, Question>(urlPath = "question/create", body = question)
+    }
+
+    suspend fun modifyQuestion(questionId: String, question: Question): ResultWrapper<BaseResponse<String>> {
+        val encodedQuestionId = questionId.encodeURLPath()
+        return Network.shared
+            .put<String, Question>(urlPath = "question/update/${encodedQuestionId}", body = question)
+    }
 }

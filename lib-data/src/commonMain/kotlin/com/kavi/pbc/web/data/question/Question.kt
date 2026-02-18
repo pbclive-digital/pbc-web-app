@@ -11,5 +11,6 @@ data class Question(
     val createdTime: Long = 0,
     val authorId: String = "",
     val author: User = User(email = ""),
+    var privacy: PrivacyStatus = PrivacyStatus.PUBLIC,
     val answerList: MutableList<AnswerComment> = mutableListOf()
 )
