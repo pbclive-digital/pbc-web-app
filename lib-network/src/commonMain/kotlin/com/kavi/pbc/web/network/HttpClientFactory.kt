@@ -27,6 +27,7 @@ internal object HttpClientFactory {
                 isLenient = true
                 ignoreUnknownKeys = true
                 encodeDefaults = true
+                explicitNulls = false
             })
         }
 

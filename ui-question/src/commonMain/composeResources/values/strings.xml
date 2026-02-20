@@ -18,5 +18,7 @@
     <string name="question_label_question_title">Question Title</string>
     <string name="question_label_question_content">Question Content</string>
     <string name="question_label_question_privacy">Question Privacy On/Off</string>
-    <string name="question_phrase_question_privacy">Once you turn on privacy, you question will treat as a private question and only Bhathes can see and answer to your question. If you keep your question as public, then devotees also can see and answer for your question.</string>
+    <string name="question_phrase_question_privacy">Once you turn on privacy, your question will treat as a private question and only Bhathes can see and answer to your question. If you keep your question as public, then devotees also can see and answer for your question.</string>
+    <string name="question_phrase_question_create_success">Successfully created your question. Now according to the privacy, you have set, Any Bhanthe or any devotee will answer to your question.</string>
+    <string name="question_phrase_question_create_error">Error happens at this time and not able to create your question. Please try again from few minutes and sorry for your inconvenience</string>
 </resources>

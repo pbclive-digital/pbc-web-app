@@ -347,8 +347,14 @@ private fun PersonalQuestionList(
     if (showCreateQuestionDialog.value) {
         QuestionAskOrModifyDialog(
             showDialog = showCreateQuestionDialog,
-            onCancel = {
+            onCancel = { refreshRequired ->
                 showCreateQuestionDialog.value = false
+
+                // Some update happens in questions, therefore refresh-required
+                if (refreshRequired) {
+                    viewModel.fetchOpenQuestionList()
+                    viewModel.fetchPersonalQuestionList()
+                }
             },
             modifyQuestion = modifyingQuestion)
     }

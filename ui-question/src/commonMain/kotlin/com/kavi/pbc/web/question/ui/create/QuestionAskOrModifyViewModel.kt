@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kavi.pbc.web.data.question.PrivacyStatus
 import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.network.model.ResultWrapper
+import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.question.data.model.NewQuestionUiStatus
 import com.kavi.pbc.web.question.data.respository.remote.QuestionRemoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,16 @@ class QuestionAskOrModifyViewModel: ViewModel() {
     val askOrModifyQuestion: StateFlow<Question?> = _askOrModifyQuestion
 
     private val _questionAskOrModifyStatus = MutableStateFlow(NewQuestionUiStatus.NONE)
-    val questionCreateOrModifyStatus: StateFlow<NewQuestionUiStatus> = _questionAskOrModifyStatus
+    val questionAskOrModifyStatus: StateFlow<NewQuestionUiStatus> = _questionAskOrModifyStatus
+
+    init {
+        Session.user?.let {
+            _askOrModifyQuestion.value = Question(
+                authorId = it.id!!,
+                author = it
+            )
+        }
+    }
 
     fun setModifyingQuestion(question: Question) {
         _askOrModifyQuestion.value = question
@@ -69,5 +79,9 @@ class QuestionAskOrModifyViewModel: ViewModel() {
                 }
             }
         }
+    }
+
+    fun revokeNewQuestionUiState() {
+        _questionAskOrModifyStatus.value = NewQuestionUiStatus.NONE
     }
 }

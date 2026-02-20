@@ -1,5 +1,6 @@
 package com.kavi.pbc.web.question.ui.create
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,14 +31,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kavi.pbc.web.common.ui.component.AppBasicDialog
 import com.kavi.pbc.web.common.ui.component.AppFilledButton
+import com.kavi.pbc.web.common.ui.component.AppFullScreenLoader
 import com.kavi.pbc.web.common.ui.component.AppOutlineMultiLineTextField
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
+import com.kavi.pbc.web.common.ui.component.ErrorMessageBalloon
+import com.kavi.pbc.web.common.ui.component.SuccessMessageBalloon
 import com.kavi.pbc.web.common.ui.component.TitleWithAction
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.question.PrivacyStatus
 import com.kavi.pbc.web.data.question.Question
+import com.kavi.pbc.web.question.data.model.NewQuestionUiStatus
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_question.generated.resources.Res
@@ -48,19 +53,21 @@ import pbcwebapp.ui_question.generated.resources.question_label_modify
 import pbcwebapp.ui_question.generated.resources.question_label_question_content
 import pbcwebapp.ui_question.generated.resources.question_label_question_privacy
 import pbcwebapp.ui_question.generated.resources.question_label_question_title
+import pbcwebapp.ui_question.generated.resources.question_phrase_question_create_error
+import pbcwebapp.ui_question.generated.resources.question_phrase_question_create_success
 import pbcwebapp.ui_question.generated.resources.question_phrase_question_privacy
 
 @Composable
 fun QuestionAskOrModifyDialog(
     showDialog: MutableState<Boolean>,
     modifyQuestion: Question? = null,
-    onCancel: () -> Unit
+    onCancel: (refreshRequired: Boolean) -> Unit
 ) {
     AppBasicDialog(
         modifier = Modifier.fillMaxSize(),
         showDialog = showDialog.value,
         onDismissRequest = {
-            onCancel.invoke()
+            onCancel.invoke(false)
         }
     ) {
         QuestionAskOrModifyUI(modifyQuestion = modifyQuestion, onCancel = onCancel)
@@ -70,9 +77,8 @@ fun QuestionAskOrModifyDialog(
 @Composable
 private fun QuestionAskOrModifyUI(
     modifyQuestion: Question?,
-    onCancel: () -> Unit
+    onCancel: (refreshRequired: Boolean) -> Unit
 ) {
-
     val viewModel: QuestionAskOrModifyViewModel = viewModel { QuestionAskOrModifyViewModel() }
     var isModify by remember { mutableStateOf(false) }
 
@@ -81,13 +87,19 @@ private fun QuestionAskOrModifyUI(
         viewModel.setModifyingQuestion(question = it)
     }
 
+    var anyAskOrModificationSuccess by remember { mutableStateOf(false) }
+
     val askOrModifyQuestion by viewModel.askOrModifyQuestion.collectAsState()
+    val questionAskOrModifyStatus by viewModel.questionAskOrModifyStatus.collectAsState()
 
     val askQuestionTitle = remember { mutableStateOf(TextFieldValue(askOrModifyQuestion?.title ?: "")) }
     val askQuestionContent = remember { mutableStateOf(TextFieldValue(askOrModifyQuestion?.content ?: "")) }
     var isPrivateQuestion by remember { mutableStateOf(
         askOrModifyQuestion?.privacy == PrivacyStatus.PRIVATE
     ) }
+
+    val errorBalloonVisibility = remember { mutableStateOf(false) }
+    val successBalloonVisibility = remember { mutableStateOf(false) }
 
     BoxWithConstraints(
         contentAlignment = Alignment.Center
@@ -110,7 +122,8 @@ private fun QuestionAskOrModifyUI(
                         isIcon = true,
                     ) {
                         viewModel.clearQuestion()
-                        onCancel.invoke()
+                        errorBalloonVisibility.value = false
+                        onCancel.invoke(anyAskOrModificationSuccess)
                     }
                 }
                 else -> {
@@ -121,9 +134,32 @@ private fun QuestionAskOrModifyUI(
                         isIcon = true,
                     ) {
                         viewModel.clearQuestion()
-                        onCancel.invoke()
+                        errorBalloonVisibility.value = false
+                        onCancel.invoke(anyAskOrModificationSuccess)
                     }
                 }
+            }
+
+            Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                ErrorMessageBalloon(
+                    modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                    showBalloon = errorBalloonVisibility,
+                    errorMessage = stringResource(Res.string.question_phrase_question_create_error),
+                    onDismiss = {
+                        errorBalloonVisibility.value = false
+                        viewModel.revokeNewQuestionUiState()
+                    }
+                )
+
+                SuccessMessageBalloon(
+                    modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                    showBalloon = successBalloonVisibility,
+                    successMessage = stringResource(Res.string.question_phrase_question_create_success),
+                    onDismiss = {
+                        successBalloonVisibility.value = false
+                        viewModel.revokeNewQuestionUiState()
+                    }
+                )
             }
 
             AppOutlineTextField (
@@ -195,6 +231,25 @@ private fun QuestionAskOrModifyUI(
                 modifier = Modifier.padding(top = 8.dp)
             ) {
                 viewModel.createOrModifyQuestion(isModify = isModify)
+            }
+        }
+
+        when(questionAskOrModifyStatus) {
+            NewQuestionUiStatus.NONE -> {
+                errorBalloonVisibility.value = false
+            }
+            NewQuestionUiStatus.PENDING -> {}
+            NewQuestionUiStatus.FAILURE -> {
+                errorBalloonVisibility.value = true
+            }
+            NewQuestionUiStatus.SUCCESS -> {
+                anyAskOrModificationSuccess = true
+                successBalloonVisibility.value = true
+
+                // Clear the question form
+                askQuestionTitle.value = TextFieldValue("")
+                askQuestionContent.value = TextFieldValue("")
+                isPrivateQuestion = false
             }
         }
     }
