@@ -84,7 +84,11 @@ private fun QuestionAskOrModifyUI(
 
     modifyQuestion?.let {
         isModify = true
+        // set modifying question
         viewModel.setModifyingQuestion(question = it)
+    }?: run {
+        // re-initiate question object if that cleared
+        viewModel.initiateNewQuestion()
     }
 
     var anyAskOrModificationSuccess by remember { mutableStateOf(false) }
@@ -123,6 +127,7 @@ private fun QuestionAskOrModifyUI(
                     ) {
                         viewModel.clearQuestion()
                         errorBalloonVisibility.value = false
+                        viewModel.revokeNewQuestionUiState()
                         onCancel.invoke(anyAskOrModificationSuccess)
                     }
                 }
@@ -135,6 +140,7 @@ private fun QuestionAskOrModifyUI(
                     ) {
                         viewModel.clearQuestion()
                         errorBalloonVisibility.value = false
+                        viewModel.revokeNewQuestionUiState()
                         onCancel.invoke(anyAskOrModificationSuccess)
                     }
                 }

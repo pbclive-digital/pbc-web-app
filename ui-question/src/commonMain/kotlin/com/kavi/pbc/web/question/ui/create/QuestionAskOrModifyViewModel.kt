@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 class QuestionAskOrModifyViewModel: ViewModel() {
     val questionRemoteRepository = QuestionRemoteRepository()
 
+    // Make this question is nullable, because need to clear the question object when creation or modify complete
     private val _askOrModifyQuestion: MutableStateFlow<Question?> = MutableStateFlow(Question())
     val askOrModifyQuestion: StateFlow<Question?> = _askOrModifyQuestion
 
@@ -32,6 +33,15 @@ class QuestionAskOrModifyViewModel: ViewModel() {
 
     fun setModifyingQuestion(question: Question) {
         _askOrModifyQuestion.value = question
+    }
+
+    fun initiateNewQuestion() {
+        Session.user?.let {
+            _askOrModifyQuestion.value = Question(
+                authorId = it.id!!,
+                author = it
+            )
+        }
     }
 
     fun clearQuestion() {
