@@ -59,6 +59,7 @@ class AppointmentDashboardViewModel: ViewModel() {
     fun fetchAppointmentRequests() {
         Session.user?.id?.let { userId ->
             viewModelScope.launch {
+                _appointmentReqList.value = emptyList()
                 when(val response = appointmentRemoteRepo.getAppointmentRequests(userId = userId)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.UnAuthError, is ResultWrapper.HttpError -> {
                         _appointmentReqList.value = emptyList()
@@ -93,6 +94,20 @@ class AppointmentDashboardViewModel: ViewModel() {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun deleteAppointmentRequest(appointmentReqId: String) {
+        viewModelScope.launch {
+            when(appointmentRemoteRepo.deleteAppointmentRequest(appointmentReqId)) {
+                is ResultWrapper.NetworkError, is ResultWrapper.UnAuthError, is ResultWrapper.HttpError -> {
+                    // TODO: Notify to UI the failure
+                }
+                is ResultWrapper.Success -> {
+                    fetchAppointmentRequests()
+                    checkAppointmentReqCreateEligibility()
                 }
             }
         }

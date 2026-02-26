@@ -51,6 +51,9 @@ import com.kavi.pbc.web.appointment.data.model.SelectedType
 import com.kavi.pbc.web.appointment.ui.common.AppointmentItem
 import com.kavi.pbc.web.appointment.ui.common.AppointmentReqItem
 import com.kavi.pbc.web.appointment.ui.common.WithComponent
+import com.kavi.pbc.web.appointment.ui.create.request.RequestCreateOrModifyDialog
+import com.kavi.pbc.web.common.ui.component.AppFilledButton
+import com.kavi.pbc.web.common.ui.component.AppMessageDialog
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.common.ui.util.ScreenType
@@ -58,13 +61,20 @@ import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.appointment.Appointment
 import com.kavi.pbc.web.data.appointment.AppointmentRequest
 import com.kavi.pbc.web.data.user.User
+import com.kavi.pbc.web.network.session.Session
+import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.AuthContract
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_appointment.generated.resources.Res
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_accepted
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_accepted_phone
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_create_request
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_details
+import pbcwebapp.ui_appointment.generated.resources.appointment_label_dismiss
+import pbcwebapp.ui_appointment.generated.resources.appointment_label_empty_appointment_list
+import pbcwebapp.ui_appointment.generated.resources.appointment_label_empty_appointment_req_list
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_empty_selection
+import pbcwebapp.ui_appointment.generated.resources.appointment_label_not_eligible_to_create
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_request
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_request_phone
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_with
@@ -101,14 +111,33 @@ private fun PhoneContent(screenWidth: Dp, screenHeight: Dp, viewModel: Appointme
 
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
+    val showCreateAppointmentReqDialog = remember { mutableStateOf(false) }
+    val showNotEligibleMessage = remember { mutableStateOf(false) }
+
     var selectedPagerIndex by rememberSaveable { mutableIntStateOf(0) }
     val state = rememberPagerState { 2 }
+
+    val requestCreateEligibility by viewModel.appointmentReqCreateEligibility.collectAsState()
 
     LaunchedEffect(selectedPagerIndex) {
         state.animateScrollToPage(selectedPagerIndex)
     }
 
     Column {
+
+        AppFilledButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            label = stringResource(Res.string.appointment_label_create_request)
+        ) {
+            if (requestCreateEligibility.allowToCreateRequest) {
+                showCreateAppointmentReqDialog.value = true
+            } else {
+                showNotEligibleMessage.value = true
+            }
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -181,6 +210,31 @@ private fun PhoneContent(screenWidth: Dp, screenHeight: Dp, viewModel: Appointme
             }
         }
     }
+
+    if (showCreateAppointmentReqDialog.value) {
+        RequestCreateOrModifyDialog(
+            showDialog = showCreateAppointmentReqDialog,
+            onCancel = { refreshRequired ->
+                showCreateAppointmentReqDialog.value = false
+
+                // Some update happens in appointment requests, therefore refresh-required
+                if (refreshRequired) {
+                    viewModel.fetchAppointmentRequests()
+                    viewModel.checkAppointmentReqCreateEligibility()
+                }
+            }
+        )
+    }
+
+    if (showNotEligibleMessage.value) {
+        AppMessageDialog(
+            showDialog = showNotEligibleMessage,
+            message = stringResource(Res.string.appointment_label_not_eligible_to_create),
+            actionButtonText = stringResource(Res.string.appointment_label_dismiss)
+        ) {
+            showNotEligibleMessage.value = false
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -192,6 +246,7 @@ private fun AppointmentRequestList(screenHeight: Dp, viewModel: AppointmentDashb
         skipPartiallyExpanded = true
     )
     val showViewSheet = remember { mutableStateOf(false) }
+    val showModifyAppointmentReqDialog = remember { mutableStateOf(false) }
     var selectedAppointmentReq by remember { mutableStateOf(AppointmentRequest(user = User(email = ""))) }
 
     LazyColumn (
@@ -204,10 +259,11 @@ private fun AppointmentRequestList(screenHeight: Dp, viewModel: AppointmentDashb
             AppointmentReqItem(
                 appointmentReq = appointmentReq,
                 onModify = {
-
+                    selectedAppointmentReq = appointmentReq
+                    showModifyAppointmentReqDialog.value = true
                 },
                 onDelete = {
-
+                    viewModel.deleteAppointmentRequest(appointmentReq.id!!)
                 },
                 onView = {
                     showViewSheet.value = true
@@ -225,6 +281,22 @@ private fun AppointmentRequestList(screenHeight: Dp, viewModel: AppointmentDashb
                 }
             )
         }
+    }
+
+    if (showModifyAppointmentReqDialog.value) {
+        RequestCreateOrModifyDialog(
+            showDialog = showModifyAppointmentReqDialog,
+            modifyRequest = selectedAppointmentReq,
+            onCancel = { refreshRequired ->
+                showModifyAppointmentReqDialog.value = false
+
+                // Some update happens in appointment requests, therefore refresh-required
+                if (refreshRequired) {
+                    viewModel.fetchAppointmentRequests()
+                    viewModel.checkAppointmentReqCreateEligibility()
+                }
+            }
+        )
     }
 }
 
@@ -255,10 +327,17 @@ private fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) 
     val appointmentReqList by viewModel.appointmentReqList.collectAsState()
     val appointmentList by viewModel.appointmentList.collectAsState()
     val residentMonkList by viewModel.residentMonkList.collectAsState()
+    val requestCreateEligibility by viewModel.appointmentReqCreateEligibility.collectAsState()
 
     var selectedType by remember { mutableStateOf(SelectedType.NONE) }
     var selectedAppointment by remember { mutableStateOf(Appointment(user = User(email = ""))) }
     var selectedAppointmentReq by remember { mutableStateOf(AppointmentRequest(user = User(email = ""))) }
+
+    val showCreateAppointmentReqDialog = remember { mutableStateOf(false) }
+    val showNotEligibleMessage = remember { mutableStateOf(false) }
+    var selectedMonk: User? by remember { mutableStateOf(null) }
+    var modifyAppointmentReq: AppointmentRequest? by remember { mutableStateOf(null) }
+    val showAuthInviteDialog = remember { mutableStateOf(false) }
 
     Row {
         Column(
@@ -295,12 +374,32 @@ private fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) 
             LazyColumn {
                 item {
                     WithComponent {
-                        // TODO: Create with any monk - open create dialog
+                        if (Session.isLogIn()) {
+                            if (requestCreateEligibility.allowToCreateRequest) {
+                                modifyAppointmentReq = null
+                                selectedMonk = null
+                                showCreateAppointmentReqDialog.value = true
+                            } else {
+                                showNotEligibleMessage.value = true
+                            }
+                        } else {
+                            showAuthInviteDialog.value = true
+                        }
                     }
                 }
                 items(residentMonkList) { monk ->
                     WithComponent(user = monk) {
-                        // TODO: Create with selected monk - open create dialog
+                        if (Session.isLogIn()) {
+                            if (requestCreateEligibility.allowToCreateRequest) {
+                                modifyAppointmentReq = null
+                                selectedMonk = null
+                                showCreateAppointmentReqDialog.value = true
+                            } else {
+                                showNotEligibleMessage.value = true
+                            }
+                        } else {
+                            showAuthInviteDialog.value = true
+                        }
                     }
                 }
             }
@@ -330,11 +429,25 @@ private fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) 
                         thickness = 2.dp
                     )
                 }
-                items(appointmentReqList) { appointmentReq ->
-                    AppointmentReqItem(appointmentReq = appointmentReq, onView = {
-                        selectedType = SelectedType.APPOINTMENT_REQ
-                        selectedAppointmentReq = appointmentReq
-                    }, onAccept = {}, onDelete = {}, onModify = {})
+                if (appointmentReqList.isNotEmpty()) {
+                    items(appointmentReqList) { appointmentReq ->
+                        AppointmentReqItem(appointmentReq = appointmentReq, onView = {
+                            selectedType = SelectedType.APPOINTMENT_REQ
+                            selectedAppointmentReq = appointmentReq
+                        }, onAccept = {}, onDelete = {
+                            viewModel.deleteAppointmentRequest(appointmentReq.id!!)
+                        }, onModify = {
+                            modifyAppointmentReq = appointmentReq
+                            showCreateAppointmentReqDialog.value = true
+                        })
+                    }
+                } else {
+                    item {
+                        EmptyList(
+                            modifier = Modifier.padding(top = 8.dp),
+                            message = stringResource(Res.string.appointment_label_empty_appointment_req_list)
+                        )
+                    }
                 }
 
                 item {
@@ -357,11 +470,20 @@ private fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) 
                     )
                 }
 
-                items(appointmentList) { appointment ->
-                    AppointmentItem(appointment = appointment, onView = {
-                        selectedType = SelectedType.APPOINTMENT
-                        selectedAppointment = appointment
-                    }, onDelete = {}, onModify = {})
+                if (appointmentList.isNotEmpty()) {
+                    items(appointmentList) { appointment ->
+                        AppointmentItem(appointment = appointment, onView = {
+                            selectedType = SelectedType.APPOINTMENT
+                            selectedAppointment = appointment
+                        }, onDelete = {}, onModify = {})
+                    }
+                } else {
+                    item {
+                        EmptyList(
+                            modifier = Modifier.padding(top = 8.dp),
+                            message = stringResource(Res.string.appointment_label_empty_appointment_list)
+                        )
+                    }
                 }
             }
         }
@@ -395,6 +517,75 @@ private fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) 
                 SelectedType.APPOINTMENT_REQ -> SelectedAppointmentReq(selectedAppointmentReq)
                 SelectedType.APPOINTMENT -> SelectedAppointment(selectedAppointment)
             }
+        }
+    }
+
+    if (showCreateAppointmentReqDialog.value) {
+        RequestCreateOrModifyDialog(
+            showDialog = showCreateAppointmentReqDialog,
+            onCancel = { refreshRequired ->
+                showCreateAppointmentReqDialog.value = false
+
+                // Some update happens in appointment requests, therefore refresh-required
+                if (refreshRequired) {
+                    viewModel.fetchAppointmentRequests()
+                    viewModel.checkAppointmentReqCreateEligibility()
+                }
+            },
+            modifyRequest = modifyAppointmentReq,
+            selectedMonk = selectedMonk
+        )
+    }
+
+    if (showNotEligibleMessage.value) {
+        AppMessageDialog(
+            showDialog = showNotEligibleMessage,
+            message = stringResource(Res.string.appointment_label_not_eligible_to_create),
+            actionButtonText = stringResource(Res.string.appointment_label_dismiss)
+        ) {
+            showNotEligibleMessage.value = false
+        }
+    }
+
+    if (showAuthInviteDialog.value) {
+        ContractServiceLocator.locate(AuthContract::class).ProvideSignUpInviteUI(
+            showDialog = showAuthInviteDialog,
+            onCancel = {
+                showAuthInviteDialog.value = false
+            }
+        )
+    }
+}
+
+@Composable
+private fun EmptyList(
+    modifier: Modifier = Modifier,
+    message: String
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.background)
+            .padding(20.dp)
+    ) {
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = message,
+                fontFamily = PBCFontFamily,
+                fontSize = 16.sp,
+                lineHeight = 16.sp,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

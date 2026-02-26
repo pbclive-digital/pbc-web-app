@@ -180,7 +180,9 @@ fun RegUnRegInitialUI(viewModel: SelectedEventViewModel, isCurrentUserRegistered
         )
 
         AppFilledButton(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             label = if (viewModel.isCurrentUserRegistered())
                 stringResource(Res.string.event_label_unregister)
             else
@@ -244,7 +246,9 @@ fun RegUnRegSuccess(viewModel: SelectedEventViewModel, regUnRegType: RegUnRegTyp
         )
 
         AppFilledButton(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             label = stringResource(Res.string.event_label_close)
         ) {
             showSheet.value = false
@@ -294,7 +298,9 @@ fun RegUnRegFailure(viewModel: SelectedEventViewModel, showSheet: MutableState<B
         )
 
         AppFilledButton(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             label = stringResource(Res.string.event_label_close)
         ) {
             showSheet.value = false

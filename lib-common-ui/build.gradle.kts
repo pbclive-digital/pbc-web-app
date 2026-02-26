@@ -36,6 +36,7 @@ kotlin {
                 implementation(libs.compose.ui)
                 implementation(libs.compose.components.resources)
                 implementation(libs.compose.ui.tooling.preview)
+                implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
 
                 // Async image loading
                 implementation(libs.coil3.compose)

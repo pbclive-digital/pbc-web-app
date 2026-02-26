@@ -250,7 +250,9 @@ fun RegisterUI(onAuthenticated: () -> Unit,
 
             AppFilledButton(
                 label = stringResource(Res.string.auth_label_register),
-                modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, bottom = 20.dp)
             ) {
                 viewModel.registerNewUser()
             }

@@ -52,7 +52,7 @@ fun AppFilledButton(label: String,
                     onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().height(50.dp),
+        modifier = modifier.height(50.dp),
         shape = RoundedCornerShape(5.dp),
         colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = MaterialTheme.colorScheme.primary)
     ) {

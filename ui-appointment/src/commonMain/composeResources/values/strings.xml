@@ -11,4 +11,24 @@
 
     <string name="appointment_label_details">Details</string>
     <string name="appointment_label_empty_selection">No Appointment Request / Appointment selected for details.</string>
+    <string name="appointment_label_empty_appointment_list">No Appointments to show at this time.</string>
+    <string name="appointment_label_empty_appointment_req_list">No Appointment Requests to show at this time.</string>
+
+    <string name="appointment_label_not_eligible_to_create">You have already created 3 appointment requests. You have reached to the limit of maximum count of appointment requests.</string>
+    <string name="appointment_label_dismiss">Dismiss</string>
+
+    <string name="appointment_label_title">Title</string>
+    <string name="appointment_pharse_with">Select with which bhanthe you want to make an appointment with or keep it empty, available bhanthe will pick your appointment.</string>
+    <string name="appointment_label_select_monk">Select a monk</string>
+    <string name="appointment_label_how">How</string>
+    <string name="appointment_phrase_how">Select which way you are comfortable to have an appointment by Remote / ON-Site</string>
+    <string name="appointment_label_select">Select</string>
+    <string name="appointment_label_why">Why</string>
+    <string name="appointment_phrase_why">Please provide a brief about you appointment. This will help bhanthe to prepare before the appointment</string>
+    <string name="appointment_label_reason">Brief Reason for appointment</string>
+    <string name="appointment_label_new_request">New Request</string>
+    <string name="appointment_label_request_create">Create Appointment Request</string>
+    <string name="appointment_label_request_modify">Modify Appointment Request</string>
+    <string name="appointment_phrase_request_create_success">Successfully created your appointment request. Now selected Bhanthe or Any available Bhanthe will accept your request and create an appointment with you as soon as possible.</string>
+    <string name="appointment_phrase_request_create_error">Error happens at this time and not able to create your appointment Request. Please try again from few minutes and sorry for your inconvenience</string>
 </resources>

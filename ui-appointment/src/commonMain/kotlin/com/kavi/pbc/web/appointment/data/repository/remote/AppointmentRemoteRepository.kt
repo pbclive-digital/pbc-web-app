@@ -21,4 +21,24 @@ class AppointmentRemoteRepository {
     suspend fun getAppointments(userId: String): ResultWrapper<BaseResponse<List<Appointment>>> {
         return Network.shared.get<List<Appointment>>(urlPath = "appointment/get/user/$userId")
     }
+
+    suspend fun createAppointmentRequest(appointmentRequest: AppointmentRequest):
+            ResultWrapper<BaseResponse<String>> {
+        return Network.shared.post<String, AppointmentRequest>(
+            urlPath = "appointment/request/create",
+            body = appointmentRequest
+        )
+    }
+
+    suspend fun updateAppointmentRequest(appointmentRequest: AppointmentRequest):
+            ResultWrapper<BaseResponse<AppointmentRequest>> {
+        return Network.shared.put<AppointmentRequest, AppointmentRequest>(
+            urlPath = "appointment/request/update",
+            body = appointmentRequest
+        )
+    }
+
+    suspend fun deleteAppointmentRequest(appointmentReqId: String): ResultWrapper<BaseResponse<String>> {
+        return Network.shared.delete<String>(urlPath = "appointment/request/delete/$appointmentReqId")
+    }
 }

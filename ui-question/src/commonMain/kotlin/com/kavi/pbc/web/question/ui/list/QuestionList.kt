@@ -306,7 +306,10 @@ private fun PersonalQuestionList(
         modifier = modifier
             .padding(top = 10.dp, end = 15.dp)
     ) {
-        AppFilledButton(label = stringResource(Res.string.question_label_create_question)) {
+        AppFilledButton(
+            modifier = Modifier.fillMaxWidth(),
+            label = stringResource(Res.string.question_label_create_question)
+        ) {
             if (Session.isLogIn()) {
                 modifyingQuestion = null
                 showCreateQuestionDialog.value = true

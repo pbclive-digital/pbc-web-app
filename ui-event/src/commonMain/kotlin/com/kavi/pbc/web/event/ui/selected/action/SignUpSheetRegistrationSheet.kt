@@ -238,6 +238,7 @@ fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUp
                     }
                     AppFilledButton(
                         modifier = Modifier
+                            .fillMaxWidth()
                             .padding(start = 4.dp)
                             .weight(.5f),
                         label = stringResource(Res.string.event_label_sign_up),
@@ -312,7 +313,9 @@ fun SignUpSheetRegUnRegSuccess(viewModel: SelectedEventViewModel, regUnRegType: 
         )
 
         AppFilledButton(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             label = stringResource(Res.string.event_label_close)
         ) {
             showSheet.value = false
@@ -362,7 +365,9 @@ fun SignUpSheetRegUnRegFailure(viewModel: SelectedEventViewModel, showSheet: Mut
         )
 
         AppFilledButton(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             label = stringResource(Res.string.event_label_close)
         ) {
             showSheet.value = false

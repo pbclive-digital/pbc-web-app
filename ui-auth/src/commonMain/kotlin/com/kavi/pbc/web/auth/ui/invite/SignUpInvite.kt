@@ -136,7 +136,9 @@ fun SignUpInviteContent(onCancel: () -> Unit, screenType: ScreenType) {
             )
 
             AppFilledButton(
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
                 label = stringResource(Res.string.auth_label_close)
             ) {
                 onCancel.invoke()

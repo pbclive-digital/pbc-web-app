@@ -234,7 +234,9 @@ private fun QuestionAskOrModifyUI(
             AppFilledButton(
                 label = if (isModify) stringResource(Res.string.question_label_modify)
                 else stringResource(Res.string.question_label_create),
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             ) {
                 viewModel.createOrModifyQuestion(isModify = isModify)
             }
