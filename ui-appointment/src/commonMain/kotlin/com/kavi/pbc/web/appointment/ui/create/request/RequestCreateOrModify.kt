@@ -99,14 +99,14 @@ private fun NewAppointmentRequestUI(
 
     var anyModifySuccess by remember { mutableStateOf(false) }
 
-    val askOrModifyQuestion by viewModel.createOrModifyAppointmentReq.collectAsState()
+    val createOrModifyAppointmentReq by viewModel.createOrModifyAppointmentReq.collectAsState()
     val residenceMonkList by viewModel.residenceMonkList.collectAsState()
     val appointmentReqUiStatus by viewModel.appointmentReqUiStatus.collectAsState()
 
-    val appointmentTitle = remember { mutableStateOf(TextFieldValue(askOrModifyQuestion?.title?: "")) }
+    val appointmentTitle = remember { mutableStateOf(TextFieldValue(createOrModifyAppointmentReq?.title?: "")) }
     val appointmentWith = remember { mutableStateOf(viewModel.getInitialSelectedMonk()) }
-    val appointmentType = remember { mutableStateOf(askOrModifyQuestion?.appointmentReqType?.name?: "" ) }
-    val appointmentReason = remember { mutableStateOf(TextFieldValue(askOrModifyQuestion?.reason?: "")) }
+    val appointmentType = remember { mutableStateOf(createOrModifyAppointmentReq?.appointmentReqType?.name?: "" ) }
+    val appointmentReason = remember { mutableStateOf(TextFieldValue(createOrModifyAppointmentReq?.reason?: "")) }
 
     val errorBalloonVisibility = remember { mutableStateOf(false) }
     val successBalloonVisibility = remember { mutableStateOf(false) }

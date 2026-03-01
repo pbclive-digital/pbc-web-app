@@ -17,6 +17,7 @@ coroutinesVesion = "1.10.2"
 kotlinxSerializationVersion = "1.9.0"
 kotlinxDateTime = "0.7.1"
 coilCompose = "3.3.0"
+materialIconsCore = "1.7.3"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -35,6 +36,9 @@ compose-material3 = { module = "org.jetbrains.compose.material3:material3", vers
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
+
+#Icons
+material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 
 # Navigation
 jetbrains-navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }

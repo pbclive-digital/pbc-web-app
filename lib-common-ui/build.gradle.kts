@@ -36,7 +36,10 @@ kotlin {
                 implementation(libs.compose.ui)
                 implementation(libs.compose.components.resources)
                 implementation(libs.compose.ui.tooling.preview)
-                implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
+                implementation(libs.material.icons.core)
+
+                // Kotlin data-time
+                implementation(libs.kotlinx.datetime)
 
                 // Async image loading
                 implementation(libs.coil3.compose)

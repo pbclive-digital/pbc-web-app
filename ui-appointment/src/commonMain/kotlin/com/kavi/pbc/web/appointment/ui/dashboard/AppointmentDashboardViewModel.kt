@@ -112,4 +112,18 @@ class AppointmentDashboardViewModel: ViewModel() {
             }
         }
     }
+
+    fun deleteAppointment(appointmentId: String) {
+        viewModelScope.launch {
+            when(appointmentRemoteRepo.deleteAppointment(appointmentId)) {
+                is ResultWrapper.NetworkError, is ResultWrapper.UnAuthError, is ResultWrapper.HttpError -> {
+                    // TODO: Notify to UI the failure
+                }
+                is ResultWrapper.Success -> {
+                    fetchAppointments()
+                    checkAppointmentReqCreateEligibility()
+                }
+            }
+        }
+    }
 }

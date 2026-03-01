@@ -19,6 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,11 +38,13 @@ import com.kavi.pbc.web.appointment.data.model.SelectedType
 import com.kavi.pbc.web.appointment.ui.common.AppointmentItem
 import com.kavi.pbc.web.appointment.ui.common.AppointmentReqItem
 import com.kavi.pbc.web.appointment.ui.common.WithComponent
+import com.kavi.pbc.web.appointment.ui.create.appointment.AppointmentCreateOrModifyDialog
 import com.kavi.pbc.web.appointment.ui.create.request.RequestCreateOrModifyDialog
 import com.kavi.pbc.web.common.ui.component.AppMessageDialog
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.appointment.Appointment
 import com.kavi.pbc.web.data.appointment.AppointmentRequest
+import com.kavi.pbc.web.data.appointment.AppointmentStatus
 import com.kavi.pbc.web.data.user.User
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
@@ -71,9 +74,15 @@ fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) {
     var selectedAppointmentReq by remember { mutableStateOf(AppointmentRequest(user = User(email = ""))) }
 
     val showCreateAppointmentReqDialog = remember { mutableStateOf(false) }
+    val showCreateAppointmentDialog = remember { mutableStateOf(false) }
+    val isRequestConversion = remember { mutableStateOf(false) }
+    val convertingRequestId: MutableState<String?> = remember { mutableStateOf(null) }
+
     val showNotEligibleMessage = remember { mutableStateOf(false) }
     var selectedMonk: User? by remember { mutableStateOf(null) }
     var modifyAppointmentReq: AppointmentRequest? by remember { mutableStateOf(null) }
+    var modifyAppointment: Appointment? by remember { mutableStateOf(null) }
+
     val showAuthInviteDialog = remember { mutableStateOf(false) }
 
     Row {
@@ -129,7 +138,7 @@ fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) {
                         if (Session.isLogIn()) {
                             if (requestCreateEligibility.allowToCreateRequest) {
                                 modifyAppointmentReq = null
-                                selectedMonk = null
+                                selectedMonk = monk
                                 showCreateAppointmentReqDialog.value = true
                             } else {
                                 showNotEligibleMessage.value = true
@@ -171,7 +180,21 @@ fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) {
                         AppointmentReqItem(appointmentReq = appointmentReq, onView = {
                             selectedType = SelectedType.APPOINTMENT_REQ
                             selectedAppointmentReq = appointmentReq
-                        }, onAccept = {}, onDelete = {
+                        }, onAccept = {
+                            val appointment = Appointment(
+                                title = appointmentReq.title,
+                                userId = appointmentReq.userId,
+                                user = appointmentReq.user,
+                                selectedMonkId = appointmentReq.selectedMonkId,
+                                selectedMonk = appointmentReq.selectedMonk,
+                                reason = appointmentReq.reason,
+                                appointmentStatus = AppointmentStatus.ACCEPTED
+                            )
+                            modifyAppointment = appointment
+                            isRequestConversion.value = true
+                            convertingRequestId.value = appointmentReq.id
+                            showCreateAppointmentDialog.value = true
+                        }, onDelete = {
                             viewModel.deleteAppointmentRequest(appointmentReq.id!!)
                         }, onModify = {
                             modifyAppointmentReq = appointmentReq
@@ -212,7 +235,14 @@ fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) {
                         AppointmentItem(appointment = appointment, onView = {
                             selectedType = SelectedType.APPOINTMENT
                             selectedAppointment = appointment
-                        }, onDelete = {}, onModify = {})
+                        }, onDelete = {
+                            viewModel.deleteAppointment(appointmentId = appointment.id!!)
+                        }, onModify = {
+                            modifyAppointment = appointment
+                            isRequestConversion.value = false
+                            convertingRequestId.value = null
+                            showCreateAppointmentDialog.value = true
+                        })
                     }
                 } else {
                     item {
@@ -271,6 +301,27 @@ fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) {
             },
             modifyRequest = modifyAppointmentReq,
             selectedMonk = selectedMonk
+        )
+    }
+
+    if (showCreateAppointmentDialog.value) {
+        AppointmentCreateOrModifyDialog(
+            showDialog = showCreateAppointmentDialog,
+            modifyAppointment = modifyAppointment,
+            isConversion = isRequestConversion.value,
+            appointmentReqId = convertingRequestId.value,
+            onCancel = { refreshRequired ->
+                isRequestConversion.value = false
+                convertingRequestId.value = null
+                showCreateAppointmentDialog.value = false
+
+                // Some update happens in appointment requests, therefore refresh-required
+                if (refreshRequired) {
+                    viewModel.fetchAppointmentRequests()
+                    viewModel.fetchAppointments()
+                    viewModel.checkAppointmentReqCreateEligibility()
+                }
+            }
         )
     }
 
