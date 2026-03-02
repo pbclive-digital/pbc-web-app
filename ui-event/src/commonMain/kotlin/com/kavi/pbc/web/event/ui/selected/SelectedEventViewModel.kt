@@ -33,6 +33,9 @@ class SelectedEventViewModel: ViewModel() {
     private val _eventSignUpSheetData = MutableStateFlow(EventSignUpSheetList(""))
     val eventSignUpSheetData: StateFlow<EventSignUpSheetList> = _eventSignUpSheetData
 
+    private val _fetchSelectedEventState = MutableStateFlow(EventActionUiState.INITIAL)
+    val fetchSelectedEventState: StateFlow<EventActionUiState> = _fetchSelectedEventState
+
     private val _potluckItemRegUnRegUiState = MutableStateFlow(EventActionUiState.INITIAL)
     val potluckItemRegUnRegUiState: StateFlow<EventActionUiState> = _potluckItemRegUnRegUiState
 
@@ -44,13 +47,15 @@ class SelectedEventViewModel: ViewModel() {
 
     fun fetchEventDetails(eventId: String) {
         viewModelScope.launch {
+            _fetchSelectedEventState.value = EventActionUiState.PENDING
             when(val response = eventRemoteRepository.getEventDetails(eventId = eventId)) {
-                is ResultWrapper.NetworkError -> {}
-                is ResultWrapper.HttpError -> {}
-                is ResultWrapper.UnAuthError -> {}
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                    _fetchSelectedEventState.value = EventActionUiState.FAILURE
+                }
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
                         _selectedEvent.value = it
+                        _fetchSelectedEventState.value = EventActionUiState.SUCCESS
 
                         if (_selectedEvent.value.signUpSheetAvailable) {
                             fetchSignUpSheetDetails()

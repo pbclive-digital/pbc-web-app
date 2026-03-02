@@ -42,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
+import com.kavi.pbc.web.common.ui.component.AppFullScreenLoader
 import com.kavi.pbc.web.common.ui.component.AppIconButton
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.common.ui.util.ScreenType
@@ -49,6 +50,7 @@ import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.event.EventStatus
 import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheet
+import com.kavi.pbc.web.event.data.model.EventActionUiState
 import com.kavi.pbc.web.event.ui.common.SignUpSheetItemUI
 import com.kavi.pbc.web.event.ui.selected.action.PotluckSheetUI
 import com.kavi.pbc.web.event.ui.selected.action.RegistrationSheetUI
@@ -105,42 +107,52 @@ fun SelectedEvent(navController: NavController, eventId: String) {
 @Composable
 fun PhoneScreenUI(viewModel: SelectedEventViewModel) {
 
+    val fetchSelectedEventState by viewModel.fetchSelectedEventState.collectAsState()
     val selectedEvent by viewModel.selectedEvent.collectAsState()
 
-    Column (
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        BoxWithConstraints (
-          contentAlignment = Alignment.Center
-        ) {
-            val maxWidth = this.maxWidth
-
-            Card (
+    when(fetchSelectedEventState) {
+        EventActionUiState.INITIAL -> {}
+        EventActionUiState.FAILURE -> {}
+        EventActionUiState.PENDING -> {
+            AppFullScreenLoader()
+        }
+        EventActionUiState.SUCCESS -> {
+            Column (
                 modifier = Modifier
-                    .height(maxWidth)
-                    .width(maxWidth)
-                    .padding(10.dp)
-                    .background(Color.Transparent),
-                shape = RoundedCornerShape(12.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
-                AsyncImage(
-                    model = selectedEvent.eventImage,
-                    error = painterResource(Res.drawable.event_image_pbc),
-                    contentDescription = null, // decorative image
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        //.padding(20.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(color = MaterialTheme.colorScheme.background)
-                )
+                BoxWithConstraints (
+                    contentAlignment = Alignment.Center
+                ) {
+                    val maxWidth = this.maxWidth
+
+                    Card (
+                        modifier = Modifier
+                            .height(maxWidth)
+                            .width(maxWidth)
+                            .padding(10.dp)
+                            .background(Color.Transparent),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+                    ) {
+                        AsyncImage(
+                            model = selectedEvent.eventImage,
+                            error = painterResource(Res.drawable.event_image_pbc),
+                            contentDescription = null, // decorative image
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                //.padding(20.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(color = MaterialTheme.colorScheme.background)
+                        )
+                    }
+                }
+
+                EventInformationComponent(viewModel = viewModel)
             }
         }
-
-        EventInformationComponent(viewModel = viewModel)
     }
 }
 
@@ -148,47 +160,57 @@ fun PhoneScreenUI(viewModel: SelectedEventViewModel) {
 @Composable
 fun WebScreenUI(viewModel: SelectedEventViewModel) {
 
+    val fetchSelectedEventState by viewModel.fetchSelectedEventState.collectAsState()
     val selectedEvent by viewModel.selectedEvent.collectAsState()
 
-    Row (
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        BoxWithConstraints (
-            modifier = Modifier
-                .weight(.5f)
-        ) {
-            val maxWidth = this.maxWidth
-
-            Card (
+    when(fetchSelectedEventState) {
+        EventActionUiState.INITIAL -> {}
+        EventActionUiState.FAILURE -> {}
+        EventActionUiState.PENDING -> {
+            AppFullScreenLoader()
+        }
+        EventActionUiState.SUCCESS -> {
+            Row (
                 modifier = Modifier
-                    .height(maxWidth)
-                    .width(maxWidth)
-                    .padding(top = 20.dp, bottom = 20.dp, end = 20.dp)
-                    .background(Color.Transparent),
-                shape = RoundedCornerShape(12.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+                    .fillMaxSize()
             ) {
-                AsyncImage(
-                    model = selectedEvent.eventImage,
-                    error = painterResource(Res.drawable.event_image_pbc),
-                    contentDescription = null, // decorative image
-                    contentScale = ContentScale.FillBounds,
+                BoxWithConstraints (
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(color = MaterialTheme.colorScheme.background)
+                        .weight(.5f)
+                ) {
+                    val maxWidth = this.maxWidth
+
+                    Card (
+                        modifier = Modifier
+                            .height(maxWidth)
+                            .width(maxWidth)
+                            .padding(top = 20.dp, bottom = 20.dp, end = 20.dp)
+                            .background(Color.Transparent),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+                    ) {
+                        AsyncImage(
+                            model = selectedEvent.eventImage,
+                            error = painterResource(Res.drawable.event_image_pbc),
+                            contentDescription = null, // decorative image
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(color = MaterialTheme.colorScheme.background)
+                        )
+                    }
+                }
+
+                EventInformationComponent(
+                    modifier = Modifier
+                        .weight(.5f)
+                        .verticalScroll(rememberScrollState()),
+                    viewModel = viewModel
                 )
             }
         }
-
-        EventInformationComponent(
-            modifier = Modifier
-                .weight(.5f)
-                .verticalScroll(rememberScrollState()),
-            viewModel = viewModel
-        )
     }
 }
 
