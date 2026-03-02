@@ -249,7 +249,9 @@ fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUp
                 }
             } else {
                 AppFilledButton(
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth(),
                     label = if (isSignUp)
                         stringResource(Res.string.event_label_sign_out) else stringResource(Res.string.event_label_sign_up)) {
 
