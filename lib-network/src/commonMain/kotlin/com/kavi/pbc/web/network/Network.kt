@@ -3,27 +3,12 @@ package com.kavi.pbc.web.network
 import com.kavi.pbc.web.network.model.NetConfig
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.data.BaseResponse
-import com.kavi.pbc.web.network.session.Session
+import com.kavi.pbc.web.data.Error
+import com.kavi.pbc.web.network.model.AuthException
+import com.kavi.pbc.web.network.model.HttpException
+import com.kavi.pbc.web.network.model.SystemException
+import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.headers
-import io.ktor.client.request.parameter
-import io.ktor.client.request.post
-import io.ktor.client.request.put
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.contentType
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.io.IOException
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 class Network {
 
@@ -39,95 +24,38 @@ class Network {
     }
 
     fun getBaseUrl(): String {
-        return "${netConfig?.scheme}://${netConfig?.domain}"
+        return "${netConfig?.scheme}://${netConfig?.domain}/"
     }
 
-    @PublishedApi
-    internal fun setHeaders(httpRequestBuilder: HttpRequestBuilder) {
-        httpRequestBuilder.headers {
-            append(HttpHeaders.Accept, "application/json")
-            append("X-app-os", "web")
-            Session.authToken?.token?.let {
-                append(HttpHeaders.Authorization, "Bearer $it")
-            }
-            Session.user?.let {
-                append("X-app-user", Json.encodeToString(it))
-            }
-        }
-        httpRequestBuilder.contentType(ContentType.Application.Json)
+    fun ktorfitClient(): Ktorfit {
+        val ktorfit = Ktorfit.Builder()
+            .httpClient(httpClientInstance)
+            .baseUrl(getBaseUrl())
+            .build()
+
+        return ktorfit
     }
 
-    suspend inline fun <reified T> safeRequest(
-        block: () -> HttpResponse
+    suspend fun <T>invokeApiCall(
+        apiCall: suspend () -> BaseResponse<T>
     ): ResultWrapper<BaseResponse<T>> {
         return try {
-            val response = block()
-            when (val status = response.status.value) {
-                in 200..299 -> {
-                    val body = response.body<BaseResponse<T>>()
-                    ResultWrapper.Success(body)
+            ResultWrapper.Success(apiCall.invoke())
+        } catch (throwable: Throwable) {
+            when (throwable) {
+                is HttpException -> {
+                    ResultWrapper.HttpError(throwable.getCode(), throwable.getAppError())
                 }
-                401 -> {
-                    ResultWrapper.UnAuthError(status)
+                is AuthException -> {
+                    ResultWrapper.HttpError(throwable.getCode(), throwable.getAppError())
+                }
+                is SystemException -> {
+                    ResultWrapper.HttpError(throwable.getCode(), throwable.getAppError())
                 }
                 else -> {
-                    val error = runCatching {
-                        response.body<Error>()
-                    }.getOrNull()
-
-                    ResultWrapper.HttpError(status, error)
+                    ResultWrapper.HttpError(-1, Error(throwable.toString()))
                 }
             }
-        } catch (e: IOException) {
-            ResultWrapper.NetworkError
-        } catch (e: TimeoutCancellationException) {
-            ResultWrapper.NetworkError
-        } catch (e: SerializationException) {
-            ResultWrapper.HttpError(-1, Error(e.toString()))
-        }
-    }
-
-    suspend inline fun <reified T> get(
-        urlPath: String,
-        query: Map<String, Any?> = emptyMap()
-    ): ResultWrapper<BaseResponse<T>> = safeRequest<T> {
-        httpClientInstance.get("${getBaseUrl()}/$urlPath") {
-            query.forEach { (k, v) -> parameter(k, v) }
-            setHeaders(this)
-        }
-    }
-
-    suspend inline fun <reified T, reified E> post(
-        urlPath: String,
-        body: E?,
-        query: Map<String, Any?> = emptyMap()
-    ): ResultWrapper<BaseResponse<T>> = safeRequest<T> {
-        httpClientInstance.post("${getBaseUrl()}/$urlPath") {
-            query.forEach { (k, v) -> parameter(k, v) }
-            setHeaders(this)
-            setBody(body)
-        }
-    }
-
-    suspend inline fun <reified T, reified E> put(
-        urlPath: String,
-        body: E?,
-        query: Map<String, Any?> = emptyMap()
-    ): ResultWrapper<BaseResponse<T>> = safeRequest<T> {
-        httpClientInstance.put("${getBaseUrl()}/$urlPath") {
-            query.forEach { (k, v) -> parameter(k, v) }
-            setHeaders(this)
-            setBody(body)
-        }
-    }
-
-    suspend inline fun <reified T> delete(
-        urlPath: String,
-        query: Map<String, Any?> = emptyMap()
-    ): ResultWrapper<BaseResponse<T>> = safeRequest<T> {
-        httpClientInstance.delete("${getBaseUrl()}/$urlPath") {
-            query.forEach { (k, v) -> parameter(k, v) }
-            setHeaders(this)
         }
     }
 }

@@ -1,8 +1,14 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.ktorfit)
+}
+
+ktorfit {
+    compilerPluginVersion = libs.versions.ktorfitCompilerVersion
 }
 
 kotlin {
@@ -39,6 +45,9 @@ kotlin {
 
                 // kotlin serialization
                 implementation(libs.kotlin.serialization)
+
+                // ktorfit
+                implementation(libs.ktorfit.lib)
 
                 implementation(projects.libData)
             }

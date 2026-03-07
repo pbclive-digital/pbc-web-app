@@ -6,6 +6,7 @@ composeNavigation = "2.9.1"
 junit = "4.13.2"
 kotlin = "2.3.0"
 kotlinStdlib = "2.3.0"
+ksp = "2.3.5"
 runner = "1.5.2"
 core = "1.5.0"
 junitVersion = "1.3.0"
@@ -13,6 +14,8 @@ junitVersion = "1.3.0"
 buildkonfig = "0.17.1"
 
 ktorVersion = "3.3.3"
+ktorfitVersion = "2.7.2"
+ktorfitCompilerVersion = "2.3.3"
 coroutinesVesion = "1.10.2"
 kotlinxSerializationVersion = "1.9.0"
 kotlinxDateTime = "0.7.1"
@@ -49,6 +52,7 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorVersion" }
 ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorVersion" }
 ktor-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
+ktorfit-lib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfitVersion" }
 
 # Datetime
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDateTime" }
@@ -66,6 +70,10 @@ kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-j
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfitVersion" }
 
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 

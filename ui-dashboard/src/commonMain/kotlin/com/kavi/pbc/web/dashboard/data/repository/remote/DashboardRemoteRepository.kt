@@ -9,15 +9,17 @@ import com.kavi.pbc.web.network.model.ResultWrapper
 
 class DashboardRemoteRepository {
 
+    val dashboardApi = Network.shared.ktorfitClient().createDashboardApi()
+
     suspend fun fetchDashboardEvents(): ResultWrapper<BaseResponse<List<Event>>> {
-        return Network.shared.get<List<Event>>(urlPath = "dashboard/get/events")
+        return Network.shared.invokeApiCall { dashboardApi.fetchDashboardEvents() }
     }
 
     suspend fun fetchDashboardDailyQuotes(): ResultWrapper<BaseResponse<List<Quote>>> {
-        return Network.shared.get<List<Quote>>(urlPath = "dashboard/get/daily/quotes")
+        return Network.shared.invokeApiCall { dashboardApi.fetchDashboardDailyQuotes() }
     }
 
     suspend fun fetchDashboardNews(): ResultWrapper<BaseResponse<List<News>>> {
-        return Network.shared.get<List<News>>(urlPath = "dashboard/get/news")
+        return Network.shared.invokeApiCall { dashboardApi.fetchDashboardNews() }
     }
 }

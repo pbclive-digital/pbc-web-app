@@ -1,9 +1,15 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.ktorfit)
+}
+
+ktorfit {
+    compilerPluginVersion = libs.versions.ktorfitCompilerVersion
 }
 
 kotlin {
@@ -41,6 +47,8 @@ kotlin {
                 implementation(libs.jetbrains.navigation.compose)
                 // ViewModel lifecycle
                 implementation(libs.androidx.lifecycle.viewmodelCompose)
+                // ktorfit
+                implementation(libs.ktorfit.lib)
 
                 implementation(projects.libParent)
                 implementation(projects.libData)

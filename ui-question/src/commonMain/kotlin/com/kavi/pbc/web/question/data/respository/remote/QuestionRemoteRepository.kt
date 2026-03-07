@@ -11,32 +11,37 @@ import io.ktor.http.encodeURLPath
 
 class QuestionRemoteRepository {
 
+    val questionApi: QuestionApi = Network.shared.ktorfitClient().createQuestionApi()
+
     suspend fun getOpenQuestionList(paginationRequest: PaginationRequest?):
             ResultWrapper<BaseResponse<PaginationResponse<Question>>> {
-        return Network.shared
-            .post<PaginationResponse<Question>, PaginationRequest>(urlPath = "question/get/all", body = paginationRequest)
+        return Network.shared.invokeApiCall {
+            questionApi.getOpenQuestionList(paginationRequest = paginationRequest)
+        }
     }
 
     suspend fun getPersonalQuestionList(userId: String): ResultWrapper<BaseResponse<MutableList<Question>>> {
-        return Network.shared.get<MutableList<Question>>(urlPath = "question/get/user/$userId")
+        return Network.shared.invokeApiCall {
+            questionApi.getPersonalQuestionList(userId = userId)
+        }
     }
 
     suspend fun createNewAnswer(questionId: String, answerComment: AnswerComment):
             ResultWrapper<BaseResponse<Question>> {
-
-        val encodedQuestionId = questionId.encodeURLPath()
-
-        return Network.shared
-            .put<Question, AnswerComment>(urlPath = "question/add/comment/${encodedQuestionId}", body = answerComment)
+        return Network.shared.invokeApiCall {
+            questionApi.createNewAnswer(questionId = questionId, answerComment = answerComment)
+        }
     }
 
     suspend fun createNewQuestion(question: Question): ResultWrapper<BaseResponse<String>> {
-        return Network.shared.post<String, Question>(urlPath = "question/create", body = question)
+        return Network.shared.invokeApiCall {
+            questionApi.createNewQuestion(question = question)
+        }
     }
 
     suspend fun modifyQuestion(questionId: String, question: Question): ResultWrapper<BaseResponse<Question>> {
-        val encodedQuestionId = questionId.encodeURLPath()
-        return Network.shared
-            .put<Question, Question>(urlPath = "question/update/${encodedQuestionId}", body = question)
+        return Network.shared.invokeApiCall {
+            questionApi.modifyQuestion(questionId = questionId, question = question)
+        }
     }
 }

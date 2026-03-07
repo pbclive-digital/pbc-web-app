@@ -1,6 +1,7 @@
 package com.kavi.pbc.web.network.model
 
 import com.kavi.pbc.web.data.BaseResponse
+import com.kavi.pbc.web.data.Error
 
 
 sealed class ResultWrapper<out T> {

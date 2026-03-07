@@ -1,9 +1,15 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.ktorfit)
+}
+
+ktorfit {
+    compilerPluginVersion = libs.versions.ktorfitCompilerVersion
 }
 
 kotlin {
@@ -44,6 +50,8 @@ kotlin {
                 // Async image loading
                 implementation(libs.coil3.compose)
                 implementation(libs.coil3.network.ktor)
+                // ktorfit
+                implementation(libs.ktorfit.lib)
 
                 implementation(projects.libParent)
                 implementation(projects.libCommonUi)

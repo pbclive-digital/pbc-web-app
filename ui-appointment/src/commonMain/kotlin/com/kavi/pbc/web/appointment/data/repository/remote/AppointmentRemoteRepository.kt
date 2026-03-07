@@ -9,56 +9,63 @@ import com.kavi.pbc.web.network.model.ResultWrapper
 
 class AppointmentRemoteRepository {
 
+    val appointmentApi: AppointmentApi = Network.shared.ktorfitClient().createAppointmentApi()
 
     suspend fun validateAppointmentReqCreate(userId: String): ResultWrapper<BaseResponse<AppointmentRequestEligibility>> {
-        return Network.shared.get<AppointmentRequestEligibility>(urlPath = "appointment/request/create/eligibility/$userId")
+        return Network.shared.invokeApiCall {
+            appointmentApi.validateAppointmentReqCreate(userId = userId)
+        }
     }
 
     suspend fun getAppointmentRequests(userId: String): ResultWrapper<BaseResponse<List<AppointmentRequest>>> {
-        return Network.shared.get<List<AppointmentRequest>>(urlPath = "appointment/request/get/user/$userId")
+        return Network.shared.invokeApiCall {
+            appointmentApi.getAppointmentRequests(userId = userId)
+        }
     }
 
     suspend fun getAppointments(userId: String): ResultWrapper<BaseResponse<List<Appointment>>> {
-        return Network.shared.get<List<Appointment>>(urlPath = "appointment/get/user/$userId")
+        return Network.shared.invokeApiCall {
+            appointmentApi.getAppointments(userId = userId)
+        }
     }
 
     suspend fun createAppointmentRequest(appointmentRequest: AppointmentRequest):
             ResultWrapper<BaseResponse<String>> {
-        return Network.shared.post<String, AppointmentRequest>(
-            urlPath = "appointment/request/create",
-            body = appointmentRequest
-        )
+        return Network.shared.invokeApiCall {
+            appointmentApi.createAppointmentRequest(appointmentRequest = appointmentRequest)
+        }
     }
 
     suspend fun updateAppointmentRequest(appointmentRequest: AppointmentRequest):
             ResultWrapper<BaseResponse<AppointmentRequest>> {
-        return Network.shared.put<AppointmentRequest, AppointmentRequest>(
-            urlPath = "appointment/request/update",
-            body = appointmentRequest
-        )
+        return Network.shared.invokeApiCall {
+            appointmentApi.updateAppointmentRequest(appointmentRequest = appointmentRequest)
+        }
     }
 
     suspend fun deleteAppointmentRequest(appointmentReqId: String): ResultWrapper<BaseResponse<String>> {
-        return Network.shared.delete<String>(urlPath = "appointment/request/delete/$appointmentReqId")
-    }
-
-    suspend fun deleteAppointment(appointmentId: String): ResultWrapper<BaseResponse<String>> {
-        return Network.shared.delete<String>(urlPath = "appointment/delete/$appointmentId")
+        return Network.shared.invokeApiCall {
+            appointmentApi.deleteAppointmentRequest(appointmentReqId = appointmentReqId)
+        }
     }
 
     suspend fun createAppointment(appointment: Appointment):
             ResultWrapper<BaseResponse<String>> {
-        return Network.shared.post<String, Appointment>(
-            urlPath = "appointment/create",
-            body = appointment
-        )
+        return Network.shared.invokeApiCall {
+            appointmentApi.createAppointment(appointment = appointment)
+        }
     }
 
     suspend fun updateAppointment(appointment: Appointment):
             ResultWrapper<BaseResponse<Appointment>> {
-        return Network.shared.put<Appointment, Appointment>(
-            urlPath = "appointment/update",
-            body = appointment
-        )
+        return Network.shared.invokeApiCall {
+            appointmentApi.updateAppointment(appointment = appointment)
+        }
+    }
+
+    suspend fun deleteAppointment(appointmentId: String): ResultWrapper<BaseResponse<String>> {
+        return Network.shared.invokeApiCall {
+            appointmentApi.deleteAppointment(appointmentId = appointmentId)
+        }
     }
 }
