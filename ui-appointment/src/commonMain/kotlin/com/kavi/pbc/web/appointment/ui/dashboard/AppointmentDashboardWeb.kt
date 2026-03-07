@@ -409,7 +409,7 @@ private fun EmptySelection() {
 }
 
 @Composable
-private fun SelectedAppointment(selectedAppointment: Appointment) {
+fun SelectedAppointment(selectedAppointment: Appointment) {
     BoxWithConstraints (
         modifier = Modifier
             .fillMaxWidth()

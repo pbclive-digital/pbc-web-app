@@ -318,6 +318,9 @@ private fun NewAppointmentRequestUI(
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             ) {
+                viewModel.updateTitle(appointmentTitle.value.text)
+                viewModel.updateReason(appointmentReason.value.text)
+
                 if(isModify)
                     viewModel.updateAppointmentRequest()
                 else

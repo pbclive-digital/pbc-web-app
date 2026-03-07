@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,13 +36,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kavi.pbc.web.appointment.ui.common.AppointmentItem
 import com.kavi.pbc.web.appointment.ui.common.AppointmentReqItem
+import com.kavi.pbc.web.appointment.ui.create.appointment.AppointmentCreateOrModifyDialog
 import com.kavi.pbc.web.appointment.ui.create.request.RequestCreateOrModifyDialog
+import com.kavi.pbc.web.appointment.ui.sheet.SelectedAppointmentBottomSheetUI
+import com.kavi.pbc.web.appointment.ui.sheet.SelectedAppointmentReqBottomSheetUI
 import com.kavi.pbc.web.common.ui.component.AppFilledButton
 import com.kavi.pbc.web.common.ui.component.AppMessageDialog
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.appointment.Appointment
 import com.kavi.pbc.web.data.appointment.AppointmentRequest
+import com.kavi.pbc.web.data.appointment.AppointmentStatus
 import com.kavi.pbc.web.data.user.User
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_appointment.generated.resources.Res
@@ -193,6 +198,11 @@ private fun AppointmentRequestList(screenHeight: Dp, viewModel: AppointmentDashb
     val showModifyAppointmentReqDialog = remember { mutableStateOf(false) }
     var selectedAppointmentReq by remember { mutableStateOf(AppointmentRequest(user = User(email = ""))) }
 
+    var modifyAppointment: Appointment? by remember { mutableStateOf(null) }
+    val isRequestConversion = remember { mutableStateOf(false) }
+    val convertingRequestId: MutableState<String?> = remember { mutableStateOf(null) }
+    val showCreateAppointmentDialog = remember { mutableStateOf(false) }
+
     LazyColumn (
         modifier = Modifier
             .fillMaxWidth()
@@ -220,8 +230,13 @@ private fun AppointmentRequestList(screenHeight: Dp, viewModel: AppointmentDashb
                         user = appointmentReq.user,
                         selectedMonkId = appointmentReq.selectedMonkId,
                         selectedMonk = appointmentReq.selectedMonk,
-                        reason = appointmentReq.reason
+                        reason = appointmentReq.reason,
+                        appointmentStatus = AppointmentStatus.ACCEPTED
                     )
+                    modifyAppointment = appointment
+                    isRequestConversion.value = true
+                    convertingRequestId.value = appointmentReq.id
+                    showCreateAppointmentDialog.value = true
                 }
             )
         }
@@ -242,12 +257,49 @@ private fun AppointmentRequestList(screenHeight: Dp, viewModel: AppointmentDashb
             }
         )
     }
+
+    if (showCreateAppointmentDialog.value) {
+        AppointmentCreateOrModifyDialog(
+            showDialog = showCreateAppointmentDialog,
+            modifyAppointment = modifyAppointment,
+            isConversion = isRequestConversion.value,
+            appointmentReqId = convertingRequestId.value,
+            onCancel = { refreshRequired ->
+                isRequestConversion.value = false
+                convertingRequestId.value = null
+                showCreateAppointmentDialog.value = false
+
+                // Some update happens in appointment requests, therefore refresh-required
+                if (refreshRequired) {
+                    viewModel.fetchAppointmentRequests()
+                    viewModel.fetchAppointments()
+                    viewModel.checkAppointmentReqCreateEligibility()
+                }
+            }
+        )
+    }
+
+    if (showViewSheet.value) {
+        SelectedAppointmentReqBottomSheetUI(
+            sheetState = viewUserSheetState,
+            showSheet = showViewSheet,
+            selectedAppointmentReq = selectedAppointmentReq,
+        )
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppointmentList(screenHeight: Dp, viewModel: AppointmentDashboardViewModel) {
 
     val appointmentList by viewModel.appointmentList.collectAsState()
+
+    val viewUserSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    val showViewSheet = remember { mutableStateOf(false) }
+    val showModifyAppointmentDialog = remember { mutableStateOf(false) }
+    var selectedAppointment by remember { mutableStateOf(Appointment(user = User(email = ""))) }
 
     LazyColumn (
         modifier = Modifier
@@ -258,10 +310,42 @@ private fun AppointmentList(screenHeight: Dp, viewModel: AppointmentDashboardVie
         items(appointmentList) { appointment ->
             AppointmentItem(
                 appointment = appointment,
-                onView = {},
-                onModify = {},
-                onDelete = {}
+                onView = {
+                    showViewSheet.value = true
+                    selectedAppointment = appointment
+                },
+                onModify = {
+                    selectedAppointment = appointment
+                    showModifyAppointmentDialog.value = true
+                },
+                onDelete = {
+                    viewModel.deleteAppointment(appointmentId = appointment.id!!)
+                }
             )
         }
+    }
+
+    if (showModifyAppointmentDialog.value) {
+        AppointmentCreateOrModifyDialog(
+            showDialog = showModifyAppointmentDialog,
+            modifyAppointment = selectedAppointment,
+            onCancel = { refreshRequired ->
+                showModifyAppointmentDialog.value = false
+
+                // Some update happens in appointment requests, therefore refresh-required
+                if (refreshRequired) {
+                    viewModel.fetchAppointments()
+                    viewModel.checkAppointmentReqCreateEligibility()
+                }
+            }
+        )
+    }
+
+    if (showViewSheet.value) {
+        SelectedAppointmentBottomSheetUI(
+            sheetState = viewUserSheetState,
+            showSheet = showViewSheet,
+            selectedAppointment = selectedAppointment,
+        )
     }
 }

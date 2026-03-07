@@ -44,7 +44,7 @@ class RequestCreateOrModifyViewModel: ViewModel() {
                 userId = it.id!!,
                 user = it,
                 selectedMonk = selectedMonk,
-                selectedMonkId = selectedMonk?.id?: ""
+                selectedMonkId = selectedMonk?.id?: "none"
             )
         }
     }
