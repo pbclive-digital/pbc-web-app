@@ -40,11 +40,13 @@ import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.auth.AppAuthStatus
+import com.kavi.pbc.web.data.user.UserType
 import com.kavi.pbc.web.datastore.AppLocalStore
 import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
+import com.kavi.pbc.web.parent.contract.model.EventContract
 import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
 import com.kavi.pbc.web.pbc.container.model.TabItem
 import com.kavi.pbc.web.pbc.container.ui.ProfileActionComponent
@@ -61,6 +63,7 @@ fun PBCDashboardContainer(
     modifier: Modifier = Modifier,
     authTabItemList: List<TabItem>,
     unAuthTabItemList: List<TabItem>,
+    adminTabItemList: List<TabItem>,
     tabContent: @Composable (selectedTabIndex: Int, appAuthStatus: AppAuthStatus?) -> Unit
 ) {
     val showSignUpDialog = remember { mutableStateOf(false) }
@@ -229,25 +232,71 @@ fun PBCDashboardContainer(
                 ) {
                     when(appAuthStatus) {
                         AppAuthStatus.SIGN_IN -> {
-                            authTabItemList.forEachIndexed { index, tabItem ->
-                                NavigationBarItem(
-                                    modifier = Modifier
-                                        .padding(4.dp),
-                                    colors = navigationBarColors(),
-                                    selected = selectedTabIndex == index,
-                                    onClick = { selectedTabIndex = index },
-                                    label = { Text(tabItem.name) },
-                                    icon = {
-                                        Icon(
-                                            painterResource(tabItem.icon),
-                                            contentDescription = "",
+                            Session.user?.let { currentUser ->
+                                if (screenType != ScreenType.PHONE && (currentUser.userType == UserType.ADMIN || currentUser.residentMonk)) {
+                                    adminTabItemList.forEachIndexed { index, tabItem ->
+                                        NavigationBarItem(
                                             modifier = Modifier
-                                                .width(45.dp)
-                                                .height(45.dp)
-                                                .padding(8.dp),
+                                                .padding(4.dp),
+                                            colors = navigationBarColors(),
+                                            selected = selectedTabIndex == index,
+                                            onClick = { selectedTabIndex = index },
+                                            label = { Text(tabItem.name) },
+                                            icon = {
+                                                Icon(
+                                                    painterResource(tabItem.icon),
+                                                    contentDescription = "",
+                                                    modifier = Modifier
+                                                        .width(45.dp)
+                                                        .height(45.dp)
+                                                        .padding(8.dp),
+                                                )
+                                            }
                                         )
                                     }
-                                )
+                                } else {
+                                    authTabItemList.forEachIndexed { index, tabItem ->
+                                        NavigationBarItem(
+                                            modifier = Modifier
+                                                .padding(4.dp),
+                                            colors = navigationBarColors(),
+                                            selected = selectedTabIndex == index,
+                                            onClick = { selectedTabIndex = index },
+                                            label = { Text(tabItem.name) },
+                                            icon = {
+                                                Icon(
+                                                    painterResource(tabItem.icon),
+                                                    contentDescription = "",
+                                                    modifier = Modifier
+                                                        .width(45.dp)
+                                                        .height(45.dp)
+                                                        .padding(8.dp),
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+                            }?: run {
+                                unAuthTabItemList.forEachIndexed { index, tabItem ->
+                                    NavigationBarItem(
+                                        modifier = Modifier
+                                            .padding(4.dp),
+                                        colors = navigationBarColors(),
+                                        selected = selectedTabIndex == index,
+                                        onClick = { selectedTabIndex = index },
+                                        label = { Text(tabItem.name) },
+                                        icon = {
+                                            Icon(
+                                                painterResource(tabItem.icon),
+                                                contentDescription = "",
+                                                modifier = Modifier
+                                                    .width(45.dp)
+                                                    .height(45.dp)
+                                                    .padding(8.dp),
+                                            )
+                                        }
+                                    )
+                                }
                             }
                         }
                         else -> {

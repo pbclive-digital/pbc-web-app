@@ -54,6 +54,7 @@ import com.kavi.pbc.web.news.ui.common.NewsItem
 import com.kavi.pbc.web.news.ui.sheet.NewsSelectedBottomSheetUI
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
+import com.kavi.pbc.web.news.ui.common.SelectedNewsUI
 import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -157,7 +158,7 @@ fun NewsListUI(navController: NavController) {
                                     .weight(.65f)
                                     .padding(top = 10.dp, start = 15.dp)
                             ) {
-                                SelectedNews(selectedNews = selectedNews)
+                                SelectedNewsUI(selectedNews = selectedNews)
                             }
                         }
                     }
@@ -171,130 +172,6 @@ fun NewsListUI(navController: NavController) {
                 showSheet = showNewsSheet,
                 selectedNews = selectedNews.value
             )
-        }
-    }
-}
-
-@Composable
-private fun SelectedNews(selectedNews: MutableState<News>) {
-    val themeAdditionalColors = LocalThemeAdditionalColors.current
-
-    Box (
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.background)
-            .padding(40.dp)
-    ) {
-        Column (
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                text = selectedNews.value.title,
-                fontFamily = PBCFontFamily,
-                fontSize = 36.sp,
-                lineHeight = 36.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-            Text(
-                text = "on ${selectedNews.value.getFormatPublishedDate()}",
-                fontFamily = PBCFontFamily,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-
-            Text(
-                text = "by ${selectedNews.value.author.name}",
-                fontFamily = PBCFontFamily,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(2.dp),
-                thickness = 2.dp
-            )
-
-            Column {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Card(
-                        modifier = Modifier
-                            .padding(top = 20.dp)
-                            .shadow(
-                                elevation = 12.dp,
-                                spotColor = themeAdditionalColors.shadow
-                            ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                    ) {
-                        AsyncImage(
-                            model = selectedNews.value.newsImage,
-                            error = painterResource(Res.drawable.news_icon_pbc),
-                            contentDescription = null, // decorative image
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .background(color = MaterialTheme.colorScheme.background)
-                        )
-                    }
-                }
-
-                Text(
-                    text = selectedNews.value.content,
-                    fontFamily = PBCFontFamily,
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Justify,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
-                )
-
-                selectedNews.value.facebookLink?.let {
-                    Text(
-                        text = stringResource(Res.string.news_label_reference),
-                        fontFamily = PBCFontFamily,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Justify,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp)
-                    )
-
-                    Text(
-                        text = it,
-                        fontFamily = PBCFontFamily,
-                        fontSize = 16.sp,
-                        fontStyle = FontStyle.Italic,
-                        textDecoration = TextDecoration.Underline,
-                        color = themeAdditionalColors.quaternary,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 2.dp)
-                            .clickable {
-                                openUrl(url = it)
-                            }
-                    )
-                }
-            }
         }
     }
 }

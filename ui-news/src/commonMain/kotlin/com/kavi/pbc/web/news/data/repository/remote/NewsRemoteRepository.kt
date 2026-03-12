@@ -9,7 +9,19 @@ class NewsRemoteRepository {
 
     val newsApi = Network.shared.ktorfitClient().createNewsApi()
 
-    suspend fun getActiveNews(): ResultWrapper<BaseResponse<List<News>>> {
+    suspend fun getActiveNews(): ResultWrapper<BaseResponse<MutableList<News>>> {
         return Network.shared.invokeApiCall { newsApi.getActiveNews() }
+    }
+
+    suspend fun getDraftNews(): ResultWrapper<BaseResponse<MutableList<News>>> {
+        return Network.shared.invokeApiCall { newsApi.fetchDraftNewsList() }
+    }
+
+    suspend fun publishDraftNews(newsId: String, news: News): ResultWrapper<BaseResponse<News>> {
+        return Network.shared.invokeApiCall { newsApi.publishDraftNews(newsId, news) }
+    }
+
+    suspend fun deleteNews(newsId: String): ResultWrapper<BaseResponse<String>> {
+        return Network.shared.invokeApiCall { newsApi.deleteNews(newsId) }
     }
 }

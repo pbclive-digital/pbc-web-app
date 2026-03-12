@@ -8,4 +8,7 @@ interface NewsContract: CommonContract {
 
     @Composable
     fun GetNewsList(navController: NavController)
+
+    @Composable
+    fun GetNewsManage(navController: NavController)
 }

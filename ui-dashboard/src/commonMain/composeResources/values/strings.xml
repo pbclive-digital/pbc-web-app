@@ -4,6 +4,7 @@
     <string name="dashboard_label_appointments">Appointments</string>
     <string name="dashboard_label_questions">Questions</string>
     <string name="dashboard_label_news">News</string>
+    <string name="dashboard_label_admin">Admin</string>
     <string name="dashboard_label_news_read_more">Read More</string>
     <string name="dashboard_label_news_more">More News from PBC</string>
     <string name="dashboard_label_no_news">Failed to retrieve NEWS at this time, Please try again later to see latest NEWS from PBC</string>
@@ -19,4 +20,6 @@
     <string name="dashboard_label_visit_us_address">58 QSI Lane, Allison Park, PA 15101</string>
 
     <string name="dashboard_label_follow_us">Follow Us</string>
+
+    <string name="dashboard_phrase_unsupport_screen_type">This page is not support for this UI factor. Please use Computer or Tablet.</string>
 </resources>
