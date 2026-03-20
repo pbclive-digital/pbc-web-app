@@ -36,7 +36,7 @@ fun DashboardUI(navController: NavController) {
 
     val viewModel: DashboardViewModel = viewModel { DashboardViewModel() }
 
-    val isAdminUser by viewModel.isAdminUser.collectAsState()
+    val isAdminUser = viewModel.isAdminUser.collectAsState()
     val authTabItemList = remember { mutableStateOf(mutableListOf<TabItem>()) }
 
     LaunchedEffect(Unit) {
@@ -50,7 +50,7 @@ fun DashboardUI(navController: NavController) {
         TabItem(name = stringResource(Res.string.dashboard_label_appointments), icon = Res.drawable.dashboard_icon_appointment),
         TabItem(name = stringResource(Res.string.dashboard_label_questions), icon = Res.drawable.dashboard_icon_ask_question),
     )
-    if (isAdminUser) {
+    if (isAdminUser.value) {
         authTabItemList.value.add(TabItem(name = stringResource(Res.string.dashboard_label_admin), icon = Res.drawable.dashboard_icon_admin))
     }
 
@@ -64,10 +64,11 @@ fun DashboardUI(navController: NavController) {
     PBCDashboardContainer (
         authTabItemList = authTabItemList,
         unAuthTabItemList = unAuthTabItemList,
+        isAdminUser = isAdminUser.value
     ) { selectedTabIndex, appAuthStatus ->
         when(appAuthStatus) {
             AppAuthStatus.SIGN_IN -> {
-                if (isAdminUser) {
+                if (isAdminUser.value) {
                     when (selectedTabIndex) {
                         /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
                         0 -> EventsUI(navController = navController)

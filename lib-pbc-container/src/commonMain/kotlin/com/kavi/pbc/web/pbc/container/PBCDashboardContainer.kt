@@ -61,6 +61,7 @@ import pbcwebapp.lib_pbc_container.generated.resources.container_label_pbc_name_
 fun PBCDashboardContainer(
     modifier: Modifier = Modifier,
     authTabItemList: MutableState<MutableList<TabItem>>,
+    isAdminUser: Boolean,
     unAuthTabItemList: List<TabItem>,
     tabContent: @Composable (selectedTabIndex: Int, appAuthStatus: AppAuthStatus?) -> Unit
 ) {
@@ -147,6 +148,11 @@ fun PBCDashboardContainer(
             ScreenType.TABLET, ScreenType.COMPUTER -> {
                 (maxWidth.value * .1).dp
             }
+        }
+
+        // Hide the Admin panel from PHONE screen type
+        if (screenType == ScreenType.PHONE && isAdminUser && authTabItemList.value.size == 5) {
+            authTabItemList.value.removeLast()
         }
 
         Column {
