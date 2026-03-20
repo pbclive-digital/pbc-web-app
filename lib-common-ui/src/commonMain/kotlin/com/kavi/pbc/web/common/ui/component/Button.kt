@@ -70,6 +70,7 @@ fun AppFilledButton(label: String,
 fun AppButtonWithIcon(label: String,
                       icon: Painter,
                       buttonHeight: Dp = 50.dp,
+                      cornerRadius: Dp = 5.dp,
                       iconSide: IconSide = IconSide.LEFT,
                       labelTextSize: TextUnit? = null,
                       modifier: Modifier = Modifier,
@@ -78,7 +79,7 @@ fun AppButtonWithIcon(label: String,
     Button(
         onClick = onClick,
         modifier = modifier.fillMaxWidth().height(buttonHeight),
-        shape = RoundedCornerShape(5.dp),
+        shape = RoundedCornerShape(cornerRadius),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.onPrimary,
             containerColor = MaterialTheme.colorScheme.primary)

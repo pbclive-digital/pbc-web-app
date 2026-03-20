@@ -21,7 +21,7 @@ class AppointmentCreateOrModifyViewModel: ViewModel() {
     private val appointmentRemoteRepo = AppointmentRemoteRepository()
     private val appointmentLocalRepo = AppointmentLocalRepository()
 
-    // Make this question is nullable, because need to clear the appointment request object when creation or modify complete
+    // Make this news is nullable, because need to clear the appointment object when creation or modify complete
     private val _createOrModifyAppointment: MutableStateFlow<Appointment?> = MutableStateFlow(Appointment(
         user = User(email = "")
     ))

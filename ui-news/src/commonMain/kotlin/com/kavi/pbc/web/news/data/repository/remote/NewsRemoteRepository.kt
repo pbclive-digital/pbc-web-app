@@ -4,6 +4,12 @@ import com.kavi.pbc.web.data.BaseResponse
 import com.kavi.pbc.web.data.news.News
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.ResultWrapper
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.readBytes
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 
 class NewsRemoteRepository {
 
@@ -23,5 +29,28 @@ class NewsRemoteRepository {
 
     suspend fun deleteNews(newsId: String): ResultWrapper<BaseResponse<String>> {
         return Network.shared.invokeApiCall { newsApi.deleteNews(newsId) }
+    }
+
+    suspend fun uploadNewsImage(newsTitle: String, imageFile: PlatformFile): ResultWrapper<BaseResponse<String>> {
+        val byteArray = imageFile.readBytes()
+
+        val multipartBody = MultiPartFormDataContent(
+            formData {
+                append("newsImage", byteArray, Headers.build {
+                    append(HttpHeaders.ContentType, "image/png")
+                    append(HttpHeaders.ContentDisposition, "filename=\"$newsTitle\"")
+                })
+            }
+        )
+
+        return Network.shared.invokeApiCall { newsApi.uploadNewsImage(newsTitle, multipartBody) }
+    }
+
+    suspend fun createNews(news: News): ResultWrapper<BaseResponse<String>> {
+        return Network.shared.invokeApiCall { newsApi.createNews(news) }
+    }
+
+    suspend fun updateNews(newsId: String, news: News): ResultWrapper<BaseResponse<News>> {
+        return Network.shared.invokeApiCall { newsApi.updateNews(newsId, news) }
     }
 }

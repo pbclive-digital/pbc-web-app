@@ -31,6 +31,22 @@ class AuthServiceModel {
         }
     }
 
+    fun fetchUser(userId: String, onComplete: (authStatus: AppAuthStatus) -> Unit) {
+        CoroutineScope(Dispatchers.Default).launch {
+            when(val response = authRemoteRepository.getUser(userId = userId)) {
+                is ResultWrapper.NetworkError -> {}
+                is ResultWrapper.HttpError -> {}
+                is ResultWrapper.UnAuthError -> {}
+                is ResultWrapper.Success -> {
+                    response.value.body?.let { user ->
+                        Session.user = user
+                        onComplete.invoke(AppAuthStatus.SIGN_IN)
+                    }
+                }
+            }
+        }
+    }
+
     private fun requestAuthToken(email: String, userId: String, onComplete: (authStatus: AppAuthStatus) -> Unit) {
         CoroutineScope(Dispatchers.Default).launch {
             when(val response = authRemoteRepository.requestAuthToken(email = email, userId = userId)) {
@@ -43,22 +59,6 @@ class AuthServiceModel {
                     response.value.body?.let { authToken ->
                         Session.authToken = authToken
                         fetchUser(userId = userId, onComplete = onComplete)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun fetchUser(userId: String, onComplete: (authStatus: AppAuthStatus) -> Unit) {
-        CoroutineScope(Dispatchers.Default).launch {
-            when(val response = authRemoteRepository.getUser(userId = userId)) {
-                is ResultWrapper.NetworkError -> {}
-                is ResultWrapper.HttpError -> {}
-                is ResultWrapper.UnAuthError -> {}
-                is ResultWrapper.Success -> {
-                    response.value.body?.let { user ->
-                        Session.user = user
-                        onComplete.invoke(AppAuthStatus.SIGN_IN)
                     }
                 }
             }

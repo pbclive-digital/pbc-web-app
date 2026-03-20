@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
 import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
@@ -37,11 +38,15 @@ import com.kavi.pbc.web.data.news.News
 import com.kavi.pbc.web.news.data.model.NewsManageMode
 import com.kavi.pbc.web.news.ui.common.NewsItemForAdmin
 import com.kavi.pbc.web.news.ui.common.SelectedNewsUI
+import com.kavi.pbc.web.news.ui.create.CreateOrModifyNewsDialog
 import com.kavi.pbc.web.news.ui.manage.dialog.DeleteConfirmationDialog
 import com.kavi.pbc.web.news.ui.manage.dialog.PublishConfirmationDialog
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_news.generated.resources.Res
+import pbcwebapp.ui_news.generated.resources.news_icon_news
 import pbcwebapp.ui_news.generated.resources.news_label_active
+import pbcwebapp.ui_news.generated.resources.news_label_create_news
 import pbcwebapp.ui_news.generated.resources.news_label_draft
 import pbcwebapp.ui_news.generated.resources.news_label_manage
 import pbcwebapp.ui_news.generated.resources.news_label_no_active
@@ -59,6 +64,9 @@ fun NewsManageUI(navController: NavController) {
     val publishingNewsId = remember { mutableStateOf("") }
     val showDeleteConfirmationDialog = remember { mutableStateOf(false) }
     val deletingNewsId = remember { mutableStateOf("") }
+
+    val selectedNewsForModify: MutableState<News?> = remember { mutableStateOf(null) }
+    val showCreateOrModifyDialog = remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -98,6 +106,16 @@ fun NewsManageUI(navController: NavController) {
                             .weight(.35f)
                             .verticalScroll(state = rememberScrollState())
                     ) {
+                        AppButtonWithIcon(
+                            modifier = Modifier.padding(bottom = 12.dp),
+                            label = stringResource(Res.string.news_label_create_news),
+                            icon = painterResource(Res.drawable.news_icon_news),
+                            cornerRadius = 12.dp
+                        ) {
+                            //navController.navigate("news/news-create")
+                            showCreateOrModifyDialog.value = true
+                        }
+
                         DraftedNews(
                             viewModel = viewModel,
                             isSelectedUpdated = isInitialNewsSelected,
@@ -105,7 +123,9 @@ fun NewsManageUI(navController: NavController) {
                             publishingId = publishingNewsId,
                             deleteConfirmation = showDeleteConfirmationDialog,
                             deletingId = deletingNewsId,
-                            newsMode = newsMode
+                            showModify = showCreateOrModifyDialog,
+                            selectedForModify = selectedNewsForModify,
+                            newsMode = newsMode,
                         ) { news ->
                             selectedNews.value = news
                         }
@@ -114,6 +134,8 @@ fun NewsManageUI(navController: NavController) {
                             isSelectedUpdated = isInitialNewsSelected,
                             deleteConfirmation = showDeleteConfirmationDialog,
                             deletingId = deletingNewsId,
+                            showModify = showCreateOrModifyDialog,
+                            selectedForModify = selectedNewsForModify,
                             newsMode = newsMode
                         ) { news ->
                             selectedNews.value = news
@@ -158,6 +180,16 @@ fun NewsManageUI(navController: NavController) {
             publishingNewsId.value = ""
         }
     )
+
+    CreateOrModifyNewsDialog(
+        showDialog = showCreateOrModifyDialog,
+        modifyNews = selectedNewsForModify.value,
+        onCreateOrModify = {},
+        onDismiss = {
+            showCreateOrModifyDialog.value = false
+            selectedNewsForModify.value = null
+        }
+    )
 }
 
 @Composable
@@ -168,6 +200,8 @@ fun DraftedNews(
     publishingId: MutableState<String>,
     deleteConfirmation: MutableState<Boolean>,
     deletingId: MutableState<String>,
+    showModify: MutableState<Boolean>,
+    selectedForModify: MutableState<News?>,
     newsMode: MutableState<NewsManageMode>,
     onSelect:(news: News) -> Unit
 ) {
@@ -200,9 +234,8 @@ fun DraftedNews(
                 NewsItemForAdmin(modifier = Modifier.clickable {
                     onSelect.invoke(news)
                 }, news = news, isDraftNews = true, onModify = {
-                    // Navigate to edit screen
-                    //val tempNewsKey = newsLocalRepository.setModifyingNews(news = news)
-                    //navController.navigate("news/news-edit/$tempNewsKey")
+                    selectedForModify.value = news
+                    showModify.value = true
                 }, onPublish = {
                     publishConfirmation.value = true
                     publishingId.value = news.id!!
@@ -246,6 +279,8 @@ fun ActiveNews(
     isSelectedUpdated: MutableState<Boolean>,
     deleteConfirmation: MutableState<Boolean>,
     deletingId: MutableState<String>,
+    showModify: MutableState<Boolean>,
+    selectedForModify: MutableState<News?>,
     newsMode: MutableState<NewsManageMode>,
     onSelect:(news: News) -> Unit
 ) {
@@ -280,9 +315,8 @@ fun ActiveNews(
                 NewsItemForAdmin(modifier = Modifier.clickable {
                     onSelect.invoke(news)
                 }, news = news, isDraftNews = false, onModify = {
-                    // Navigate to edit screen
-                    //val tempNewsKey = newsLocalRepository.setModifyingNews(news = news)
-                    //navController.navigate("news/news-edit/$tempNewsKey")
+                    selectedForModify.value = news
+                    showModify.value = true
                 }, onPublish = {
                     /* Nothing to implement */
                 }, onDelete = {

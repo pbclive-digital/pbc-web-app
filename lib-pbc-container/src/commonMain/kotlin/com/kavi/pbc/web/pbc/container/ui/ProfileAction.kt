@@ -34,6 +34,7 @@ import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.lib_pbc_container.generated.resources.Res
 import pbcwebapp.lib_pbc_container.generated.resources.container_icon_profile
 import pbcwebapp.lib_pbc_container.generated.resources.container_image_dhamma_chakra_256
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_close
 import pbcwebapp.lib_pbc_container.generated.resources.container_label_profile
 import pbcwebapp.lib_pbc_container.generated.resources.container_label_sign_in
 import pbcwebapp.lib_pbc_container.generated.resources.container_label_sign_out
@@ -101,17 +102,23 @@ fun ProfileActionComponent(
         ) {
             when(profileActionConfig.appAuthStatus) {
                 AppAuthStatus.SIGN_IN -> {
-                    DropdownMenuItem(
+                    /*DropdownMenuItem(
                         text = { Text(stringResource(Res.string.container_label_profile)) },
                         onClick = {
                             profileActionConfig.onProfileClick.invoke()
                             isExpanded = false
                         }
-                    )
+                    )*/
                     DropdownMenuItem(
                         text = { Text(stringResource(Res.string.container_label_sign_out)) },
                         onClick = {
                             profileActionConfig.onSignOutClick.invoke()
+                            isExpanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(Res.string.container_label_close)) },
+                        onClick = {
                             isExpanded = false
                         }
                     )
@@ -132,6 +139,12 @@ fun ProfileActionComponent(
                             isExpanded = false
                         }
                     )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(Res.string.container_label_close)) },
+                        onClick = {
+                            isExpanded = false
+                        }
+                    )
                 }
                 else -> {
                     DropdownMenuItem(
@@ -139,6 +152,12 @@ fun ProfileActionComponent(
                         onClick = {
                             // Invoke sign-in with Firebase-Google
                             profileActionConfig.onSignInClick.invoke()
+                            isExpanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(Res.string.container_label_close)) },
+                        onClick = {
                             isExpanded = false
                         }
                     )

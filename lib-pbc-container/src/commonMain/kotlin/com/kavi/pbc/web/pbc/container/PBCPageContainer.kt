@@ -23,6 +23,7 @@ fun PBCPageContainer(
     content: @Composable () -> Unit
 ) {
     val showSignUpDialog = remember { mutableStateOf(false) }
+    val profilePicImageUrl = remember { mutableStateOf(Session.user?.profilePicUrl) }
 
     var appAuthStatus by remember {
         mutableStateOf(
@@ -33,7 +34,7 @@ fun PBCPageContainer(
 
     val profileActionConfig = ProfileActionConfig(
         appAuthStatus = appAuthStatus,
-        profileUserImageUrl = Session.user?.profilePicUrl,
+        profileUserImageUrl = profilePicImageUrl,
         onProfileClick = {
             if (Session.isLogIn()) {
                 // Navigate to profile screen
