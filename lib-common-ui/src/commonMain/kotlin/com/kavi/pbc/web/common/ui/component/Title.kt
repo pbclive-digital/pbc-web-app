@@ -92,3 +92,31 @@ fun TitleWithAction(modifier: Modifier = Modifier,
         }
     }
 }
+
+@Composable
+fun TitleWithActionComposable(modifier: Modifier = Modifier,
+                    titleText: String,
+                    textSize: Int = 48,
+                    textColor: Color = MaterialTheme.colorScheme.onBackground,
+                    content: @Composable () -> Unit) {
+
+    Row (
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = titleText,
+            fontFamily = PBCFontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = textSize.sp,
+            lineHeight = textSize.sp,
+            color = textColor
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Action Content
+        content()
+    }
+}

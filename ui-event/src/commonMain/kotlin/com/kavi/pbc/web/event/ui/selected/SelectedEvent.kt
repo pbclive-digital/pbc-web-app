@@ -400,7 +400,9 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 )
 
                 AppButtonWithIcon(
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
                     label = stringResource(Res.string.event_label_register_or_unregister),
                     icon = painterResource(Res.drawable.event_icon_register)
                 ) {
@@ -447,7 +449,9 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 )
 
                 AppButtonWithIcon(
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
                     label = stringResource(Res.string.event_label_potluck_details),
                     icon = painterResource(Res.drawable.event_icon_potluck_register)
                 ) {

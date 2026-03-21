@@ -78,7 +78,7 @@ fun AppButtonWithIcon(label: String,
 
     Button(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().height(buttonHeight),
+        modifier = modifier.height(buttonHeight),
         shape = RoundedCornerShape(cornerRadius),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.onPrimary,

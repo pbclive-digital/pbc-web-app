@@ -19,7 +19,7 @@
     <string name="news_label_publish_confirmation">Is it ready to publish?</string>
     <string name="news_phrase_publish_confirmation">Is this event ready to publish?. Once you published it, all users will see this as a News.</string>
 
-    <string name="news_label_create_news">Create a News</string>
+    <string name="news_label_create_news">Create</string>
     <string name="news_label_modify_news">Modify a News</string>
     <string name="news_label_headline">Headline</string>
     <string name="news_label_content">News Content</string>

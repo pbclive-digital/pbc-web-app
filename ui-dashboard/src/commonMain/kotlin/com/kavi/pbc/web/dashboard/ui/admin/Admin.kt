@@ -57,7 +57,7 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                 else -> {
                     Column(
                         modifier = Modifier
-                            .weight(.20f)
+                            .weight(.15f)
                             .height(maxHeight)
                             .padding(top = 10.dp, end = 4.dp)
                     ) {
@@ -76,7 +76,7 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                     }
                     Column(
                         modifier = Modifier
-                            .weight(.80f)
+                            .weight(.85f)
                             .padding(top = 10.dp, start = 4.dp)
                     ) {
                         when(selectedAction) {

@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
-import com.kavi.pbc.web.common.ui.component.Title
+import com.kavi.pbc.web.common.ui.component.TitleWithActionComposable
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.news.News
@@ -78,10 +78,19 @@ fun NewsManageUI(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Title(
+            TitleWithActionComposable(
                 modifier = Modifier.padding(start = 12.dp, end = 12.dp),
-                titleText = stringResource(Res.string.news_label_manage),
-            )
+                titleText = stringResource(Res.string.news_label_manage)
+            ) {
+                AppButtonWithIcon(
+                    modifier = Modifier.padding(bottom = 12.dp),
+                    label = stringResource(Res.string.news_label_create_news),
+                    icon = painterResource(Res.drawable.news_icon_news),
+                    cornerRadius = 12.dp
+                ) {
+                    showCreateOrModifyDialog.value = true
+                }
+            }
 
             Column (
                 modifier = Modifier
@@ -106,16 +115,6 @@ fun NewsManageUI(navController: NavController) {
                             .weight(.35f)
                             .verticalScroll(state = rememberScrollState())
                     ) {
-                        AppButtonWithIcon(
-                            modifier = Modifier.padding(bottom = 12.dp),
-                            label = stringResource(Res.string.news_label_create_news),
-                            icon = painterResource(Res.drawable.news_icon_news),
-                            cornerRadius = 12.dp
-                        ) {
-                            //navController.navigate("news/news-create")
-                            showCreateOrModifyDialog.value = true
-                        }
-
                         DraftedNews(
                             viewModel = viewModel,
                             isSelectedUpdated = isInitialNewsSelected,
