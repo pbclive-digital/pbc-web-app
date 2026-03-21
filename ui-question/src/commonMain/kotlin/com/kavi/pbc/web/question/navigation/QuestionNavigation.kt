@@ -9,7 +9,7 @@ import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.navigation.QuestionPath
 import com.kavi.pbc.web.pbc.container.PBCPageContainer
-import com.kavi.pbc.web.question.ui.list.OpenQuestinList
+import com.kavi.pbc.web.question.ui.list.QuestionListUI
 
 fun NavGraphBuilder.questionNavGraph(navController: NavHostController) {
 
@@ -23,7 +23,7 @@ fun NavGraphBuilder.questionNavGraph(navController: NavHostController) {
         // Path: questin/question-list-ui
         composable<QuestionPath.QuestionList> {
             PBCPageContainer (user = user) {
-                OpenQuestinList(navController = navController)
+                QuestionListUI(navController = navController)
             }
         }
     }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,7 +68,7 @@ import pbcwebapp.ui_question.generated.resources.question_label_personal_questio
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OpenQuestinList(navController: NavController) {
+fun QuestionListUI(navController: NavController) {
 
     val viewModel: QuestionListViewModel = viewModel { QuestionListViewModel() }
 
@@ -141,6 +142,7 @@ fun OpenQuestinList(navController: NavController) {
                                     }
                                 )
                             }
+                            Spacer(modifier = Modifier.width(12.dp))
                             Column(
                                 modifier = Modifier
                                     .weight(.65f)
@@ -181,7 +183,22 @@ private fun QuestionListPager(
         state.animateScrollToPage(selectedPagerIndex)
     }
 
+    val showCreateQuestionDialog = remember { mutableStateOf(false) }
+    val showAuthInviteDialog = remember { mutableStateOf(false) }
+
     Column {
+        AppFilledButton(
+            modifier = Modifier.fillMaxWidth(),
+            label = stringResource(Res.string.question_label_create_question)
+        ) {
+            if (Session.isLogIn()) {
+                showCreateQuestionDialog.value = true
+            } else
+                showAuthInviteDialog.value = true
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         Row {
             Column(
                 modifier = Modifier
@@ -254,6 +271,31 @@ private fun QuestionListPager(
             }
         }
     }
+
+    // Create New question block
+    if (showCreateQuestionDialog.value) {
+        QuestionAskOrModifyDialog(
+            showDialog = showCreateQuestionDialog,
+            onCancel = { refreshRequired ->
+                showCreateQuestionDialog.value = false
+
+                // Some update happens in questions, therefore refresh-required
+                if (refreshRequired) {
+                    viewModel.fetchOpenQuestionList()
+                    viewModel.fetchPersonalQuestionList()
+                }
+            },
+            modifyQuestion = null)
+    }
+
+    if (showAuthInviteDialog.value) {
+        ContractServiceLocator.locate(AuthContract::class).ProvideSignUpInviteUI(
+            showDialog = showAuthInviteDialog,
+            onCancel = {
+                showAuthInviteDialog.value = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -270,7 +312,7 @@ private fun OpenQuestionListComponent(
     selectedQuestion.value = openQuestionList[0]
     Column(
         modifier = modifier
-            .padding(top = 10.dp, end = 15.dp)
+            .padding(top = 10.dp)
     ) {
         LazyColumn {
             items(openQuestionList) { question ->
@@ -300,23 +342,11 @@ private fun PersonalQuestionList(
 
     val showCreateQuestionDialog = remember { mutableStateOf(false) }
     var modifyingQuestion: Question? by remember { mutableStateOf(null) }
-    val showAuthInviteDialog = remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
-            .padding(top = 10.dp, end = 15.dp)
+            .padding(top = 10.dp)
     ) {
-        AppFilledButton(
-            modifier = Modifier.fillMaxWidth(),
-            label = stringResource(Res.string.question_label_create_question)
-        ) {
-            if (Session.isLogIn()) {
-                modifyingQuestion = null
-                showCreateQuestionDialog.value = true
-            } else
-                showAuthInviteDialog.value = true
-        }
-
         when (personalQuestionUiState) {
             QuestionListUiState.NONE, QuestionListUiState.FAILURE -> {}
             QuestionListUiState.EMPTY -> {
@@ -347,6 +377,7 @@ private fun PersonalQuestionList(
         }
     }
 
+    // Modify Question Block
     if (showCreateQuestionDialog.value) {
         QuestionAskOrModifyDialog(
             showDialog = showCreateQuestionDialog,
@@ -360,15 +391,6 @@ private fun PersonalQuestionList(
                 }
             },
             modifyQuestion = modifyingQuestion)
-    }
-
-    if (showAuthInviteDialog.value) {
-        ContractServiceLocator.locate(AuthContract::class).ProvideSignUpInviteUI(
-            showDialog = showAuthInviteDialog,
-            onCancel = {
-                showAuthInviteDialog.value = false
-            }
-        )
     }
 }
 
