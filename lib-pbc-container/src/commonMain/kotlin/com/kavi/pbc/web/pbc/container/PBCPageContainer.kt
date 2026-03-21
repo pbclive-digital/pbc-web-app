@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.kavi.pbc.web.data.auth.AppAuthStatus
+import com.kavi.pbc.web.data.user.User
 import com.kavi.pbc.web.datastore.AppLocalStore
 import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.session.Session
@@ -20,10 +21,10 @@ import com.kavi.pbc.web.pbc.container.ui.PageContainer
 @Composable
 fun PBCPageContainer(
     modifier: Modifier = Modifier,
+    user: User? = null,
     content: @Composable () -> Unit
 ) {
     val showSignUpDialog = remember { mutableStateOf(false) }
-    val profilePicImageUrl = remember { mutableStateOf(Session.user?.profilePicUrl) }
 
     var appAuthStatus by remember {
         mutableStateOf(
@@ -34,7 +35,7 @@ fun PBCPageContainer(
 
     val profileActionConfig = ProfileActionConfig(
         appAuthStatus = appAuthStatus,
-        profileUserImageUrl = profilePicImageUrl,
+        profileUserImageUrl = user?.profilePicUrl,
         onProfileClick = {
             if (Session.isLogIn()) {
                 // Navigate to profile screen

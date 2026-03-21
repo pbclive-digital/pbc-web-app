@@ -41,6 +41,7 @@ import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.auth.AppAuthStatus
+import com.kavi.pbc.web.data.user.User
 import com.kavi.pbc.web.datastore.AppLocalStore
 import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.session.Session
@@ -61,12 +62,12 @@ import pbcwebapp.lib_pbc_container.generated.resources.container_label_pbc_name_
 fun PBCDashboardContainer(
     modifier: Modifier = Modifier,
     authTabItemList: MutableState<MutableList<TabItem>>,
+    user: User,
     isAdminUser: Boolean,
     unAuthTabItemList: List<TabItem>,
     tabContent: @Composable (selectedTabIndex: Int, appAuthStatus: AppAuthStatus?) -> Unit
 ) {
     val showSignUpDialog = remember { mutableStateOf(false) }
-    val profilePicImageUrl = remember { mutableStateOf(Session.user?.profilePicUrl) }
 
     var appAuthStatus by remember {
         mutableStateOf(
@@ -76,41 +77,44 @@ fun PBCDashboardContainer(
     }
 
     val profileActionConfig = ProfileActionConfig(
-        appAuthStatus = appAuthStatus,
-        profileUserImageUrl = profilePicImageUrl,
-        onProfileClick = {
-            if (Session.isLogIn()) {
-                // Navigate to profile screen
-                println("Profile Tap")
-            }
-        },
-        onSignOutClick = {
-            // Invoke user authentication
-            if (Session.isLogIn()) {
-                ContractServiceLocator.locate(AuthContract::class).signOut()
-                appAuthStatus = AppAuthStatus.NONE
-            }
-        },
-        onSignUpClick = {
-            // Navigate to register screen
-            showSignUpDialog.value = true
-        },
-        onSignInClick = {
-            // Invoke sign-in with Firebase-Google
-            ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
-            ContractServiceLocator.locate(AuthContract::class)
-                .retrieveCurrentAuthStatus { authStatus ->
-                    appAuthStatus = authStatus
-                    if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
-                        // Navigate to register screen
-                        showSignUpDialog.value = true
-                    } else {
-                        // Re-login and update auth status
-                        AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
-                    }
+            appAuthStatus = appAuthStatus,
+            profileUserImageUrl = user.profilePicUrl,
+            onProfileClick = {
+                if (Session.isLogIn()) {
+                    // Navigate to profile screen
+                    println("Profile Tap")
                 }
-        }
-    )
+            },
+            onSignOutClick = {
+                // Invoke user authentication
+                if (Session.isLogIn()) {
+                    ContractServiceLocator.locate(AuthContract::class).signOut()
+                    appAuthStatus = AppAuthStatus.NONE
+                }
+            },
+            onSignUpClick = {
+                // Navigate to register screen
+                showSignUpDialog.value = true
+            },
+            onSignInClick = {
+                // Invoke sign-in with Firebase-Google
+                ContractServiceLocator.locate(AuthContract::class).signInWithFirebaseGoogle()
+                ContractServiceLocator.locate(AuthContract::class)
+                    .retrieveCurrentAuthStatus { authStatus ->
+                        appAuthStatus = authStatus
+                        if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
+                            // Navigate to register screen
+                            showSignUpDialog.value = true
+                        } else {
+                            // Re-login and update auth status
+                            AppLocalStore.shared.storeValue(
+                                DataKey.APP_USER_AUTH_STATUS,
+                                authStatus
+                            )
+                        }
+                    }
+            }
+        )
 
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 

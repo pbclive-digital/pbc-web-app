@@ -37,6 +37,7 @@ fun DashboardUI(navController: NavController) {
     val viewModel: DashboardViewModel = viewModel { DashboardViewModel() }
 
     val isAdminUser = viewModel.isAdminUser.collectAsState()
+    val user = viewModel.user.collectAsState()
     val authTabItemList = remember { mutableStateOf(mutableListOf<TabItem>()) }
 
     LaunchedEffect(Unit) {
@@ -64,6 +65,7 @@ fun DashboardUI(navController: NavController) {
     PBCDashboardContainer (
         authTabItemList = authTabItemList,
         unAuthTabItemList = unAuthTabItemList,
+        user = user.value,
         isAdminUser = isAdminUser.value
     ) { selectedTabIndex, appAuthStatus ->
         when(appAuthStatus) {

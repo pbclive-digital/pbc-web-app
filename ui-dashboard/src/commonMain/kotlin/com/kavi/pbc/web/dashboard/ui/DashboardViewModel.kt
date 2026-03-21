@@ -14,6 +14,7 @@ class DashboardViewModel: ViewModel() {
     val isAdminUser: StateFlow<Boolean> = _isAdminUser
 
     private var _user = MutableStateFlow(User(email = ""))
+    val user: StateFlow<User> = _user
 
     fun fetchUser() {
         if (!isValidUser()) {
