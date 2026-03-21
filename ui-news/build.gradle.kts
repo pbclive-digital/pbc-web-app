@@ -53,8 +53,7 @@ kotlin {
                 // ktorfit
                 implementation(libs.ktorfit.lib)
                 // Image Picker
-                //implementation("io.github.vinceglb:filekit-compose:0.8.8")
-                implementation("io.github.vinceglb:filekit-dialogs-compose:0.12.0")
+                implementation(libs.filekit.compose)
 
                 implementation(projects.libParent)
                 implementation(projects.libCommonUi)
