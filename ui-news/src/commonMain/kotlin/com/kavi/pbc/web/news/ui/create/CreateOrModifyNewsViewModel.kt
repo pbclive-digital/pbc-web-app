@@ -92,6 +92,12 @@ class CreateOrModifyNewsViewModel: ViewModel() {
                         }
                     }
                 }
+            } else {
+                if (isModify) {
+                    updateNews()
+                } else {
+                    createNews()
+                }
             }
         } else {
             _newsCreationOrModifyState.value = NewsCreateOrModifyUiState.EMPTY_FIELD
@@ -107,7 +113,11 @@ class CreateOrModifyNewsViewModel: ViewModel() {
     }
 
     private fun isValidNewsForm(): Boolean {
-        return !(_createOrModifyNews.value?.title == null || _createOrModifyNews.value?.content == null)
+        return !(_createOrModifyNews.value?.title == null
+                || _createOrModifyNews.value?.title?.isEmpty() == true
+                || _createOrModifyNews.value?.content == null
+                || _createOrModifyNews.value?.content?.isEmpty() == true
+                )
     }
 
     private fun createNews() {

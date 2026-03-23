@@ -44,7 +44,7 @@ class RequestCreateOrModifyViewModel: ViewModel() {
                 userId = it.id!!,
                 user = it,
                 selectedMonk = selectedMonk,
-                selectedMonkId = selectedMonk?.id?: "none"
+                selectedMonkId = selectedMonk?.id?: "any"
             )
         }
     }
@@ -85,7 +85,7 @@ class RequestCreateOrModifyViewModel: ViewModel() {
             _createOrModifyAppointmentReq.value?.selectedMonkId = it.id!!
             _createOrModifyAppointmentReq.value?.selectedMonk = it
         }?: run {
-            _createOrModifyAppointmentReq.value?.selectedMonkId = "none"
+            _createOrModifyAppointmentReq.value?.selectedMonkId = "any"
             _createOrModifyAppointmentReq.value?.selectedMonk = null
         }
     }
@@ -105,25 +105,32 @@ class RequestCreateOrModifyViewModel: ViewModel() {
         return _createOrModifyAppointmentReq.value?.selectedMonk?.let {
             "Bhanthe ${it.lastName}"
         }?: run {
-            "none"
+            "any"
         }
     }
 
     fun createNewAppointmentRequest() {
         Session.user?.let {
-            _appointmentReqUiStatus.value = AppointmentCreateOrModifyUiStatus.PENDING
-            viewModelScope.launch {
-                when (val response = appointmentRemoteRepo
-                    .createAppointmentRequest(_createOrModifyAppointmentReq.value!!)) {
-                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _appointmentReqUiStatus.value = AppointmentCreateOrModifyUiStatus.FAILURE
-                    }
-                    is ResultWrapper.Success -> {
-                        response.value.body?.let {
-                            _appointmentReqUiStatus.value = AppointmentCreateOrModifyUiStatus.SUCCESS
+            if (isValidAppointmentReqForm()) {
+                _appointmentReqUiStatus.value = AppointmentCreateOrModifyUiStatus.PENDING
+                viewModelScope.launch {
+                    when (val response = appointmentRemoteRepo
+                        .createAppointmentRequest(_createOrModifyAppointmentReq.value!!)) {
+                        is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                            _appointmentReqUiStatus.value =
+                                AppointmentCreateOrModifyUiStatus.FAILURE
+                        }
+
+                        is ResultWrapper.Success -> {
+                            response.value.body?.let {
+                                _appointmentReqUiStatus.value =
+                                    AppointmentCreateOrModifyUiStatus.SUCCESS
+                            }
                         }
                     }
                 }
+            } else {
+                _appointmentReqUiStatus.value = AppointmentCreateOrModifyUiStatus.EMPTY_FIELD
             }
         }
     }
@@ -145,5 +152,12 @@ class RequestCreateOrModifyViewModel: ViewModel() {
                 }
             }
         }
+    }
+
+    private fun isValidAppointmentReqForm(): Boolean {
+        return !(_createOrModifyAppointmentReq.value?.title == null
+                || _createOrModifyAppointmentReq.value?.title?.isEmpty() == true
+                || _createOrModifyAppointmentReq.value?.reason == null
+                || _createOrModifyAppointmentReq.value?.reason?.isEmpty() == true)
     }
 }

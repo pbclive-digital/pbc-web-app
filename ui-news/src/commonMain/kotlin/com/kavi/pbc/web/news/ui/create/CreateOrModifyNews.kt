@@ -161,8 +161,11 @@ private fun CreateOrModifyNewsContent(
                     viewModel.clearNews()
                     errorBalloonVisibility.value = false
                     viewModel.revokeCreateOrModifyUiStatus()
-                    //onCancel.invoke(anyModifySuccess)
-                    onDismiss.invoke()
+                    if (anyModifySuccess) {
+                        onCreateOrModify.invoke()
+                    } else {
+                        onDismiss.invoke()
+                    }
                 }
 
                 Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {

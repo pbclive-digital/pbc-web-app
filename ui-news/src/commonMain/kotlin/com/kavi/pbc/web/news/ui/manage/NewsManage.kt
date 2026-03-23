@@ -183,7 +183,15 @@ fun NewsManageUI(navController: NavController) {
     CreateOrModifyNewsDialog(
         showDialog = showCreateOrModifyDialog,
         modifyNews = selectedNewsForModify.value,
-        onCreateOrModify = {},
+        onCreateOrModify = {
+            showCreateOrModifyDialog.value = false
+            selectedNewsForModify.value = null
+
+            // Update the draft news list
+            viewModel.fetchDraftNewsList()
+            // Update the active news list
+            viewModel.fetchActiveNewsList()
+        },
         onDismiss = {
             showCreateOrModifyDialog.value = false
             selectedNewsForModify.value = null

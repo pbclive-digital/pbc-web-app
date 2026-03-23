@@ -31,11 +31,13 @@
     <string name="appointment_label_request_modify">Modify Appointment Request</string>
     <string name="appointment_phrase_request_create_success">Successfully created your appointment request. Now selected Bhanthe or Any available Bhanthe will accept your request and create an appointment with you as soon as possible.</string>
     <string name="appointment_phrase_request_create_error">Error happens at this time and not able to create your appointment Request. Please try again from few minutes, and sorry for your inconvenience.</string>
+    <string name="appointment_phrase_request_create_or_modify_empty_fields">Some fields are empty to create / modify this your appointment request. Please check that and provide required fields to create the appointment request.</string>
 
     <string name="appointment_label_new_appointment">New Appointment</string>
     <string name="appointment_label_update_appointment">Update Appointment</string>
     <string name="appointment_phrase_appointment_create_success">Successfully created the appointment.</string>
     <string name="appointment_phrase_appointment_create_error">Error happens at this time and not able to create your appointment. Please try again from few minutes, and sorry for your inconvenience.</string>
+    <string name="appointment_phrase_create_or_modify_empty_fields">Some fields are empty to create / modify this your appointment. Please check that and provide required fields to create the appointment.</string>
     <string name="appointment_label_when">When</string>
     <string name="appointment_phase_when">Select your date and time to have an appointment</string>
     <string name="appointment_phase_devotee_name">Following is the name of the devotee who requested this appointment.</string>

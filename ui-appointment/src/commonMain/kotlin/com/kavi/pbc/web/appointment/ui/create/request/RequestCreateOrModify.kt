@@ -60,6 +60,7 @@ import pbcwebapp.ui_appointment.generated.resources.appointment_label_with
 import pbcwebapp.ui_appointment.generated.resources.appointment_pharse_with
 import pbcwebapp.ui_appointment.generated.resources.appointment_phrase_how
 import pbcwebapp.ui_appointment.generated.resources.appointment_phrase_request_create_error
+import pbcwebapp.ui_appointment.generated.resources.appointment_phrase_request_create_or_modify_empty_fields
 import pbcwebapp.ui_appointment.generated.resources.appointment_phrase_request_create_success
 import pbcwebapp.ui_appointment.generated.resources.appointment_phrase_why
 
@@ -109,6 +110,7 @@ private fun NewAppointmentRequestUI(
     val appointmentReason = remember { mutableStateOf(TextFieldValue(createOrModifyAppointmentReq?.reason?: "")) }
 
     val errorBalloonVisibility = remember { mutableStateOf(false) }
+    var errorBalloonMessage by remember { mutableStateOf("") }
     val successBalloonVisibility = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -169,7 +171,7 @@ private fun NewAppointmentRequestUI(
                 ErrorMessageBalloon(
                     modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                     showBalloon = errorBalloonVisibility,
-                    errorMessage = stringResource(Res.string.appointment_phrase_request_create_error),
+                    errorMessage = errorBalloonMessage,
                     onDismiss = {
                         errorBalloonVisibility.value = false
                         viewModel.revokeAppointmentReqUiStatus()
@@ -334,6 +336,11 @@ private fun NewAppointmentRequestUI(
             }
             AppointmentCreateOrModifyUiStatus.PENDING -> {}
             AppointmentCreateOrModifyUiStatus.FAILURE -> {
+                errorBalloonMessage = stringResource(Res.string.appointment_phrase_request_create_error)
+                errorBalloonVisibility.value = true
+            }
+            AppointmentCreateOrModifyUiStatus.EMPTY_FIELD -> {
+                errorBalloonMessage = stringResource(Res.string.appointment_phrase_request_create_or_modify_empty_fields)
                 errorBalloonVisibility.value = true
             }
             AppointmentCreateOrModifyUiStatus.SUCCESS -> {

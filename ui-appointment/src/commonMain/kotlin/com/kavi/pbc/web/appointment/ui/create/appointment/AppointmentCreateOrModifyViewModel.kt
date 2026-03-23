@@ -69,7 +69,7 @@ class AppointmentCreateOrModifyViewModel: ViewModel() {
         return _createOrModifyAppointment.value?.selectedMonk?.let {
             "Bhanthe ${it.lastName}"
         }?: run {
-            "none"
+            "any"
         }
     }
 
@@ -99,7 +99,7 @@ class AppointmentCreateOrModifyViewModel: ViewModel() {
             _createOrModifyAppointment.value?.selectedMonkId = it.id!!
             _createOrModifyAppointment.value?.selectedMonk = it
         }?: run {
-            _createOrModifyAppointment.value?.selectedMonkId = "none"
+            _createOrModifyAppointment.value?.selectedMonkId = "any"
             _createOrModifyAppointment.value?.selectedMonk = null
         }
     }
@@ -144,23 +144,29 @@ class AppointmentCreateOrModifyViewModel: ViewModel() {
 
     fun createNewAppointment(appointmentReqId: String? = null) {
         Session.user?.let {
-            _appointmentUiStatus.value = AppointmentCreateOrModifyUiStatus.PENDING
-            viewModelScope.launch {
-                when (val response = appointmentRemoteRepo
-                    .createAppointment(_createOrModifyAppointment.value!!)) {
-                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _appointmentUiStatus.value = AppointmentCreateOrModifyUiStatus.FAILURE
-                    }
-                    is ResultWrapper.Success -> {
-                        response.value.body?.let {
-                            _appointmentUiStatus.value = AppointmentCreateOrModifyUiStatus.SUCCESS
+            if (isValidAppointmentForm()) {
+                _appointmentUiStatus.value = AppointmentCreateOrModifyUiStatus.PENDING
+                viewModelScope.launch {
+                    when (val response = appointmentRemoteRepo
+                        .createAppointment(_createOrModifyAppointment.value!!)) {
+                        is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                            _appointmentUiStatus.value = AppointmentCreateOrModifyUiStatus.FAILURE
+                        }
 
-                            appointmentReqId?.let {
-                                deleteAppointmentRequest(it)
+                        is ResultWrapper.Success -> {
+                            response.value.body?.let {
+                                _appointmentUiStatus.value =
+                                    AppointmentCreateOrModifyUiStatus.SUCCESS
+
+                                appointmentReqId?.let {
+                                    deleteAppointmentRequest(it)
+                                }
                             }
                         }
                     }
                 }
+            } else {
+                _appointmentUiStatus.value = AppointmentCreateOrModifyUiStatus.EMPTY_FIELD
             }
         }
     }
@@ -196,5 +202,15 @@ class AppointmentCreateOrModifyViewModel: ViewModel() {
                 }
             }
         }
+    }
+
+    private fun isValidAppointmentForm(): Boolean {
+        return !(_createOrModifyAppointment.value?.title == null
+                || _createOrModifyAppointment.value?.title?.isEmpty() == true
+                || _createOrModifyAppointment.value?.reason == null
+                || _createOrModifyAppointment.value?.reason?.isEmpty() == true
+                || _createOrModifyAppointment.value?.date == null
+                || _createOrModifyAppointment.value?.time == null
+                || _createOrModifyAppointment.value?.time?.isEmpty() == true)
     }
 }

@@ -68,6 +68,7 @@ import pbcwebapp.ui_appointment.generated.resources.appointment_phase_devotee_na
 import pbcwebapp.ui_appointment.generated.resources.appointment_phase_when
 import pbcwebapp.ui_appointment.generated.resources.appointment_phrase_appointment_create_error
 import pbcwebapp.ui_appointment.generated.resources.appointment_phrase_appointment_create_success
+import pbcwebapp.ui_appointment.generated.resources.appointment_phrase_create_or_modify_empty_fields
 import pbcwebapp.ui_appointment.generated.resources.appointment_phrase_why
 
 @Composable
@@ -128,6 +129,7 @@ private fun NewAppointmentUI(
     val appointmentReason = remember { mutableStateOf(TextFieldValue(createOrModifyAppointment?.reason?: "")) }
 
     val errorBalloonVisibility = remember { mutableStateOf(false) }
+    var errorBalloonMessage by remember { mutableStateOf("") }
     val successBalloonVisibility = remember { mutableStateOf(false) }
 
     val datePickerState = rememberDatePickerState()
@@ -195,7 +197,7 @@ private fun NewAppointmentUI(
                 ErrorMessageBalloon(
                     modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                     showBalloon = errorBalloonVisibility,
-                    errorMessage = stringResource(Res.string.appointment_phrase_appointment_create_error),
+                    errorMessage = errorBalloonMessage,
                     onDismiss = {
                         errorBalloonVisibility.value = false
                         viewModel.revokeAppointmentUiStatus()
@@ -395,6 +397,11 @@ private fun NewAppointmentUI(
             }
             AppointmentCreateOrModifyUiStatus.PENDING -> {}
             AppointmentCreateOrModifyUiStatus.FAILURE -> {
+                errorBalloonMessage = stringResource(Res.string.appointment_phrase_appointment_create_error)
+                errorBalloonVisibility.value = true
+            }
+            AppointmentCreateOrModifyUiStatus.EMPTY_FIELD -> {
+                errorBalloonMessage = stringResource(Res.string.appointment_phrase_create_or_modify_empty_fields)
                 errorBalloonVisibility.value = true
             }
             AppointmentCreateOrModifyUiStatus.SUCCESS -> {
