@@ -51,8 +51,6 @@ fun TitleWithAction(modifier: Modifier = Modifier,
                     isIcon: Boolean = false,
                     action: (() -> Unit)? = null) {
 
-    val themeAdditionalColors = LocalThemeAdditionalColors.current
-
     Row (
         modifier = modifier
             .fillMaxWidth(),
@@ -71,7 +69,7 @@ fun TitleWithAction(modifier: Modifier = Modifier,
             Icon(
                 painter = actionPainter,
                 contentDescription = "Provided icon",
-                tint = themeAdditionalColors.shadow,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(actionPainterSize)
                     .clickable {

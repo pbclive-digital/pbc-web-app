@@ -47,7 +47,7 @@ import com.kavi.pbc.web.common.ui.util.UIUtil
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_auth.generated.resources.Res
-import pbcwebapp.ui_auth.generated.resources.auth_icon_x
+import pbcwebapp.ui_auth.generated.resources.auth_icon_close_x
 import pbcwebapp.ui_auth.generated.resources.auth_label_address
 import pbcwebapp.ui_auth.generated.resources.auth_label_first_name
 import pbcwebapp.ui_auth.generated.resources.auth_label_last_name
@@ -129,7 +129,7 @@ fun RegisterUI(onAuthenticated: () -> Unit,
                     TitleWithAction(
                         titleText = stringResource(Res.string.auth_label_register),
                         textSize = 40,
-                        actionPainter = painterResource(Res.drawable.auth_icon_x),
+                        actionPainter = painterResource(Res.drawable.auth_icon_close_x),
                         actionPainterSize = 30.dp,
                         isIcon = true,
                     ) {
@@ -139,7 +139,7 @@ fun RegisterUI(onAuthenticated: () -> Unit,
                 else -> {
                     TitleWithAction(
                         titleText = stringResource(Res.string.auth_label_register),
-                        actionPainter = painterResource(Res.drawable.auth_icon_x),
+                        actionPainter = painterResource(Res.drawable.auth_icon_close_x),
                         actionPainterSize = 40.dp,
                         isIcon = true,
                     ) {

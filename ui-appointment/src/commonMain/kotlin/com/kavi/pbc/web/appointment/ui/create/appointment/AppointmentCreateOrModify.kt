@@ -52,9 +52,8 @@ import com.kavi.pbc.web.data.user.User
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_appointment.generated.resources.Res
-import pbcwebapp.ui_appointment.generated.resources.appointment_icon_x
+import pbcwebapp.ui_appointment.generated.resources.appointment_icon_close_x
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_new_appointment
-import pbcwebapp.ui_appointment.generated.resources.appointment_label_new_request
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_reason
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_request_create
 import pbcwebapp.ui_appointment.generated.resources.appointment_label_request_modify
@@ -163,7 +162,7 @@ private fun NewAppointmentUI(
                         else
                             stringResource(Res.string.appointment_label_new_appointment),
                         textSize = 28,
-                        actionPainter = painterResource(Res.drawable.appointment_icon_x),
+                        actionPainter = painterResource(Res.drawable.appointment_icon_close_x),
                         actionPainterSize = 25.dp,
                         isIcon = true,
                     ) {
@@ -179,7 +178,7 @@ private fun NewAppointmentUI(
                             stringResource(Res.string.appointment_label_update_appointment)
                         else
                             stringResource(Res.string.appointment_label_new_appointment),
-                        actionPainter = painterResource(Res.drawable.appointment_icon_x),
+                        actionPainter = painterResource(Res.drawable.appointment_icon_close_x),
                         actionPainterSize = 40.dp,
                         isIcon = true,
                     ) {

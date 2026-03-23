@@ -56,7 +56,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_news.generated.resources.Res
 import pbcwebapp.ui_news.generated.resources.news_icon_add_image
-import pbcwebapp.ui_news.generated.resources.news_icon_x
+import pbcwebapp.ui_news.generated.resources.news_icon_close_x
 import pbcwebapp.ui_news.generated.resources.news_label_content
 import pbcwebapp.ui_news.generated.resources.news_label_create
 import pbcwebapp.ui_news.generated.resources.news_label_create_news
@@ -154,7 +154,7 @@ private fun CreateOrModifyNewsContent(
                         stringResource(Res.string.news_label_create_news)
                     else
                         stringResource(Res.string.news_label_modify_news),
-                    actionPainter = painterResource(Res.drawable.news_icon_x),
+                    actionPainter = painterResource(Res.drawable.news_icon_close_x),
                     actionPainterSize = 40.dp,
                     isIcon = true,
                 ) {
