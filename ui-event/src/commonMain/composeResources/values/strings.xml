@@ -41,4 +41,12 @@
     <string name="event_label_sign_out">Sign-out from Sheet</string>
     <string name="event_label_or">OR</string>
     <string name="event_label_user_sign_up_count">You have already signed-up [%s] time(s) to this sheet</string>
+
+    <string name="event_label_manage">Manage Events</string>
+    <string name="event_label_create">Create</string>
+    <string name="event_phrase_manage">This section is to manage all the Events in PBC. From here can create new events, publish drafted events, modify existing events or remove events etc…</string>
+    <string name="event_label_draft">Draft Events</string>
+    <string name="event_label_no_draft">No any drafted Events available.</string>
+    <string name="event_label_active">Active Events</string>
+    <string name="event_label_no_active">No any active Events available.</string>
 </resources>

@@ -14,6 +14,10 @@ import com.kavi.pbc.web.network.model.ResultWrapper
 class EventRemoteRepository {
 
     val eventApi = Network.shared.ktorfitClient().createEventApi()
+
+    suspend fun getDraftEvents(): ResultWrapper<BaseResponse<List<Event>>> {
+        return Network.shared.invokeApiCall { eventApi.getDraftEvents() }
+    }
     suspend fun getUpcomingEvents(): ResultWrapper<BaseResponse<List<Event>>> {
         return Network.shared.invokeApiCall { eventApi.getUpcomingEvents() }
     }

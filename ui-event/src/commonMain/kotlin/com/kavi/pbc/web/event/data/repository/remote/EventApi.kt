@@ -16,6 +16,9 @@ import de.jensklingenberg.ktorfit.http.Path
 
 interface EventApi {
 
+    @GET("event/get/draft")
+    suspend fun getDraftEvents(): BaseResponse<List<Event>>
+
     @GET("event/get/upcoming")
     suspend fun getUpcomingEvents(): BaseResponse<List<Event>>
 

@@ -8,4 +8,7 @@ interface EventContract: CommonContract {
 
     @Composable
     fun GetEventListUI(navController: NavController)
+
+    @Composable
+    fun GetEventManageUI(navController: NavController)
 }

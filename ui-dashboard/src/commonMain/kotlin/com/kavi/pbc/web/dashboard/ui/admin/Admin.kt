@@ -30,6 +30,7 @@ import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.dashboard.data.model.AdminAction
 import com.kavi.pbc.web.dashboard.ui.common.AdminItem
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
+import com.kavi.pbc.web.parent.contract.model.EventContract
 import com.kavi.pbc.web.parent.contract.model.NewsContract
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
@@ -61,10 +62,10 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                             .height(maxHeight)
                             .padding(top = 10.dp, end = 4.dp)
                     ) {
-                        /*AdminItem(label = "Event Management") {
+                        AdminItem(label = "Event Management") {
                             selectedAction = AdminAction.EVENT_MANAGEMENT
                         }
-                        AdminItem(label = "User Management") {
+                        /*AdminItem(label = "User Management") {
                             selectedAction = AdminAction.USER_MANAGEMENT
                         }*/
                         AdminItem(label = "NEWS Management") {
@@ -81,14 +82,8 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                     ) {
                         when(selectedAction) {
                             AdminAction.EVENT_MANAGEMENT -> {
-                                Box(modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(20.dp)
-                                    .background(MaterialTheme.colorScheme.background),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text("Yet to implement")
-                                }
+                                ContractServiceLocator.locate(EventContract::class)
+                                    .GetEventManageUI(navController = navController)
                             }
                             AdminAction.USER_MANAGEMENT -> {
                                 Box(modifier = Modifier
