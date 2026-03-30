@@ -39,7 +39,7 @@ fun EventItemForAdmin(
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {

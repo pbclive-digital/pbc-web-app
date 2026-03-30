@@ -1,17 +1,24 @@
 package com.kavi.pbc.web.event.ui.manage
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,30 +31,54 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
+import com.kavi.pbc.web.common.ui.component.AppIconButton
 import com.kavi.pbc.web.common.ui.component.TitleWithActionComposable
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.VenueType
+import com.kavi.pbc.web.data.event.potluck.PotluckItem
+import com.kavi.pbc.web.data.event.signup.SignUpSheet
 import com.kavi.pbc.web.event.data.model.EventManageMode
 import com.kavi.pbc.web.event.ui.common.EventItemForAdmin
+import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
 import pbcwebapp.ui_event.generated.resources.event_icon_event
+import pbcwebapp.ui_event.generated.resources.event_icon_location
+import pbcwebapp.ui_event.generated.resources.event_icon_online_meeting
+import pbcwebapp.ui_event.generated.resources.event_image_pbc
 import pbcwebapp.ui_event.generated.resources.event_label_active
+import pbcwebapp.ui_event.generated.resources.event_label_at
 import pbcwebapp.ui_event.generated.resources.event_label_create
 import pbcwebapp.ui_event.generated.resources.event_label_draft
+import pbcwebapp.ui_event.generated.resources.event_label_from
 import pbcwebapp.ui_event.generated.resources.event_label_manage
 import pbcwebapp.ui_event.generated.resources.event_label_no_active
 import pbcwebapp.ui_event.generated.resources.event_label_no_draft
+import pbcwebapp.ui_event.generated.resources.event_label_on
+import pbcwebapp.ui_event.generated.resources.event_label_potluck_in_admin
+import pbcwebapp.ui_event.generated.resources.event_label_reg_in_admin
+import pbcwebapp.ui_event.generated.resources.event_label_reg_in_admin_seat_count
+import pbcwebapp.ui_event.generated.resources.event_label_sign_up_sheet_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_manage
+import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_in_admin
+import pbcwebapp.ui_event.generated.resources.event_phrase_reg_in_admin
+import pbcwebapp.ui_event.generated.resources.event_phrase_sign_up_sheet_in_admin
 
 @Composable
 fun EventManageUI(navController: NavController) {
@@ -95,7 +126,7 @@ fun EventManageUI(navController: NavController) {
             Column (
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 30.dp)
+                    .padding(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 20.dp)
             ) {
                 Text(
                     text = stringResource(Res.string.event_phrase_manage),
@@ -142,11 +173,12 @@ fun EventManageUI(navController: NavController) {
                         }
                     }
 
+                    Spacer(modifier = Modifier.width(10.dp))
+
                     Column (modifier = Modifier.weight(.65f)) {
-                        /*SelectedNewsUI(
-                            modifier = Modifier.padding(start = 8.dp),
-                            selectedNews = selectedNews
-                        )*/
+                        SelectedEventUI(
+                            selectedEvent = selectedEvent
+                        )
                     }
                 }
             }
@@ -273,8 +305,10 @@ private fun ActiveEventBlock(
     Column {
         if (activeEventList.isNotEmpty()) {
             // Set initial selected Event
-            onSelect.invoke(activeEventList[0])
-            isSelected.value = true
+            if (!isSelected.value) {
+                onSelect.invoke(activeEventList[0])
+                isSelected.value = true
+            }
 
             activeEventList.forEachIndexed { index, event ->
                 EventItemForAdmin(
@@ -321,6 +355,369 @@ private fun ActiveEventBlock(
                     color = MaterialTheme.colorScheme.onSurface,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.background)
+            .padding(40.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+        ) {
+            Row {
+                Card(
+                    modifier = Modifier
+                        .background(Color.Transparent),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    AsyncImage(
+                        model = selectedEvent.value.eventImage,
+                        error = painterResource(Res.drawable.event_image_pbc),
+                        contentDescription = null, // decorative image
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .size(200.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(color = MaterialTheme.colorScheme.background)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+                    Text(
+                        text = selectedEvent.value.name,
+                        fontFamily = PBCFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 36.sp,
+                        lineHeight = 40.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(top = 12.dp),
+                        text = selectedEvent.value.description,
+                        fontFamily = PBCFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    Row (
+                        modifier = Modifier.padding(top = 12.dp),
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.event_label_on),
+                                fontFamily = PBCFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = selectedEvent.value.getFormatDate(),
+                                fontFamily = PBCFontFamily,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.event_label_from),
+                                fontFamily = PBCFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = "${selectedEvent.value.startTime} - ${selectedEvent.value.endTime}",
+                                fontFamily = PBCFontFamily,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+
+                    Row (
+                        modifier = Modifier.padding(top = 12.dp),
+                    ) {
+                        if (selectedEvent.value.venueType == VenueType.PHYSICAL) {
+                            Text(
+                                text = stringResource(Res.string.event_label_at),
+                                fontFamily = PBCFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp),
+                                text = selectedEvent.value.getPlace(),
+                                fontFamily = PBCFontFamily,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            AppIconButton(
+                                icon = painterResource(Res.drawable.event_icon_location),
+                                buttonSize = 40.dp
+                            ) {
+                                selectedEvent.value.venueAddress?.let {
+                                    val addressUrl = it.replace(" ", "+")
+                                    val locationUrl = "https://www.google.com/maps/place/$addressUrl"
+                                    openUrl(url = locationUrl)
+                                }
+                            }
+                        } else {
+                            Text(
+                                text = selectedEvent.value.getPlace(),
+                                fontFamily = PBCFontFamily,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            AppIconButton(
+                                icon = painterResource(Res.drawable.event_icon_online_meeting),
+                                buttonSize = 40.dp
+                            ) {
+                                selectedEvent.value.meetingUrl?.let {
+                                    openUrl(url = it)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (selectedEvent.value.registrationRequired) {
+                Column (
+                    modifier = Modifier.padding(top = 20.dp)
+                ) {
+                    Text(
+                        text = stringResource(Res.string.event_label_reg_in_admin),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(2.dp),
+                        thickness = 2.dp
+                    )
+
+                    Text(
+                        text = stringResource(Res.string.event_phrase_reg_in_admin) +
+                                "${stringResource(Res.string.event_label_reg_in_admin_seat_count)}: " +
+                                "${selectedEvent.value.openSeatCount}",
+                        fontFamily = PBCFontFamily,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Justify,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+            }
+
+            if (selectedEvent.value.potluckAvailable) {
+                Column (
+                    modifier = Modifier.padding(top = 20.dp)
+                ) {
+                    Text(
+                        text = stringResource(Res.string.event_label_potluck_in_admin),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(2.dp),
+                        thickness = 2.dp
+                    )
+
+                    Text(
+                        text = stringResource(Res.string.event_phrase_potluck_in_admin),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Justify,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                    selectedEvent.value.potluckItemList?.let { potluckItems ->
+                        FlowRow(
+                            maxItemsInEachRow = 3,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            potluckItems.forEach { item ->
+                                PotluckItemUI(
+                                    modifier = Modifier.padding(4.dp),
+                                    potluckItem = item
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (selectedEvent.value.signUpSheetAvailable) {
+                Column (
+                    modifier = Modifier.padding(top = 20.dp)
+                ) {
+                    Text(
+                        text = stringResource(Res.string.event_label_sign_up_sheet_in_admin),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(2.dp),
+                        thickness = 2.dp
+                    )
+
+                    Text(
+                        text = stringResource(Res.string.event_phrase_sign_up_sheet_in_admin),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Justify,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                    selectedEvent.value.signUpSheetList?.let { signUpSheets ->
+                        signUpSheets.forEach { sheet ->
+                            Spacer(modifier = Modifier.height(8.dp))
+                            SignUpSheetItem(signUpSheet = sheet)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PotluckItemUI(
+    modifier: Modifier = Modifier,
+    potluckItem: PotluckItem
+) {
+    Row (
+        modifier = modifier
+            .width(300.dp)
+            .border(1.dp, MaterialTheme.colorScheme.tertiary,
+                shape = RoundedCornerShape(8.dp))
+            .clip( RoundedCornerShape(8.dp)),
+        verticalAlignment = Alignment.Top
+    ) {
+        Row (
+          modifier = Modifier
+              .background(MaterialTheme.colorScheme.surface)
+              .padding(16.dp)
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(start = 4.dp, end = 4.dp)
+                    .weight(.85f),
+                text = potluckItem.itemName,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontFamily = PBCFontFamily,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                modifier = Modifier.padding(start = 4.dp, end = 4.dp)
+                    .weight(.15f),
+                text = "${potluckItem.itemCount}",
+                color = MaterialTheme.colorScheme.onSurface,
+                fontFamily = PBCFontFamily,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.End
+            )
+        }
+    }
+}
+
+@Composable
+private fun SignUpSheetItem(modifier: Modifier = Modifier, signUpSheet: SignUpSheet) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(1.dp, MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(8.dp))
+            .clip( RoundedCornerShape(8.dp))
+            .shadow(elevation = 2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(12.dp)
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(start = 4.dp, end = 4.dp),
+                text = signUpSheet.sheetName,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontFamily = PBCFontFamily,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                modifier = Modifier
+                    .padding(start = 4.dp, end = 4.dp),
+                text = signUpSheet.sheetDescription,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontFamily = PBCFontFamily,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Thin,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

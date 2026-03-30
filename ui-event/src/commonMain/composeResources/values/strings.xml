@@ -49,4 +49,11 @@
     <string name="event_label_no_draft">No any drafted Events available.</string>
     <string name="event_label_active">Active Events</string>
     <string name="event_label_no_active">No any active Events available.</string>
+    <string name="event_label_reg_in_admin">Registration Required.</string>
+    <string name="event_phrase_reg_in_admin">This event enabled registration required. Therefore, to consumer, this event will open up for registration.</string>
+    <string name="event_label_reg_in_admin_seat_count">Open Seat Count</string>
+    <string name="event_label_potluck_in_admin">Potluck Available</string>
+    <string name="event_phrase_potluck_in_admin">This event hosting a potluck. Therefore, to consumer, this event will open up sign-up sheet for selected potluck items. Following are the potluck items selected for this event.</string>
+    <string name="event_label_sign_up_sheet_in_admin">Sign-Up sheet(s) Available</string>
+    <string name="event_phrase_sign_up_sheet_in_admin">This event is having the following sign-up sheets. Therefore, to consumer, this event will list down following sign-up sheets to sign their names to contribute.</string>
 </resources>
