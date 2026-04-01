@@ -83,7 +83,7 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                         when(selectedAction) {
                             AdminAction.EVENT_MANAGEMENT -> {
                                 ContractServiceLocator.locate(EventContract::class)
-                                    .GetEventManageUI(navController = navController)
+                                    .GetEventAdminUI(navController = navController)
                             }
                             AdminAction.USER_MANAGEMENT -> {
                                 Box(modifier = Modifier

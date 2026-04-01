@@ -52,6 +52,8 @@ kotlin {
                 implementation(libs.coil3.network.ktor)
                 // ktorfit
                 implementation(libs.ktorfit.lib)
+                // Image Picker
+                implementation(libs.filekit.compose)
 
                 implementation(projects.libParent)
                 implementation(projects.libCommonUi)

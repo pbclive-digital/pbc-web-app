@@ -1,4 +1,4 @@
-package com.kavi.pbc.web.event.ui.manage
+package com.kavi.pbc.web.event.ui.admin.manage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -53,6 +53,9 @@ import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.potluck.PotluckItem
 import com.kavi.pbc.web.data.event.signup.SignUpSheet
 import com.kavi.pbc.web.event.data.model.EventManageMode
+import com.kavi.pbc.web.event.data.model.EventManageOrCreate
+import com.kavi.pbc.web.event.ui.admin.manage.dialog.DeleteConfirmationDialog
+import com.kavi.pbc.web.event.ui.admin.manage.dialog.PublishConfirmationDialog
 import com.kavi.pbc.web.event.ui.common.EventItemForAdmin
 import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
@@ -81,7 +84,11 @@ import pbcwebapp.ui_event.generated.resources.event_phrase_reg_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_sign_up_sheet_in_admin
 
 @Composable
-fun EventManageUI(navController: NavController) {
+fun EventManageUI(
+    navController: NavController,
+    eventManageOrCreate: MutableState<EventManageOrCreate>,
+    selectedEventForModify: MutableState<Event?>
+) {
 
     val viewModel: EventManageViewModel = viewModel { EventManageViewModel() }
 
@@ -95,9 +102,6 @@ fun EventManageUI(navController: NavController) {
 
     val showDeleteConfirmationDialog = remember { mutableStateOf(false) }
     val deletingEventId = remember { mutableStateOf("") }
-
-    val showCreateOrModifyDialog = remember { mutableStateOf(false) }
-    val selectedEventForModify: MutableState<Event?> = remember { mutableStateOf(null) }
 
     Box(
         modifier = Modifier
@@ -119,7 +123,9 @@ fun EventManageUI(navController: NavController) {
                     icon = painterResource(Res.drawable.event_icon_event),
                     cornerRadius = 12.dp
                 ) {
-                    //showCreateOrModifyDialog.value = true
+                    // Navigate to Event-Create
+                    selectedEventForModify.value = null
+                    eventManageOrCreate.value = EventManageOrCreate.CREATE
                 }
             }
 
@@ -153,7 +159,7 @@ fun EventManageUI(navController: NavController) {
                             publishingId = publishingEventId,
                             deleteConfirmation = showDeleteConfirmationDialog,
                             deletingId = deletingEventId,
-                            showModify = showCreateOrModifyDialog,
+                            eventManageOrCreate = eventManageOrCreate,
                             selectedForModify = selectedEventForModify,
                             eventMode = eventManageMode
                         ) { event ->
@@ -165,7 +171,7 @@ fun EventManageUI(navController: NavController) {
                             isSelected = isInitialEventSelected,
                             deleteConfirmation = showDeleteConfirmationDialog,
                             deletingId = deletingEventId,
-                            showModify = showCreateOrModifyDialog,
+                            eventManageOrCreate = eventManageOrCreate,
                             selectedForModify = selectedEventForModify,
                             eventMode = eventManageMode
                         ) { event ->
@@ -184,6 +190,36 @@ fun EventManageUI(navController: NavController) {
             }
         }
     }
+
+    if (showPublishConfirmationDialog.value) {
+        PublishConfirmationDialog(
+            showDialog = showPublishConfirmationDialog,
+            onAgree = {
+                showPublishConfirmationDialog.value = false
+                viewModel.publishDraftEvent(eventId = publishingEventId.value)
+                publishingEventId.value = ""
+            },
+            onDisagree = {
+                showPublishConfirmationDialog.value = false
+                publishingEventId.value = ""
+            }
+        )
+    }
+
+    if (showDeleteConfirmationDialog.value) {
+        DeleteConfirmationDialog(
+            showDialog = showDeleteConfirmationDialog,
+            onAgree = {
+                showDeleteConfirmationDialog.value = false
+                viewModel.deleteEvent(eventId = deletingEventId.value, eventManageMode = eventManageMode.value)
+                deletingEventId.value = ""
+            },
+            onDisagree = {
+                showDeleteConfirmationDialog.value = false
+                deletingEventId.value = ""
+            }
+        )
+    }
 }
 
 @Composable
@@ -194,7 +230,7 @@ private fun DraftEventBlock(
     publishingId: MutableState<String>,
     deleteConfirmation: MutableState<Boolean>,
     deletingId: MutableState<String>,
-    showModify: MutableState<Boolean>,
+    eventManageOrCreate: MutableState<EventManageOrCreate>,
     selectedForModify: MutableState<Event?>,
     eventMode: MutableState<EventManageMode>,
     onSelect:(event: Event) -> Unit
@@ -232,7 +268,7 @@ private fun DraftEventBlock(
                     isDraftEvent = true,
                     onModify = {
                         selectedForModify.value = event
-                        showModify.value = true
+                        eventManageOrCreate.value = EventManageOrCreate.CREATE
                     },
                     onPublish = {
                         publishConfirmation.value = true
@@ -279,7 +315,7 @@ private fun ActiveEventBlock(
     isSelected: MutableState<Boolean>,
     deleteConfirmation: MutableState<Boolean>,
     deletingId: MutableState<String>,
-    showModify: MutableState<Boolean>,
+    eventManageOrCreate: MutableState<EventManageOrCreate>,
     selectedForModify: MutableState<Event?>,
     eventMode: MutableState<EventManageMode>,
     onSelect:(event: Event) -> Unit
@@ -319,7 +355,7 @@ private fun ActiveEventBlock(
                     isDraftEvent = false,
                     onModify = {
                         selectedForModify.value = event
-                        showModify.value = true
+                        eventManageOrCreate.value = EventManageOrCreate.CREATE
                     },
                     onPublish = {
                         /* Nothing to implement */

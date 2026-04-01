@@ -39,7 +39,7 @@ fun AppDatePickerDialog(
             }
         }
     ) {
-        DatePicker(state = datePickerState)
+        DatePicker(state = datePickerState, showModeToggle = false, title = null, headline = null)
     }
 }
 

@@ -11,8 +11,11 @@ import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.GET
+import de.jensklingenberg.ktorfit.http.Multipart
 import de.jensklingenberg.ktorfit.http.POST
+import de.jensklingenberg.ktorfit.http.PUT
 import de.jensklingenberg.ktorfit.http.Path
+import io.ktor.client.request.forms.MultiPartFormDataContent
 
 interface EventApi {
 
@@ -67,4 +70,20 @@ interface EventApi {
     suspend fun signOutFromSelectedSignUpSheet(@Path("eventId") eventId: String,
                                    @Path("sheetId") sheetId: String,
                                    @Path("contributorId") contributorId: String): BaseResponse<EventSignUpSheetList>
+
+    @PUT("event/put/publish/{eventId}")
+    suspend fun publishDraftEvent(@Path("eventId") eventId: String, @Body event: Event): BaseResponse<Event>
+
+    @DELETE("event/delete/{eventId}")
+    suspend fun deleteEvent(@Path("eventId") eventId: String): BaseResponse<String>
+
+    @Multipart
+    @POST("event/add/image/{eventName}")
+    suspend fun uploadEventImage(@Path("eventName") eventName: String, @Body file: MultiPartFormDataContent): BaseResponse<String>
+
+    @POST("event/create")
+    suspend fun createNewEvent(@Body event: Event): BaseResponse<String>
+
+    @PUT("event/update/{eventId}")
+    suspend fun updateEvent(@Path("eventId") eventId: String, @Body event: Event): BaseResponse<Event>
 }

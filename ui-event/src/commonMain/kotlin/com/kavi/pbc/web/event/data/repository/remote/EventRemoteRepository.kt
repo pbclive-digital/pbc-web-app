@@ -10,6 +10,12 @@ import com.kavi.pbc.web.data.event.signup.EventSignUpSheetContributor
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.ResultWrapper
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.readBytes
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 
 class EventRemoteRepository {
 
@@ -101,5 +107,36 @@ class EventRemoteRepository {
                 eventId = eventId, sheetId = sheetId, contributorId = contributorId
             )
         }
+    }
+
+    suspend fun publishDraftEvent(eventId: String, event: Event): ResultWrapper<BaseResponse<Event>> {
+        return Network.shared.invokeApiCall { eventApi.publishDraftEvent(eventId, event) }
+    }
+
+    suspend fun deleteEvent(eventId: String): ResultWrapper<BaseResponse<String>> {
+        return Network.shared.invokeApiCall { eventApi.deleteEvent(eventId = eventId) }
+    }
+
+    suspend fun uploadEventImage(eventName: String, imageFile: PlatformFile): ResultWrapper<BaseResponse<String>> {
+        val byteArray = imageFile.readBytes()
+
+        val multipartBody = MultiPartFormDataContent(
+            formData {
+                append("eventImage", byteArray, Headers.build {
+                    append(HttpHeaders.ContentType, "image/png")
+                    append(HttpHeaders.ContentDisposition, "filename=\"$eventName\"")
+                })
+            }
+        )
+
+        return Network.shared.invokeApiCall { eventApi.uploadEventImage(eventName, multipartBody) }
+    }
+
+    suspend fun createEvent(event: Event): ResultWrapper<BaseResponse<String>> {
+        return Network.shared.invokeApiCall { eventApi.createNewEvent(event) }
+    }
+
+    suspend fun updateEvent(eventId: String, event: Event): ResultWrapper<BaseResponse<Event>> {
+        return Network.shared.invokeApiCall { eventApi.updateEvent(eventId, event) }
     }
 }

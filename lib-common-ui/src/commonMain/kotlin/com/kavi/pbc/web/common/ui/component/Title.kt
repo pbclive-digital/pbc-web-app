@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,8 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
+import org.jetbrains.compose.resources.painterResource
+import pbcwebapp.lib_common_ui.generated.resources.Res
+import pbcwebapp.lib_common_ui.generated.resources.icon_back_nav
 
 @Composable
 fun Title(modifier: Modifier = Modifier,
@@ -30,6 +33,39 @@ fun Title(modifier: Modifier = Modifier,
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        Text(
+            text = titleText,
+            fontFamily = PBCFontFamily,
+            fontWeight = FontWeight.Bold,
+            lineHeight = textSize.sp,
+            fontSize = textSize.sp,
+            color = textColor
+        )
+    }
+}
+
+@Composable
+fun TitleWithBackNav(
+    modifier: Modifier = Modifier,
+    titleText: String, textSize: Int = 48,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    backAction: () -> Unit
+) {
+    Row (
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(Res.drawable.icon_back_nav),
+            contentDescription = "Provided icon",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .size(48.dp)
+                .clickable {
+                    backAction.invoke()
+                }
+        )
+        Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = titleText,
             fontFamily = PBCFontFamily,

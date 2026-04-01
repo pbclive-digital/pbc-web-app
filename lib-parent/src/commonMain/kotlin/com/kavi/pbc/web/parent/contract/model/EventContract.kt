@@ -10,5 +10,5 @@ interface EventContract: CommonContract {
     fun GetEventListUI(navController: NavController)
 
     @Composable
-    fun GetEventManageUI(navController: NavController)
+    fun GetEventAdminUI(navController: NavController)
 }
