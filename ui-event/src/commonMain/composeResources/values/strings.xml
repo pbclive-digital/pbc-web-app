@@ -9,6 +9,7 @@
     <string name="event_label_at">At: </string>
     <string name="event_label_yes">Yes</string>
     <string name="event_label_no">No</string>
+    <string name="event_label_close">Close</string>
 
     <string name="event_label_registration">Registration</string>
     <string name="event_phrase_registration_details">Because of the limited space availability, we expect you to register for this event to reserve your seat.</string>
@@ -27,7 +28,8 @@
     <string name="event_phrase_un_reg_success">You have successfully un-registered from this event. At any time you can register back to this event.</string>
     <string name="event_label_reg_un_reg_failure">Failed to process your request</string>
     <string name="event_phrase_reg_un_reg_failure">At this time, PBC failed to process your request. Please try again later. Sorry for the incontinence</string>
-    <string name="event_label_close">Close</string>
+    <string name="event_label_invite_heading">You Are Cordially Invited</string>
+    <string name="event_label_invite_message">Please join us for this event to bring our community together. Everyone is welcome!</string>
 
     <string name="event_label_potluck_details">Potluck Details</string>
     <string name="event_label_potluck">Potluck</string>

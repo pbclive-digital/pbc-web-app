@@ -70,6 +70,8 @@ import pbcwebapp.ui_event.generated.resources.event_icon_register
 import pbcwebapp.ui_event.generated.resources.event_label_additional_sign_ups
 import pbcwebapp.ui_event.generated.resources.event_label_at
 import pbcwebapp.ui_event.generated.resources.event_label_from
+import pbcwebapp.ui_event.generated.resources.event_label_invite_heading
+import pbcwebapp.ui_event.generated.resources.event_label_invite_message
 import pbcwebapp.ui_event.generated.resources.event_label_on
 import pbcwebapp.ui_event.generated.resources.event_label_potluck
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_details
@@ -176,36 +178,58 @@ fun WebScreenUI(viewModel: SelectedEventViewModel) {
             ) {
                 BoxWithConstraints (
                     modifier = Modifier
-                        .weight(.5f)
+                        .weight(.35f)
                 ) {
                     val maxWidth = this.maxWidth
 
-                    Card (
-                        modifier = Modifier
-                            .height(maxWidth)
-                            .width(maxWidth)
-                            .padding(top = 20.dp, bottom = 20.dp, end = 20.dp)
-                            .background(Color.Transparent),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
-                    ) {
-                        AsyncImage(
-                            model = selectedEvent.eventImage,
-                            error = painterResource(Res.drawable.event_image_pbc),
-                            contentDescription = null, // decorative image
-                            contentScale = ContentScale.FillBounds,
+                    Column {
+                        Card (
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(20.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(color = MaterialTheme.colorScheme.background)
+                                .height(maxWidth)
+                                .width(maxWidth)
+                                .padding(top = 20.dp, bottom = 20.dp, end = 20.dp)
+                                .background(Color.Transparent),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+                        ) {
+                            AsyncImage(
+                                model = selectedEvent.eventImage,
+                                error = painterResource(Res.drawable.event_image_pbc),
+                                contentDescription = null, // decorative image
+                                contentScale = ContentScale.FillBounds,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(20.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(color = MaterialTheme.colorScheme.background)
+                            )
+                        }
+
+                        Text(
+                            modifier = Modifier.padding(top = 12.dp, end = 8.dp),
+                            text = stringResource(Res.string.event_label_invite_heading),
+                            fontFamily = PBCFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp,
+                            lineHeight = 28.sp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(top = 4.dp, end = 8.dp),
+                            text = stringResource(Res.string.event_label_invite_message),
+                            fontFamily = PBCFontFamily,
+                            fontWeight = FontWeight.Thin,
+                            fontSize = 18.sp,
+                            lineHeight = 18.sp,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
 
                 EventInformationComponent(
                     modifier = Modifier
-                        .weight(.5f)
+                        .weight(.65f)
                         .verticalScroll(rememberScrollState()),
                     viewModel = viewModel
                 )
