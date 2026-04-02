@@ -25,6 +25,10 @@ class EventCreateViewModel: ViewModel() {
     val eventRemoteRepository = EventRemoteRepository()
     private val _eventCreationOrModifyState = MutableStateFlow(EventCreateOrModifyUiState.NONE)
     val eventCreationOrModifyState: StateFlow<EventCreateOrModifyUiState> = _eventCreationOrModifyState
+
+    private val _eventFormValidationError = MutableStateFlow("")
+    val eventFormValidationError: StateFlow<String> = _eventFormValidationError
+
     private val _createOrModifyEvent = MutableStateFlow(Event(
         creator = Session.user!!.id!!,
         createdTime = Clock.System.now().toEpochMilliseconds(),
@@ -38,6 +42,19 @@ class EventCreateViewModel: ViewModel() {
     val signUpSheetItemList: StateFlow<List<SignUpSheet>> = _signUpSheetItemList
 
     private var eventImageFile: PlatformFile? = null
+
+    fun initiateNewEvent() {
+        _createOrModifyEvent.value = Event(
+            creator = Session.user!!.id!!,
+            createdTime = Clock.System.now().toEpochMilliseconds(),
+        )
+
+        // clearing the potluck list
+        _potluckItemList.value.clear()
+
+        // clearing the sign-up sheet list
+        _signUpSheetItemList.value.clear()
+    }
 
     fun setModifyEvent(event: Event) {
         _createOrModifyEvent.value = event
@@ -58,6 +75,7 @@ class EventCreateViewModel: ViewModel() {
     }
 
     fun revokeEventCreateOrModifyUiState() {
+        _eventFormValidationError.value = ""
         _eventCreationOrModifyState.value = EventCreateOrModifyUiState.NONE
     }
 
@@ -216,7 +234,8 @@ class EventCreateViewModel: ViewModel() {
     }
 
     fun uploadEventImageAndCreateOrUpdateEvent(isModify: Boolean = false) {
-        if (isValidNewsForm()) {
+        val validationFormResult = isValidNewsForm()
+        if (validationFormResult.first) {
             val formatedEventName = _createOrModifyEvent.value.name
                 .replace(" ", "_")
                 .replace("-", "_")
@@ -254,19 +273,41 @@ class EventCreateViewModel: ViewModel() {
                 }
             }
         } else {
+            _eventFormValidationError.value = validationFormResult.second
             _eventCreationOrModifyState.value = EventCreateOrModifyUiState.EMPTY_FIELD
         }
     }
 
-    private fun isValidNewsForm(): Boolean {
-        return !(_createOrModifyEvent.value.name.isEmpty()
-                || _createOrModifyEvent.value.description.isEmpty()
-                || _createOrModifyEvent.value.eventType == EventType.DEFAULT
-                || _createOrModifyEvent.value.eventDate == 0L
-                || _createOrModifyEvent.value.startTime.isEmpty()
-                || _createOrModifyEvent.value.endTime.isEmpty()
-                || _createOrModifyEvent.value.venueType == VenueType.DEFAULT
-                )
+    private fun isValidNewsForm(): Pair<Boolean, String> {
+        if (_createOrModifyEvent.value.name.isEmpty()) {
+            return Pair(false, "Event Name is empty")
+        }
+
+        if (_createOrModifyEvent.value.description.isEmpty()) {
+            return Pair(false, "Event Description is empty")
+        }
+
+        if (_createOrModifyEvent.value.eventType == EventType.DEFAULT) {
+            return Pair(false, "Event Type not selected")
+        }
+
+        if (_createOrModifyEvent.value.eventDate == 0L) {
+            return Pair(false, "Event Date not selected")
+        }
+
+        if (_createOrModifyEvent.value.startTime.isEmpty()) {
+            return Pair(false, "Event Start Time not selected")
+        }
+
+        if (_createOrModifyEvent.value.endTime.isEmpty()) {
+            return Pair(false, "Event End Time not selected")
+        }
+
+        if (_createOrModifyEvent.value.venueType == VenueType.DEFAULT) {
+            return Pair(false, "Event VenueType not selected")
+        }
+
+        return Pair(true, "")
     }
 
     private fun createEvent() {

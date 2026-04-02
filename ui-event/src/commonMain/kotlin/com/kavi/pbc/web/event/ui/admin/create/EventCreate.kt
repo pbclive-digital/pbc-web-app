@@ -120,15 +120,19 @@ fun EventCreateUI(
     modifyEvent: Event? = null
 ) {
     val viewModel: EventCreateViewModel = viewModel { EventCreateViewModel() }
-    var isModify by remember { mutableStateOf(false) }
+    val isModify = modifyEvent != null
 
-    modifyEvent?.let {
-        isModify = true
-        viewModel.setModifyEvent(it)
+    LaunchedEffect(modifyEvent) {
+        if (modifyEvent != null) {
+            viewModel.setModifyEvent(modifyEvent)
+        } else {
+            viewModel.initiateNewEvent()
+        }
     }
 
     val createOrModifyEvent by viewModel.createOrModifyEvent.collectAsState()
     val eventCreationOrModifyState by viewModel.eventCreationOrModifyState.collectAsState()
+    val eventFormValidationError by viewModel.eventFormValidationError.collectAsState()
 
     val errorBalloonVisibility = remember { mutableStateOf(false) }
     var errorBalloonMessage by remember { mutableStateOf("") }
@@ -302,7 +306,7 @@ fun EventCreateUI(
         EventCreateOrModifyUiState.PENDING -> {}
         EventCreateOrModifyUiState.EMPTY_FIELD -> {
             errorBalloonVisibility.value = true
-            errorBalloonMessage = stringResource(Res.string.event_phrase_create_or_modify_empty_fields)
+            errorBalloonMessage = stringResource(Res.string.event_phrase_create_or_modify_empty_fields) + eventFormValidationError
         }
         EventCreateOrModifyUiState.FAILURE -> {
             errorBalloonVisibility.value = true
@@ -342,10 +346,26 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
     val eventVenueAddress = remember { mutableStateOf(TextFieldValue(createOrModifyEvent.venueAddress ?: run { "" })) }
     val eventMeetingUrl = remember { mutableStateOf(TextFieldValue(createOrModifyEvent.meetingUrl ?: run { "" })) }
 
+    // Sync local state when ViewModel state changes
+    LaunchedEffect(createOrModifyEvent) {
+        eventName.value = TextFieldValue(createOrModifyEvent.name)
+        eventDescription.value = TextFieldValue(createOrModifyEvent.description)
+        eventType.value = viewModel.getInitialEventType()
+        eventDate.value = viewModel.getInitialEventDate()
+        eventFrom.value = viewModel.getInitialStartTime()
+        eventTo.value = viewModel.getInitialEndTime()
+        venueType.value = viewModel.getInitialVenueType()
+        eventVenue.value = TextFieldValue(createOrModifyEvent.venue ?: run { "" })
+        eventVenueAddress.value = TextFieldValue(createOrModifyEvent.venueAddress ?: run { "" })
+        eventMeetingUrl.value = TextFieldValue(createOrModifyEvent.meetingUrl ?: run { "" })
+    }
+
+    // Update viewModel with local changes of event-type
     LaunchedEffect(eventType.value) {
         viewModel.updateEventType(eventType = eventType.value)
     }
 
+    // Update viewModel with local changes of venue-type
     LaunchedEffect(venueType.value) {
         viewModel.updateVenueType(venueType = venueType.value)
     }
@@ -371,10 +391,10 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 4.dp)
-                .height(100.dp),
+                .height(200.dp),
             headingText = stringResource(Res.string.event_label_description).uppercase(),
             contentText = eventDescription,
-            maxLines = 6,
+            maxLines = 12,
             onValueChange = { newValue ->
                 eventDescription.value = newValue
                 viewModel.updateDescription(eventDescription.value.text)
@@ -597,6 +617,12 @@ private fun EventRegistrationSetup(viewModel: EventCreateViewModel) {
     val availableSeatCount = remember { mutableStateOf(TextFieldValue(
         createOrModifyEvent.openSeatCount?.toString() ?: run { "" })) }
 
+    LaunchedEffect(createOrModifyEvent) {
+        isRegistrationChecked = createOrModifyEvent.registrationRequired
+        availableSeatCount.value = TextFieldValue(
+            createOrModifyEvent.openSeatCount?.toString() ?: run { "" })
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -691,11 +717,14 @@ private fun EventRegistrationSetup(viewModel: EventCreateViewModel) {
 private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
     val createOrModifyEvent by viewModel.createOrModifyEvent.collectAsState()
+    val potluckItemList by viewModel.potluckItemList.collectAsState()
 
     var isPotluckChecked by remember { mutableStateOf(createOrModifyEvent.potluckAvailable) }
     val showCreatePotluckItemDialog = remember { mutableStateOf(false) }
 
-    val potluckItemList by viewModel.potluckItemList.collectAsState()
+    LaunchedEffect(createOrModifyEvent) {
+        isPotluckChecked = createOrModifyEvent.potluckAvailable
+    }
 
     Column(
         modifier = Modifier
@@ -810,11 +839,14 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
 private fun EventSignUpSheetSetup(viewModel: EventCreateViewModel) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
     val createOrModifyEvent by viewModel.createOrModifyEvent.collectAsState()
+    val signUpSheetItemList by viewModel.signUpSheetItemList.collectAsState()
 
     var isAdditionalSignUpsChecked by remember { mutableStateOf(createOrModifyEvent.signUpSheetAvailable) }
     val showCreateSignUpSheetItemDialog = remember { mutableStateOf(false) }
 
-    val signUpSheetItemList by viewModel.signUpSheetItemList.collectAsState()
+    LaunchedEffect(createOrModifyEvent) {
+        isAdditionalSignUpsChecked = createOrModifyEvent.signUpSheetAvailable
+    }
 
     Column(
         modifier = Modifier

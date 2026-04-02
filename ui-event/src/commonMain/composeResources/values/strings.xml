@@ -78,7 +78,7 @@
     <string name="event_label_venue_address">Venue Address</string>
     <string name="event_label_meeting_url">Meeting Link</string>
     <string name="event_phrase_create_or_modify_failure">Error happens at this time and not able to create / modify your Event. Please try again from few minutes, and sorry for your inconvenience.</string>
-    <string name="event_phrase_create_or_modify_empty_fields">Some fields are empty to create / modify this event. Please check that and provide required fields to create the event.</string>
+    <string name="event_phrase_create_or_modify_empty_fields">Please check that and provide required fields to create the event. Can not continue due to: </string>
 
     <string name="event_label_registration_in_admin">Setup Event Registration</string>
     <string name="event_phrase_registration_in_admin">Is this event required user pre-registration? If yes, add the opening seat count for the event.</string>
