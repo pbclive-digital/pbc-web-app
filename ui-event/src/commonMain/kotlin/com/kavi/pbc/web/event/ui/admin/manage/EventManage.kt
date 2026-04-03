@@ -449,11 +449,11 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                     )
 
                     Row (
-                        modifier = Modifier.padding(top = 12.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
+                        Column(
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.Center,
                         ) {
                             Text(
                                 text = stringResource(Res.string.event_label_on),
@@ -464,7 +464,7 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                             )
 
                             Text(
-                                modifier = Modifier.padding(start = 4.dp),
+                                modifier = Modifier.padding(top = 8.dp),
                                 text = selectedEvent.value.getFormatDate(),
                                 fontFamily = PBCFontFamily,
                                 fontWeight = FontWeight.SemiBold,
@@ -475,9 +475,9 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.End
+                        Column(
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.Center,
                         ) {
                             Text(
                                 text = stringResource(Res.string.event_label_from),
@@ -488,7 +488,7 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                             )
 
                             Text(
-                                modifier = Modifier.padding(start = 4.dp),
+                                modifier = Modifier.padding(top = 8.dp),
                                 text = "${selectedEvent.value.startTime} - ${selectedEvent.value.endTime}",
                                 fontFamily = PBCFontFamily,
                                 fontWeight = FontWeight.SemiBold,
@@ -499,7 +499,7 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                     }
 
                     Row (
-                        modifier = Modifier.padding(top = 12.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                     ) {
                         if (selectedEvent.value.venueType == VenueType.PHYSICAL) {
                             Text(

@@ -284,11 +284,11 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
         )
 
         Row (
-            modifier = Modifier.padding(top = 12.dp),
+            modifier = Modifier.padding(top = 16.dp),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = stringResource(Res.string.event_label_on),
@@ -310,9 +310,9 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = stringResource(Res.string.event_label_from),
@@ -334,7 +334,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
         }
 
         Row (
-            modifier = Modifier.padding(top = 12.dp),
+            modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
         ) {
             if (selectedEvent.venueType == VenueType.PHYSICAL) {
                 Text(
@@ -396,7 +396,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
             }
 
             Column(
-                modifier = Modifier.padding(top = 16.dp, bottom = registrationBottomPadding)
+                modifier = Modifier.padding(top = 8.dp, bottom = registrationBottomPadding)
             ) {
                 Text(
                     text = stringResource(Res.string.event_label_registration),
