@@ -4,10 +4,13 @@ import com.kavi.pbc.web.data.BaseResponse
 import com.kavi.pbc.web.data.event.Event
 import com.kavi.pbc.web.data.event.potluck.EventPotluck
 import com.kavi.pbc.web.data.event.potluck.EventPotluckContributor
+import com.kavi.pbc.web.data.event.potluck.PotluckDownloadLink
 import com.kavi.pbc.web.data.event.register.EventRegistration
 import com.kavi.pbc.web.data.event.register.EventRegistrationItem
+import com.kavi.pbc.web.data.event.register.RegistrationDownloadLink
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetContributor
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
+import com.kavi.pbc.web.data.event.signup.SignUpSheetDownloadLink
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.ResultWrapper
 import io.github.vinceglb.filekit.PlatformFile
@@ -138,5 +141,17 @@ class EventRemoteRepository {
 
     suspend fun updateEvent(eventId: String, event: Event): ResultWrapper<BaseResponse<Event>> {
         return Network.shared.invokeApiCall { eventApi.updateEvent(eventId, event) }
+    }
+
+    suspend fun getEventRegistrationDownloadLink(eventId: String): ResultWrapper<BaseResponse<RegistrationDownloadLink>> {
+        return Network.shared.invokeApiCall { eventApi.getEventRegistrationDownloadLink(eventId = eventId) }
+    }
+
+    suspend fun getEventPotluckDownloadLink(eventId: String): ResultWrapper<BaseResponse<PotluckDownloadLink>> {
+        return Network.shared.invokeApiCall { eventApi.getEventPotluckDownloadLink(eventId = eventId) }
+    }
+
+    suspend fun getEventSignUpSheetDownloadLink(eventId: String, sheetId: String): ResultWrapper<BaseResponse<SignUpSheetDownloadLink>> {
+        return Network.shared.invokeApiCall { eventApi.getEventSignUpSheetDownloadLink(eventId = eventId, sheetId = sheetId) }
     }
 }

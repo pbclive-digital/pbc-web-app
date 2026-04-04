@@ -54,6 +54,8 @@ kotlin {
                 implementation(libs.ktorfit.lib)
                 // Image Picker
                 implementation(libs.filekit.compose)
+                // Enable native browser functions
+                implementation(libs.kotlinx.browser)
 
                 implementation(projects.libParent)
                 implementation(projects.libCommonUi)

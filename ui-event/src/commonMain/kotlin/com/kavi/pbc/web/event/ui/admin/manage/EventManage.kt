@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,10 +58,13 @@ import com.kavi.pbc.web.event.data.model.EventManageOrCreate
 import com.kavi.pbc.web.event.ui.admin.manage.dialog.DeleteConfirmationDialog
 import com.kavi.pbc.web.event.ui.admin.manage.dialog.PublishConfirmationDialog
 import com.kavi.pbc.web.event.ui.common.EventItemForAdmin
+import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.parent.extention.openUrl
+import kotlinx.browser.window
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
+import pbcwebapp.ui_event.generated.resources.event_icon_download
 import pbcwebapp.ui_event.generated.resources.event_icon_event
 import pbcwebapp.ui_event.generated.resources.event_icon_location
 import pbcwebapp.ui_event.generated.resources.event_icon_online_meeting
@@ -82,6 +86,7 @@ import pbcwebapp.ui_event.generated.resources.event_phrase_manage
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_sign_up_sheet_in_admin
+import kotlin.js.ExperimentalWasmJsInterop
 
 @Composable
 fun EventManageUI(
@@ -395,8 +400,12 @@ private fun ActiveEventBlock(
     }
 }
 
+@OptIn(ExperimentalWasmJsInterop::class)
 @Composable
 private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
+    val viewModel: EventManageViewModel = viewModel { EventManageViewModel() }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -561,15 +570,33 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                 Column (
                     modifier = Modifier.padding(top = 20.dp)
                 ) {
-                    Text(
-                        text = stringResource(Res.string.event_label_reg_in_admin),
-                        fontFamily = PBCFontFamily,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
+                    Row {
+                        Text(
+                            text = stringResource(Res.string.event_label_reg_in_admin),
+                            fontFamily = PBCFontFamily,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Icon(
+                            painter = painterResource(Res.drawable.event_icon_download),
+                            contentDescription = "Download .csv",
+                            tint = themeAdditionalColors.shadow,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(4.dp)
+                                .clickable {
+                                    // Download event registration .csv
+                                    viewModel.downloadEventRegistrationList(eventId = selectedEvent.value.id!!) { urlPath ->
+                                        val downloadLink = "${Network.shared.getBaseUrl()}$urlPath"
+                                        window.open(url = downloadLink, "_blank")
+                                    }
+                                }
+                        )
+                    }
 
                     HorizontalDivider(
                         modifier = Modifier.padding(2.dp),
@@ -594,15 +621,33 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                 Column (
                     modifier = Modifier.padding(top = 20.dp)
                 ) {
-                    Text(
-                        text = stringResource(Res.string.event_label_potluck_in_admin),
-                        fontFamily = PBCFontFamily,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
+                    Row {
+                        Text(
+                            text = stringResource(Res.string.event_label_potluck_in_admin),
+                            fontFamily = PBCFontFamily,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Icon(
+                            painter = painterResource(Res.drawable.event_icon_download),
+                            contentDescription = "Download .csv",
+                            tint = themeAdditionalColors.shadow,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(4.dp)
+                                .clickable {
+                                    // Download potluck contribution .csv
+                                    viewModel.downloadEventPotluckContribution(eventId = selectedEvent.value.id!!) { urlPath ->
+                                        val downloadLink = "${Network.shared.getBaseUrl()}$urlPath"
+                                        window.open(url = downloadLink, "_blank")
+                                    }
+                                }
+                        )
+                    }
 
                     HorizontalDivider(
                         modifier = Modifier.padding(2.dp),
@@ -667,7 +712,16 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                     selectedEvent.value.signUpSheetList?.let { signUpSheets ->
                         signUpSheets.forEach { sheet ->
                             Spacer(modifier = Modifier.height(8.dp))
-                            SignUpSheetItem(signUpSheet = sheet)
+                            SignUpSheetItem(signUpSheet = sheet) {
+                                // Download potluck contribution .csv
+                                viewModel.downloadEventSignUpSheetContribution(
+                                    eventId = selectedEvent.value.id!!,
+                                    sheetId = sheet.sheetId
+                                ) { urlPath ->
+                                    val downloadLink = "${Network.shared.getBaseUrl()}$urlPath"
+                                    window.open(url = downloadLink, "_blank")
+                                }
+                            }
                         }
                     }
                 }
@@ -719,19 +773,18 @@ private fun PotluckItemUI(
 }
 
 @Composable
-private fun SignUpSheetItem(modifier: Modifier = Modifier, signUpSheet: SignUpSheet) {
+private fun SignUpSheetItem(modifier: Modifier = Modifier, signUpSheet: SignUpSheet, onDownload: () -> Unit) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .border(1.dp, MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(8.dp))
             .clip( RoundedCornerShape(8.dp))
-            .shadow(elevation = 2.dp),
+            .shadow(elevation = 2.dp)
+            .background(MaterialTheme.colorScheme.surface),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column (
             modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
                 .padding(12.dp)
         ) {
             Text(
@@ -755,5 +808,20 @@ private fun SignUpSheetItem(modifier: Modifier = Modifier, signUpSheet: SignUpSh
                 overflow = TextOverflow.Ellipsis
             )
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Icon(
+            painter = painterResource(Res.drawable.event_icon_download),
+            contentDescription = "Download .csv",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .size(40.dp)
+                .padding(end = 16.dp)
+                .clickable {
+                    // Download potluck contribution .csv
+                    onDownload.invoke()
+                }
+        )
     }
 }

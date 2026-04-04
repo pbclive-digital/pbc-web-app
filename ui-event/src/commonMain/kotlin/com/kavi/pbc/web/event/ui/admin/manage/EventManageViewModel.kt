@@ -106,4 +106,49 @@ class EventManageViewModel: ViewModel() {
             }
         }
     }
+
+    fun downloadEventRegistrationList(eventId: String, onLinkAvailable: (urlPath: String) -> Unit) {
+        viewModelScope.launch {
+            when (val response = eventRemoteRepository.getEventRegistrationDownloadLink(eventId = eventId)) {
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                    // Nothing to do as per now.
+                }
+                is ResultWrapper.Success -> {
+                    response.value.body?.let { downloadData ->
+                        onLinkAvailable.invoke(downloadData.downloadLink)
+                    }
+                }
+            }
+        }
+    }
+
+    fun downloadEventPotluckContribution(eventId: String, onLinkAvailable: (urlPath: String) -> Unit) {
+        viewModelScope.launch {
+            when (val response = eventRemoteRepository.getEventPotluckDownloadLink(eventId = eventId)) {
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                    // Nothing to do as per now.
+                }
+                is ResultWrapper.Success -> {
+                    response.value.body?.let { downloadData ->
+                        onLinkAvailable.invoke(downloadData.downloadLink)
+                    }
+                }
+            }
+        }
+    }
+
+    fun downloadEventSignUpSheetContribution(eventId: String, sheetId: String, onLinkAvailable: (urlPath: String) -> Unit) {
+        viewModelScope.launch {
+            when (val response = eventRemoteRepository.getEventSignUpSheetDownloadLink(eventId = eventId, sheetId = sheetId)) {
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                    // Nothing to do as per now.
+                }
+                is ResultWrapper.Success -> {
+                    response.value.body?.let { downloadData ->
+                        onLinkAvailable.invoke(downloadData.downloadLink)
+                    }
+                }
+            }
+        }
+    }
 }

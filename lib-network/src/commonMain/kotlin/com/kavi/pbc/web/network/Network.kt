@@ -24,13 +24,13 @@ class Network {
     }
 
     fun getBaseUrl(): String {
-        return "${netConfig?.scheme}://${netConfig?.domain}/"
+        return "${netConfig?.scheme}://${netConfig?.domain}"
     }
 
     fun ktorfitClient(): Ktorfit {
         val ktorfit = Ktorfit.Builder()
             .httpClient(httpClientInstance)
-            .baseUrl(getBaseUrl())
+            .baseUrl("${getBaseUrl()}/")
             .build()
 
         return ktorfit

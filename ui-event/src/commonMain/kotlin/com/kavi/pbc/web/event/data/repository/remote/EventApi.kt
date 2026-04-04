@@ -4,10 +4,13 @@ import com.kavi.pbc.web.data.BaseResponse
 import com.kavi.pbc.web.data.event.Event
 import com.kavi.pbc.web.data.event.potluck.EventPotluck
 import com.kavi.pbc.web.data.event.potluck.EventPotluckContributor
+import com.kavi.pbc.web.data.event.potluck.PotluckDownloadLink
 import com.kavi.pbc.web.data.event.register.EventRegistration
 import com.kavi.pbc.web.data.event.register.EventRegistrationItem
+import com.kavi.pbc.web.data.event.register.RegistrationDownloadLink
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetContributor
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheetList
+import com.kavi.pbc.web.data.event.signup.SignUpSheetDownloadLink
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.GET
@@ -86,4 +89,13 @@ interface EventApi {
 
     @PUT("event/update/{eventId}")
     suspend fun updateEvent(@Path("eventId") eventId: String, @Body event: Event): BaseResponse<Event>
+
+    @GET("event/get/registration/download-link/{eventId}")
+    suspend fun getEventRegistrationDownloadLink(@Path("eventId") eventId: String): BaseResponse<RegistrationDownloadLink>
+
+    @GET("event/get/potluck/download-link/{eventId}")
+    suspend fun getEventPotluckDownloadLink(@Path("eventId") eventId: String): BaseResponse<PotluckDownloadLink>
+
+    @GET("event/get/sign-up-sheet/download-link/{eventId}/{sheetId}")
+    suspend fun getEventSignUpSheetDownloadLink(@Path("eventId") eventId: String, @Path("sheetId") sheetId: String): BaseResponse<SignUpSheetDownloadLink>
 }
