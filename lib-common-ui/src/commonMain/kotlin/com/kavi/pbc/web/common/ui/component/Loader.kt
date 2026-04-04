@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun AppFullScreenLoader(
-    isWithBackground: Boolean = true,
+    isWithBackground: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Box(
