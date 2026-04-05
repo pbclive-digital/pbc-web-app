@@ -30,9 +30,9 @@ object DateTimeUtil {
     }
 
     fun datePickerInitializeMills(): Long {
-        val today = Clock.System.todayIn(TimeZone.UTC)
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         return today
-            .atStartOfDayIn(TimeZone.UTC) // Crucial: Use UTC here
+            .atStartOfDayIn(TimeZone.currentSystemDefault()) // Crucial: Use UTC here
             .toEpochMilliseconds()
     }
 
