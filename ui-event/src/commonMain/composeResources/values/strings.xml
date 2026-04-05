@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="event_label_upcoming">Upcoming Events</string>
+    <string name="event_phrase_upcoming">Following are the future events / programs that Pittsburgh Buddhist Center is organizing or participation. You all are welcome to take part of these events.</string>
     <string name="event_label_past">Passed Events</string>
+    <string name="event_phrase_past">These are the events PBC hosted or took part in recent past.</string>
 
     <string name="event_label_from">From: </string>
     <string name="event_label_to">To: </string>
