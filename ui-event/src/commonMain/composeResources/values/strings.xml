@@ -2,8 +2,14 @@
 <resources>
     <string name="event_label_upcoming">Upcoming Events</string>
     <string name="event_phrase_upcoming">Following are the future events / programs that Pittsburgh Buddhist Center is organizing or participation. You all are welcome to take part of these events.</string>
-    <string name="event_label_past">Passed Events</string>
+    <string name="event_label_past">Past Events</string>
     <string name="event_phrase_past">These are the events PBC hosted or took part in recent past.</string>
+    <string name="event_phrase_empty_upcoming_events">There is no upcoming events to show at this time. Soon we will come up with new events / programs.</string>
+    <string name="event_phrase_empty_past_events">There is no recent past events to show at this time.</string>
+    <string name="event_phrase_note_for_events">All the events are free and open to public, unless otherwise noted. All are welcome.</string>
+    <string name="event_label_recurring">Recurring Events</string>
+    <string name="event_phrase_recurring">Following are the events that happening every week.</string>
+    <string name="event_phrase_empty_recurring_events">There is no recurring events to show at this time. Soon we will come up with new events / programs.</string>
 
     <string name="event_label_from">From: </string>
     <string name="event_label_to">To: </string>
@@ -12,6 +18,7 @@
     <string name="event_label_yes">Yes</string>
     <string name="event_label_no">No</string>
     <string name="event_label_close">Close</string>
+    <string name="event_label_view_more">View More</string>
 
     <string name="event_label_registration">Registration</string>
     <string name="event_phrase_registration_details">Because of the limited space availability, we expect you to register for this event to reserve your seat.</string>
@@ -76,6 +83,7 @@
     <string name="event_label_event_type">Event Type</string>
     <string name="event_label_when">When</string>
     <string name="event_label_event_date">Event Date:</string>
+    <string name="event_label_event_recuring_day">Day of recurring</string>
     <string name="event_label_where">Where</string>
     <string name="event_label_venue_type">Venue Type:</string>
     <string name="event_label_venue">Venue</string>

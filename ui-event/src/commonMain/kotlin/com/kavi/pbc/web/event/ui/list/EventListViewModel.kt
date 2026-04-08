@@ -19,6 +19,9 @@ class EventListViewModel: ViewModel() {
     private val _pastEventList = MutableStateFlow<List<Event>>(mutableListOf())
     val pastEventList: StateFlow<List<Event>> = _pastEventList
 
+    private val _recurringEventList = MutableStateFlow<List<Event>>(mutableListOf())
+    val recurringEventList: StateFlow<List<Event>> = _recurringEventList
+
     fun fetchUpcomingEvents() {
         viewModelScope.launch {
             when(val response = eventRemoteRepository.getUpcomingEvents()) {
@@ -28,6 +31,21 @@ class EventListViewModel: ViewModel() {
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
                         _upcomingEventList.value = it
+                    }
+                }
+            }
+        }
+    }
+
+    fun fetchRecurringEvents() {
+        viewModelScope.launch {
+            when(val response = eventRemoteRepository.getRecurringEvents()) {
+                is ResultWrapper.NetworkError -> {}
+                is ResultWrapper.HttpError -> {}
+                is ResultWrapper.UnAuthError -> {}
+                is ResultWrapper.Success -> {
+                    response.value.body?.let {
+                        _recurringEventList.value = it
                     }
                 }
             }

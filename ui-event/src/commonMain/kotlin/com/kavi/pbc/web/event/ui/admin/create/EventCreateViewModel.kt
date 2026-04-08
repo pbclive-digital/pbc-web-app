@@ -3,6 +3,7 @@ package com.kavi.pbc.web.event.ui.admin.create
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.EventRecurringDay
 import com.kavi.pbc.web.data.event.EventType
 import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.potluck.PotluckItem
@@ -86,6 +87,13 @@ class EventCreateViewModel: ViewModel() {
             _createOrModifyEvent.value.eventType.name
     }
 
+    fun getInitialEventRecurringDay(): String {
+        return if (_createOrModifyEvent.value.recurringDay == EventRecurringDay.NONE)
+            ""
+        else
+            _createOrModifyEvent.value.recurringDay.name
+    }
+
     fun getInitialEventDate(): String {
         return if (_createOrModifyEvent.value.eventDate.toInt() == 0)
             "SELECT DATE"
@@ -149,6 +157,19 @@ class EventCreateViewModel: ViewModel() {
             EventType.BUDDHISM_CLASS.name -> _createOrModifyEvent.value.eventType = EventType.BUDDHISM_CLASS
             EventType.MEDITATION.name -> _createOrModifyEvent.value.eventType = EventType.MEDITATION
             EventType.DHAMMA_TALK.name -> _createOrModifyEvent.value.eventType = EventType.DHAMMA_TALK
+            EventType.RECURRING.name -> _createOrModifyEvent.value.eventType = EventType.RECURRING
+        }
+    }
+
+    fun updateEventRecurringDay(eventRecurringDay: String) {
+        when(eventRecurringDay) {
+            EventRecurringDay.MONDAY.name -> _createOrModifyEvent.value.recurringDay = EventRecurringDay.MONDAY
+            EventRecurringDay.TUESDAY.name -> _createOrModifyEvent.value.recurringDay = EventRecurringDay.TUESDAY
+            EventRecurringDay.WEDNESDAY.name -> _createOrModifyEvent.value.recurringDay = EventRecurringDay.WEDNESDAY
+            EventRecurringDay.THURSDAY.name -> _createOrModifyEvent.value.recurringDay = EventRecurringDay.THURSDAY
+            EventRecurringDay.FRIDAY.name -> _createOrModifyEvent.value.recurringDay = EventRecurringDay.FRIDAY
+            EventRecurringDay.SATURDAY.name -> _createOrModifyEvent.value.recurringDay = EventRecurringDay.SATURDAY
+            EventRecurringDay.SUNDAY.name -> _createOrModifyEvent.value.recurringDay = EventRecurringDay.SUNDAY
         }
     }
 
@@ -291,8 +312,14 @@ class EventCreateViewModel: ViewModel() {
             return Pair(false, "Event Type not selected")
         }
 
-        if (_createOrModifyEvent.value.eventDate == 0L) {
-            return Pair(false, "Event Date not selected")
+        if (_createOrModifyEvent.value.eventType == EventType.RECURRING) {
+            if (_createOrModifyEvent.value.recurringDay == EventRecurringDay.NONE) {
+                return Pair(false, "Event recurring day is not selected")
+            }
+        } else {
+            if (_createOrModifyEvent.value.eventDate == 0L) {
+                return Pair(false, "Event Date not selected")
+            }
         }
 
         if (_createOrModifyEvent.value.startTime.isEmpty()) {
@@ -312,6 +339,12 @@ class EventCreateViewModel: ViewModel() {
 
     private fun createEvent() {
         viewModelScope.launch {
+            if (_createOrModifyEvent.value.eventType == EventType.RECURRING) {
+                _createOrModifyEvent.value.eventDate = 0L
+            } else {
+                _createOrModifyEvent.value.recurringDay = EventRecurringDay.NONE
+            }
+
             when(val response = eventRemoteRepository.createEvent(event = _createOrModifyEvent.value)) {
                 is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
                     _eventCreationOrModifyState.value = EventCreateOrModifyUiState.FAILURE

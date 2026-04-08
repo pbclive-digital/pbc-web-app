@@ -65,6 +65,7 @@ import com.kavi.pbc.web.common.ui.component.TitleWithBackNav
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.EventRecurringDay
 import com.kavi.pbc.web.data.event.EventType
 import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.util.DateTimeUtil
@@ -92,6 +93,7 @@ import pbcwebapp.ui_event.generated.resources.event_label_count
 import pbcwebapp.ui_event.generated.resources.event_label_create_new
 import pbcwebapp.ui_event.generated.resources.event_label_description
 import pbcwebapp.ui_event.generated.resources.event_label_event_date
+import pbcwebapp.ui_event.generated.resources.event_label_event_recuring_day
 import pbcwebapp.ui_event.generated.resources.event_label_event_type
 import pbcwebapp.ui_event.generated.resources.event_label_is_additional_sign_ups_available
 import pbcwebapp.ui_event.generated.resources.event_label_meeting_url
@@ -339,6 +341,7 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
     val eventDescription = remember { mutableStateOf(TextFieldValue(createOrModifyEvent.description)) }
     val eventType = remember { mutableStateOf(viewModel.getInitialEventType()) }
     val eventDate = remember { mutableStateOf(viewModel.getInitialEventDate()) }
+    val eventRecurringDay = remember { mutableStateOf(viewModel.getInitialEventRecurringDay()) }
     val eventFrom = remember { mutableStateOf(viewModel.getInitialStartTime()) }
     val eventTo = remember { mutableStateOf(viewModel.getInitialEndTime()) }
     val venueType = remember { mutableStateOf(viewModel.getInitialVenueType()) }
@@ -352,6 +355,7 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
         eventDescription.value = TextFieldValue(createOrModifyEvent.description)
         eventType.value = viewModel.getInitialEventType()
         eventDate.value = viewModel.getInitialEventDate()
+        eventRecurringDay.value = viewModel.getInitialEventRecurringDay()
         eventFrom.value = viewModel.getInitialStartTime()
         eventTo.value = viewModel.getInitialEndTime()
         venueType.value = viewModel.getInitialVenueType()
@@ -363,6 +367,11 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
     // Update viewModel with local changes of event-type
     LaunchedEffect(eventType.value) {
         viewModel.updateEventType(eventType = eventType.value)
+    }
+
+    // Update viewModel with local changes of event-recurring-day
+    LaunchedEffect(eventRecurringDay.value) {
+        viewModel.updateEventRecurringDay(eventRecurringDay = eventRecurringDay.value)
     }
 
     // Update viewModel with local changes of venue-type
@@ -407,7 +416,7 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
             title = stringResource(Res.string.event_label_event_type).uppercase(),
             selectableItems = listOf(
                 EventType.BUDDHISM_CLASS.name, EventType.MEDITATION.name,
-                EventType.DHAMMA_TALK.name, EventType.SPECIAL.name),
+                EventType.DHAMMA_TALK.name, EventType.SPECIAL.name, EventType.RECURRING.name),
             selectedItem = eventType,
         )
 
@@ -427,28 +436,60 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
             thickness = 2.dp
         )
 
-        Row (
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp, start = 4.dp, end = 4.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(Res.string.event_label_event_date),
-                fontFamily = PBCFontFamily,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            AppDatePickerButton (
-                modifier = Modifier.width(200.dp),
-                label = eventDate
+        if (eventType.value == EventType.RECURRING.name) {
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, start = 4.dp, end = 4.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                showDatePicker.value = true
+                Text(
+                    text = "${stringResource(Res.string.event_label_event_recuring_day)}:",
+                    fontFamily = PBCFontFamily,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                AppDropDownMenu(
+                    modifier = Modifier.width(300.dp),
+                    title = stringResource(Res.string.event_label_event_recuring_day).uppercase(),
+                    selectableItems = listOf(
+                        EventRecurringDay.MONDAY.name, EventRecurringDay.TUESDAY.name,
+                        EventRecurringDay.WEDNESDAY.name, EventRecurringDay.THURSDAY.name,
+                        EventRecurringDay.FRIDAY.name, EventRecurringDay.SATURDAY.name,
+                        EventRecurringDay.SUNDAY.name
+                    ),
+                    selectedItem = eventRecurringDay,
+                )
+            }
+        } else {
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, start = 4.dp, end = 4.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(Res.string.event_label_event_date),
+                    fontFamily = PBCFontFamily,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                AppDatePickerButton (
+                    modifier = Modifier.width(200.dp),
+                    label = eventDate
+                ) {
+                    showDatePicker.value = true
+                }
             }
         }
 

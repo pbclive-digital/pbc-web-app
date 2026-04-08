@@ -19,6 +19,7 @@ data class Event(
     var description: String = "",
     var eventStatus: EventStatus = EventStatus.DRAFT,
     var eventDate: Long = 0,
+    var recurringDay: EventRecurringDay = EventRecurringDay.NONE,
     var startTime: String = "",
     var endTime: String = "",
     val createdTime: Long = Clock.System.now().toEpochMilliseconds(),

@@ -31,6 +31,10 @@ class EventRemoteRepository {
         return Network.shared.invokeApiCall { eventApi.getUpcomingEvents() }
     }
 
+    suspend fun getRecurringEvents(): ResultWrapper<BaseResponse<List<Event>>> {
+        return Network.shared.invokeApiCall { eventApi.getRecurringEvents() }
+    }
+
     suspend fun getPastEvents(): ResultWrapper<BaseResponse<List<Event>>> {
         return Network.shared.invokeApiCall { eventApi.getPastEvents() }
     }
