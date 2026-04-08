@@ -91,10 +91,12 @@ fun EventListUI(navController: NavController) {
 @Composable
 private fun EventListPhoneUI(viewModel: EventListViewModel, navController: NavController, maxWidth: Dp) {
     val upcomingEventList by viewModel.upcomingEventList.collectAsState()
+    val recurringEventList by viewModel.recurringEventList.collectAsState()
     val pastEventList by viewModel.pastEventList.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.fetchUpcomingEvents()
+        viewModel.fetchRecurringEvents()
         viewModel.fetchPastEventsWithLimit()
     }
 
@@ -128,6 +130,46 @@ private fun EventListPhoneUI(viewModel: EventListViewModel, navController: NavCo
                      */
                     navController.navigate(EventPath.EventDetails(eventId = event.id!!))
                 })
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        HorizontalDivider(
+            modifier = Modifier.padding(2.dp),
+            thickness = 2.dp
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            modifier = Modifier
+                .padding(start = 8.dp, top = 12.dp, bottom = 12.dp),
+            text = stringResource(Res.string.event_label_recurring),
+            textAlign = TextAlign.Justify,
+            fontWeight = FontWeight.Bold,
+            fontFamily = PBCFontFamily,
+            fontSize = 22.sp
+        )
+
+        Row (
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+        ) {
+            recurringEventList.forEachIndexed { index, event ->
+                RecurringEventListItem(event = event) {
+                    /**
+                     * Alternative way to do the same navigation as a path
+                     * navController.navigate("event/event-selected/${event.id}")
+                     */
+                    navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+                }
+                if (index < recurringEventList.lastIndex) {
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = Color.LightGray
+                    )
+                }
             }
         }
 
@@ -207,7 +249,10 @@ private fun EventListWebUI(viewModel: EventListViewModel, navController: NavCont
             )
 
             // This is for recurring events (weekly/monthly)
-            WebRecurringEvents(viewModel = viewModel)
+            WebRecurringEvents(
+                navController = navController,
+                viewModel = viewModel
+            )
 
             Text(
                 modifier = Modifier
@@ -299,6 +344,7 @@ private fun WebUpcomingEvents(
 @Composable
 private fun WebRecurringEvents(
     modifier: Modifier = Modifier,
+    navController: NavController,
     viewModel: EventListViewModel
 ) {
 
@@ -335,7 +381,11 @@ private fun WebRecurringEvents(
             ) {
                 recurringEventList.forEachIndexed { index, event ->
                     RecurringEventListItem(event = event) {
-
+                        /**
+                         * Alternative way to do the same navigation as a path
+                         * navController.navigate("event/event-selected/${event.id}")
+                         */
+                        navController.navigate(EventPath.EventDetails(eventId = event.id!!))
                     }
                     if (index < recurringEventList.lastIndex) {
                         HorizontalDivider(
@@ -352,6 +402,14 @@ private fun WebRecurringEvents(
                 message = stringResource(Res.string.event_phrase_empty_recurring_events)
             )
         }
+
+        HorizontalDivider(
+            modifier = Modifier
+                .padding(top = 8.dp, bottom = 12.dp)
+                .fillMaxWidth(),
+            thickness = 2.dp,
+            color = Color.LightGray
+        )
     }
 }
 
@@ -407,6 +465,14 @@ private fun WebPastEvents(
                 message = stringResource(Res.string.event_phrase_empty_past_events)
             )
         }
+
+        HorizontalDivider(
+            modifier = Modifier
+                .padding(top = 8.dp, bottom = 12.dp)
+                .fillMaxWidth(),
+            thickness = 2.dp,
+            color = Color.LightGray
+        )
     }
 }
 

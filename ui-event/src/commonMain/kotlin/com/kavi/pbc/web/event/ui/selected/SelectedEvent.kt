@@ -48,6 +48,7 @@ import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.event.EventStatus
+import com.kavi.pbc.web.data.event.EventType
 import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheet
 import com.kavi.pbc.web.event.data.model.EventActionUiState
@@ -298,14 +299,25 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                Text(
-                    modifier = Modifier.padding(start = 4.dp),
-                    text = selectedEvent.getFormatDate(),
-                    fontFamily = PBCFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+                if (selectedEvent.eventType == EventType.RECURRING) {
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp),
+                        text = "every ${selectedEvent.recurringDay.name}",
+                        fontFamily = PBCFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp),
+                        text = selectedEvent.getFormatDate(),
+                        fontFamily = PBCFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.weight(1f))

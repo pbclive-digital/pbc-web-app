@@ -1,8 +1,10 @@
 package com.kavi.pbc.web.event.ui.common
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -13,18 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kavi.pbc.web.common.ui.component.AppLinkButton
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.Event
-import org.jetbrains.compose.resources.stringResource
-import pbcwebapp.ui_event.generated.resources.Res
-import pbcwebapp.ui_event.generated.resources.event_label_view_more
 
 @Composable
 fun RecurringEventListItem(modifier: Modifier = Modifier, event: Event, onViewMode: () -> Unit) {
     Row (
         modifier = modifier
-            .height(60.dp),
+            .height(60.dp)
+            .fillMaxWidth()
+            .clickable {
+                onViewMode.invoke()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -37,12 +39,5 @@ fun RecurringEventListItem(modifier: Modifier = Modifier, event: Event, onViewMo
         )
 
         Spacer(modifier = Modifier.width(12.dp))
-
-        AppLinkButton(
-            label = stringResource(Res.string.event_label_view_more),
-            labelTextSize = 12.sp
-        ) {
-            onViewMode.invoke()
-        }
     }
 }
