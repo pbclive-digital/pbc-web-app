@@ -46,6 +46,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
 import com.kavi.pbc.web.common.ui.component.AppIconButton
+import com.kavi.pbc.web.common.ui.component.AppTooltipWrap
 import com.kavi.pbc.web.common.ui.component.TitleWithActionComposable
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
@@ -82,6 +83,11 @@ import pbcwebapp.ui_event.generated.resources.event_label_potluck_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_reg_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_reg_in_admin_seat_count
 import pbcwebapp.ui_event.generated.resources.event_label_sign_up_sheet_in_admin
+import pbcwebapp.ui_event.generated.resources.event_label_tip_download_potluck_list
+import pbcwebapp.ui_event.generated.resources.event_label_tip_download_reg_list
+import pbcwebapp.ui_event.generated.resources.event_label_tip_download_signup_list
+import pbcwebapp.ui_event.generated.resources.event_label_tip_location
+import pbcwebapp.ui_event.generated.resources.event_label_tip_open_meeting
 import pbcwebapp.ui_event.generated.resources.event_phrase_manage
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_in_admin
@@ -530,14 +536,19 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
 
                             Spacer(modifier = Modifier.weight(1f))
 
-                            AppIconButton(
-                                icon = painterResource(Res.drawable.event_icon_location),
-                                buttonSize = 40.dp
+                            AppTooltipWrap(
+                                tipLabel = stringResource(Res.string.event_label_tip_location)
                             ) {
-                                selectedEvent.value.venueAddress?.let {
-                                    val addressUrl = it.replace(" ", "+")
-                                    val locationUrl = "https://www.google.com/maps/place/$addressUrl"
-                                    openUrl(url = locationUrl)
+                                AppIconButton(
+                                    icon = painterResource(Res.drawable.event_icon_location),
+                                    buttonSize = 40.dp
+                                ) {
+                                    selectedEvent.value.venueAddress?.let {
+                                        val addressUrl = it.replace(" ", "+")
+                                        val locationUrl =
+                                            "https://www.google.com/maps/place/$addressUrl"
+                                        openUrl(url = locationUrl)
+                                    }
                                 }
                             }
                         } else {
@@ -551,12 +562,16 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
 
                             Spacer(modifier = Modifier.weight(1f))
 
-                            AppIconButton(
-                                icon = painterResource(Res.drawable.event_icon_online_meeting),
-                                buttonSize = 40.dp
+                            AppTooltipWrap(
+                                tipLabel = stringResource(Res.string.event_label_tip_open_meeting)
                             ) {
-                                selectedEvent.value.meetingUrl?.let {
-                                    openUrl(url = it)
+                                AppIconButton(
+                                    icon = painterResource(Res.drawable.event_icon_online_meeting),
+                                    buttonSize = 40.dp
+                                ) {
+                                    selectedEvent.value.meetingUrl?.let {
+                                        openUrl(url = it)
+                                    }
                                 }
                             }
                         }
@@ -581,21 +596,26 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Icon(
-                            painter = painterResource(Res.drawable.event_icon_download),
-                            contentDescription = "Download .csv",
-                            tint = themeAdditionalColors.shadow,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(4.dp)
-                                .clickable {
-                                    // Download event registration .csv
-                                    viewModel.downloadEventRegistrationList(eventId = selectedEvent.value.id!!) { urlPath ->
-                                        val downloadLink = "${Network.shared.getBaseUrl()}$urlPath"
-                                        window.open(url = downloadLink, "_blank")
+                        AppTooltipWrap(
+                            tipLabel = stringResource(Res.string.event_label_tip_download_reg_list)
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.event_icon_download),
+                                contentDescription = "Download .csv",
+                                tint = themeAdditionalColors.shadow,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .padding(4.dp)
+                                    .clickable {
+                                        // Download event registration .csv
+                                        viewModel.downloadEventRegistrationList(eventId = selectedEvent.value.id!!) { urlPath ->
+                                            val downloadLink =
+                                                "${Network.shared.getBaseUrl()}$urlPath"
+                                            window.open(url = downloadLink, "_blank")
+                                        }
                                     }
-                                }
-                        )
+                            )
+                        }
                     }
 
                     HorizontalDivider(
@@ -632,21 +652,26 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Icon(
-                            painter = painterResource(Res.drawable.event_icon_download),
-                            contentDescription = "Download .csv",
-                            tint = themeAdditionalColors.shadow,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(4.dp)
-                                .clickable {
-                                    // Download potluck contribution .csv
-                                    viewModel.downloadEventPotluckContribution(eventId = selectedEvent.value.id!!) { urlPath ->
-                                        val downloadLink = "${Network.shared.getBaseUrl()}$urlPath"
-                                        window.open(url = downloadLink, "_blank")
+                        AppTooltipWrap(
+                            tipLabel = stringResource(Res.string.event_label_tip_download_potluck_list)
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.event_icon_download),
+                                contentDescription = "Download .csv",
+                                tint = themeAdditionalColors.shadow,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .padding(4.dp)
+                                    .clickable {
+                                        // Download potluck contribution .csv
+                                        viewModel.downloadEventPotluckContribution(eventId = selectedEvent.value.id!!) { urlPath ->
+                                            val downloadLink =
+                                                "${Network.shared.getBaseUrl()}$urlPath"
+                                            window.open(url = downloadLink, "_blank")
+                                        }
                                     }
-                                }
-                        )
+                            )
+                        }
                     }
 
                     HorizontalDivider(
@@ -811,17 +836,21 @@ private fun SignUpSheetItem(modifier: Modifier = Modifier, signUpSheet: SignUpSh
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Icon(
-            painter = painterResource(Res.drawable.event_icon_download),
-            contentDescription = "Download .csv",
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .size(40.dp)
-                .padding(end = 16.dp)
-                .clickable {
-                    // Download potluck contribution .csv
-                    onDownload.invoke()
-                }
-        )
+        AppTooltipWrap(
+            tipLabel = stringResource(Res.string.event_label_tip_download_signup_list)
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.event_icon_download),
+                contentDescription = "Download .csv",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(end = 16.dp)
+                    .clickable {
+                        // Download potluck contribution .csv
+                        onDownload.invoke()
+                    }
+            )
+        }
     }
 }

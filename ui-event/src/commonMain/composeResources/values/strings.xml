@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="event_label_tip_modify">Modify</string>
+    <string name="event_label_tip_publish">Publish</string>
+    <string name="event_label_tip_delete">Delete</string>
+    <string name="event_label_tip_location">Show the location</string>
+    <string name="event_label_tip_open_meeting">Open up meeting</string>
+    <string name="event_label_tip_download_reg_list">Download registration list</string>
+    <string name="event_label_tip_download_potluck_list">Download potluck contribution list</string>
+    <string name="event_label_tip_download_signup_list">Download sign-up list</string>
+
     <string name="event_label_upcoming">Upcoming Events</string>
     <string name="event_phrase_upcoming">Following are the future events / programs that Pittsburgh Buddhist Center is organizing or participation. You all are welcome to take part of these events.</string>
     <string name="event_label_past">Past Events</string>
