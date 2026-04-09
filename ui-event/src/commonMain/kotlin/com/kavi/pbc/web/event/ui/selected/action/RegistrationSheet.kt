@@ -121,7 +121,7 @@ fun RegUnRegInitialUI(viewModel: SelectedEventViewModel, isCurrentUserRegistered
             else
                 stringResource(Res.string.event_label_registering),
             fontFamily = PBCFontFamily,
-            fontSize = 22.sp,
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier

@@ -49,6 +49,7 @@ fun TitleWithBackNav(
     modifier: Modifier = Modifier,
     titleText: String, textSize: Int = 48,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
+    backIconSize: Dp = 48.dp,
     backAction: () -> Unit
 ) {
     Row (
@@ -60,7 +61,7 @@ fun TitleWithBackNav(
             contentDescription = "Provided icon",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
-                .size(48.dp)
+                .size(backIconSize)
                 .clickable {
                     backAction.invoke()
                 }

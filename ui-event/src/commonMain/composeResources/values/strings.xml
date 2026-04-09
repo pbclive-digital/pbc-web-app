@@ -44,7 +44,8 @@
     <string name="event_label_potluck">Potluck</string>
     <string name="event_phrase_potluck_details">As a part of this event. We are planing to organize a potluck. Please mark your contributions to the potluck by selecting food items from the list.</string>
     <string name="event_label_contribute_potluck">Potluck Contribution</string>
-    <string name="event_phrase_contribute_potluck">Following are the potluck items that you can contribute on the event. By tapping on the item or tap on 'plus' icon you can sign-up for that and by tap on 'X' icon, you can sign-out.</string>
+    <string name="event_phrase_contribute_potluck">Following are the potluck items that you can contribute on the event. By tapping on the item or tap on 'plus' icon you can sign up for that and by tap on 'X' icon, you can sign out.</string>
+    <string name="event_phrase_potluck_contribution_data">Following are the current contribution list of devotees to this potluck items. To add your contribution, go back and add your contribution.</string>
     <string name="event_label_user_contribution_count">You have already signed %d of %s(s)</string>
 
     <string name="event_label_additional_sign_ups">Additional Sign-up Sheet(s)</string>

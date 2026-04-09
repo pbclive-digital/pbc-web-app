@@ -153,7 +153,7 @@ fun PhoneScreenUI(viewModel: SelectedEventViewModel) {
                     }
                 }
 
-                EventInformationComponent(viewModel = viewModel)
+                EventInformationComponent(viewModel = viewModel, isPhoneScreen = true)
             }
         }
     }
@@ -232,7 +232,8 @@ fun WebScreenUI(viewModel: SelectedEventViewModel) {
                     modifier = Modifier
                         .weight(.65f)
                         .verticalScroll(rememberScrollState()),
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    isPhoneScreen = false
                 )
             }
         }
@@ -241,7 +242,7 @@ fun WebScreenUI(viewModel: SelectedEventViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: SelectedEventViewModel) {
+fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: SelectedEventViewModel, isPhoneScreen: Boolean) {
     val selectedEvent by viewModel.selectedEvent.collectAsState()
     val eventSignUpSheetData by viewModel.eventSignUpSheetData.collectAsState()
 
@@ -564,7 +565,8 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
         PotluckSheetUI(
             sheetState = potluckSheetState,
             showSheet = showPotluckSheet,
-            viewModel = viewModel
+            viewModel = viewModel,
+            isPhoneScreen = isPhoneScreen
         )
     }
 

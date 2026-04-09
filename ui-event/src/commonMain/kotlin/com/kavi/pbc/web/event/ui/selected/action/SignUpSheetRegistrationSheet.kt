@@ -129,7 +129,7 @@ fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUp
                 text = stringResource(Res.string.event_label_sign_up_sheet_title)
                     .replace("%s", selectedSignUpSheet.sheetName),
                 fontFamily = PBCFontFamily,
-                fontSize = 22.sp,
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
