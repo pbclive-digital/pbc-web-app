@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kavi.pbc.web.common.ui.component.AppBasicDialog
 import com.kavi.pbc.web.common.ui.component.AppFilledButton
-import com.kavi.pbc.web.common.ui.component.AppFullScreenLoader
 import com.kavi.pbc.web.common.ui.component.AppOutlineMultiLineTextField
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
 import com.kavi.pbc.web.common.ui.component.ErrorMessageBalloon
@@ -46,7 +45,7 @@ import com.kavi.pbc.web.question.data.model.NewQuestionUiStatus
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_question.generated.resources.Res
-import pbcwebapp.ui_question.generated.resources.question_icon_x
+import pbcwebapp.ui_question.generated.resources.question_icon_close_x
 import pbcwebapp.ui_question.generated.resources.question_label_create
 import pbcwebapp.ui_question.generated.resources.question_label_create_new_question
 import pbcwebapp.ui_question.generated.resources.question_label_modify
@@ -121,7 +120,7 @@ private fun QuestionAskOrModifyUI(
                     TitleWithAction(
                         titleText = stringResource(Res.string.question_label_create_new_question),
                         textSize = 40,
-                        actionPainter = painterResource(Res.drawable.question_icon_x),
+                        actionPainter = painterResource(Res.drawable.question_icon_close_x),
                         actionPainterSize = 30.dp,
                         isIcon = true,
                     ) {
@@ -134,7 +133,7 @@ private fun QuestionAskOrModifyUI(
                 else -> {
                     TitleWithAction(
                         titleText = stringResource(Res.string.question_label_create_new_question),
-                        actionPainter = painterResource(Res.drawable.question_icon_x),
+                        actionPainter = painterResource(Res.drawable.question_icon_close_x),
                         actionPainterSize = 40.dp,
                         isIcon = true,
                     ) {
