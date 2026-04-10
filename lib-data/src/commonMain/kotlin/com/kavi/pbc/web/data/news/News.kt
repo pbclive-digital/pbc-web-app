@@ -37,16 +37,20 @@ data class News(
     }
 
     fun getFormatPublishedDate(): String {
-        val instant = fromEpochMilliseconds(publishedTime)
-        val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-        val dateFormat = LocalDate.Format {
-            monthName(MonthNames.ENGLISH_ABBREVIATED)
-            char(' ')
-            day()
-            char(',')
-            char(' ')
-            year()
+        return if (publishedTime != 0L) {
+            val instant = fromEpochMilliseconds(publishedTime)
+            val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+            val dateFormat = LocalDate.Format {
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+                char(' ')
+                day()
+                char(',')
+                char(' ')
+                year()
+            }
+            localDateTime.date.format(dateFormat)
+        } else {
+            "- Yet to Publish"
         }
-        return localDateTime.date.format(dateFormat)
     }
 }

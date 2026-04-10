@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="news_label_tip_modify">Modify</string>
+    <string name="news_label_tip_publish">Publish</string>
+    <string name="news_label_tip_delete">Delete</string>
+
     <string name="news_label_yes">Yes</string>
     <string name="news_label_no">No</string>
 
