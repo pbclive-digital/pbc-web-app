@@ -120,11 +120,11 @@ class EventCreateViewModel: ViewModel() {
             _createOrModifyEvent.value.venueType.name
     }
 
-    fun formatDate(selectedDateMils: Long?): String {
+    fun formatDate(selectedDateMils: Long?): Pair<String, Long> {
         return selectedDateMils?.let {
             DateTimeUtil.formatDate(it)
         }?: run {
-            "Select Event Date".uppercase()
+            Pair("Select Event Date".uppercase(), 0L)
         }
     }
 

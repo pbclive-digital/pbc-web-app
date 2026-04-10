@@ -122,11 +122,11 @@ class AppointmentCreateOrModifyViewModel: ViewModel() {
         _appointmentUiStatus.value = AppointmentCreateOrModifyUiStatus.NONE
     }
 
-    fun formatDate(selectedDateMils: Long?): String {
+    fun formatDate(selectedDateMils: Long?): Pair<String, Long> {
         return selectedDateMils?.let {
             DateTimeUtil.formatDate(it)
         }?: run {
-            "Select Event Date".uppercase()
+            Pair("Select Event Date".uppercase(), 0L)
         }
     }
 

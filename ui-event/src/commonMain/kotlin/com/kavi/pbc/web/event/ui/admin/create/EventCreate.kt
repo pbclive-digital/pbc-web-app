@@ -615,8 +615,9 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
             datePickerState = datePickerState,
             onConfirmAction = {
                 showDatePicker.value = false
-                eventDate.value = viewModel.formatDate(datePickerState.selectedDateMillis)
-                viewModel.updateDate(datePickerState.selectedDateMillis)
+                val dateFormatting = viewModel.formatDate(datePickerState.selectedDateMillis)
+                eventDate.value = dateFormatting.first
+                viewModel.updateDate(dateFormatting.second)
             },
             onDismissAction = {
                 showDatePicker.value = false
