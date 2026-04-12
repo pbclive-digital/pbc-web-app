@@ -17,6 +17,7 @@
 
     <string name="auth_label_basic_info">Basic Information</string>
     <string name="auth_phrase_basic_info">Basic information about you. You can edit them at any time you need.</string>
+    <string name="auth_phrase_profile_pic">This profile picture is extracted from your connected Google Account.</string>
     <string name="auth_label_user_favorite">Favorites</string>
     <string name="auth_phrase_user_favorite">Following are the items you marked as interested, you have picked Events, News etc... as your favorites</string>
 </resources>

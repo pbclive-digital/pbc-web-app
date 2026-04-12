@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,7 @@ import pbcwebapp.ui_auth.generated.resources.auth_label_name
 import pbcwebapp.ui_auth.generated.resources.auth_label_phone_num
 import pbcwebapp.ui_auth.generated.resources.auth_label_user_favorite
 import pbcwebapp.ui_auth.generated.resources.auth_phrase_basic_info
+import pbcwebapp.ui_auth.generated.resources.auth_phrase_profile_pic
 import pbcwebapp.ui_auth.generated.resources.auth_phrase_user_favorite
 
 @Composable
@@ -161,6 +163,18 @@ private fun WebUI(viewModel: UserProfileViewModel) {
                         .clip(CircleShape)
                 )
             }
+
+            Text(
+                text = stringResource(Res.string.auth_phrase_profile_pic),
+                fontFamily = PBCFontFamily,
+                fontWeight = FontWeight.Light,
+                fontStyle = FontStyle.Italic,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+            )
         }
         Column (
             modifier = Modifier
