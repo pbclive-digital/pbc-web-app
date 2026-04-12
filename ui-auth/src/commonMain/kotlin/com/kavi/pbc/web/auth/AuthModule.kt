@@ -2,8 +2,10 @@ package com.kavi.pbc.web.auth
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.navigation.NavController
 import com.kavi.pbc.web.auth.service.auth.AuthServiceModel
 import com.kavi.pbc.web.auth.ui.invite.SignUpInviteDialog
+import com.kavi.pbc.web.auth.ui.profile.UserProfileUI
 import com.kavi.pbc.web.auth.ui.register.RegisterDialog
 import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.data.user.User
@@ -70,5 +72,10 @@ class AuthModule: AuthContract {
     override fun ProvideSignUpInviteUI(showDialog: MutableState<Boolean>,
                                        onCancel: () -> Unit) {
         SignUpInviteDialog(showDialog = showDialog, onCancel = onCancel)
+    }
+
+    @Composable
+    override fun GetUserProfileUI(navController: NavController) {
+        UserProfileUI(navController = navController)
     }
 }

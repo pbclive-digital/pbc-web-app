@@ -5,10 +5,18 @@
     <string name="auth_label_last_name">Last Name</string>
     <string name="auth_label_phone_num">Phone #</string>
     <string name="auth_label_address">Address</string>
+    <string name="auth_label_email">Email</string>
+    <string name="auth_label_name">Name</string>
+    <string name="auth_label_edit">Edit</string>
     <string name="auth_phrase_welcome_msg">We’d love to have you with us, create your account now. Create an account in PBC will help us to connect with you easily and more frequent.</string>
 
     <string name="auth_label_join_us">Join with us</string>
     <string name="auth_label_close">Close</string>
     <string name="auth_phrase_join_us">Pittsburgh Buddhist Center warmly welcome you to join with us on this spiritual journey by registering here.</string>
     <string name="auth_phrase_join_us_guide">Join us by clicking on the Dhamma Chakkra icon on Top-Right corner.</string>
+
+    <string name="auth_label_basic_info">Basic Information</string>
+    <string name="auth_phrase_basic_info">Basic information about you. You can edit them at any time you need.</string>
+    <string name="auth_label_user_favorite">Favorites</string>
+    <string name="auth_phrase_user_favorite">Following are the items you marked as interested, you have picked Events, News etc... as your favorites</string>
 </resources>

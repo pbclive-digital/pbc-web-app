@@ -4,6 +4,7 @@
     <string name="dashboard_label_appointments">Appointments</string>
     <string name="dashboard_label_questions">Questions</string>
     <string name="dashboard_label_news">News</string>
+    <string name="dashboard_label_profile">Profile</string>
     <string name="dashboard_label_admin">Admin</string>
     <string name="dashboard_label_news_read_more">Read More</string>
     <string name="dashboard_label_news_more">More News from PBC</string>

@@ -13,6 +13,7 @@ import com.kavi.pbc.web.dashboard.ui.admin.AdminUI
 import com.kavi.pbc.web.dashboard.ui.event.EventsUI
 import com.kavi.pbc.web.dashboard.ui.news.NewsUI
 import com.kavi.pbc.web.dashboard.ui.appointment.AppointmentUI
+import com.kavi.pbc.web.dashboard.ui.profile.ProfileUI
 import com.kavi.pbc.web.dashboard.ui.question.QuestionUI
 import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.pbc.container.PBCDashboardContainer
@@ -24,10 +25,12 @@ import pbcwebapp.ui_dashboard.generated.resources.dashboard_icon_appointment
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_icon_ask_question
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_icon_event
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_icon_news
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_icon_profile
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_admin
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_appointments
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_events
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_news
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_profile
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_questions
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,8 +51,9 @@ fun DashboardUI(navController: NavController) {
         /* TabItem(name = "Home", icon = Res.drawable.icon_container_lotus),*/ // TODO - Keep this for future use
         TabItem(name = stringResource(Res.string.dashboard_label_events), icon = Res.drawable.dashboard_icon_event),
         TabItem(name = stringResource(Res.string.dashboard_label_news), icon = Res.drawable.dashboard_icon_news),
-        TabItem(name = stringResource(Res.string.dashboard_label_appointments), icon = Res.drawable.dashboard_icon_appointment),
+        /* TabItem(name = stringResource(Res.string.dashboard_label_appointments), icon = Res.drawable.dashboard_icon_appointment), */ // TODO - Wait till feature ready to prod
         TabItem(name = stringResource(Res.string.dashboard_label_questions), icon = Res.drawable.dashboard_icon_ask_question),
+        TabItem(name = stringResource(Res.string.dashboard_label_profile), icon = Res.drawable.dashboard_icon_profile),
     )
     if (isAdminUser.value) {
         authTabItemList.value.add(TabItem(name = stringResource(Res.string.dashboard_label_admin), icon = Res.drawable.dashboard_icon_admin))
@@ -75,8 +79,9 @@ fun DashboardUI(navController: NavController) {
                         /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
                         0 -> EventsUI(navController = navController)
                         1 -> NewsUI(navController = navController)
-                        2 -> AppointmentUI(navController = navController)
-                        3 -> QuestionUI(navController = navController)
+                        /* 2 -> AppointmentUI(navController = navController) */ // TODO - Wait till feature ready to prod
+                        2 -> QuestionUI(navController = navController)
+                        3 -> ProfileUI(navController = navController)
                         4 -> AdminUI(navController = navController)
                     }
                 } else {
@@ -84,8 +89,9 @@ fun DashboardUI(navController: NavController) {
                         /*0 -> HomeUI(navController = navController)*/ // TODO - Keep this for future
                         0 -> EventsUI(navController = navController)
                         1 -> NewsUI(navController = navController)
-                        2 -> AppointmentUI(navController = navController)
-                        3 -> QuestionUI(navController = navController)
+                        /* 2 -> AppointmentUI(navController = navController) */ // TODO - Wait till feature ready to prod
+                        2 -> QuestionUI(navController = navController)
+                        3 -> ProfileUI(navController = navController)
                     }
                 }
             }
