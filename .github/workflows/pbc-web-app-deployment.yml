@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-pbc-web-app:
     runs-on: ubuntu-latest
     outputs:
       env_type: ${{ steps.get_env.outputs.app_env }}
@@ -53,10 +53,10 @@ jobs:
         run: ./gradlew clean --no-build-cache :composeApp:wasmJsBrowserDistribution
 
   deploy-staging:
-    needs: build
+    needs: build-pbc-web-app
 
     # Only runs if app.env=staging
-    if: needs:build.outputs.env_type == 'staging'
+    if: needs.build-pbc-web-app.outputs.env_type == 'staging'
     runs-on: ubuntu-latest
 
     permissions:
@@ -105,10 +105,10 @@ jobs:
           git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
       
   deploy-production:
-    needs: build
+    needs: build-pbc-web-app
 
     # Only runs if app.env=prod
-    if: needs:build.outputs.env_type == 'prod'
+    if: needs.build-pbc-web-app.outputs.env_type == 'prod'
     runs-on: ubuntu-latest
 
     steps:
