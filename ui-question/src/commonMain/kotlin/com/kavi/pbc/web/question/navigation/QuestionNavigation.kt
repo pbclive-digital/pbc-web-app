@@ -22,7 +22,7 @@ fun NavGraphBuilder.questionNavGraph(navController: NavHostController) {
     navigation(startDestination = QuestionPath.QuestionList.toString(), route = QuestionPath.ROUTE) {
         // Path: questin/question-list-ui
         composable<QuestionPath.QuestionList> {
-            PBCPageContainer (user = user) {
+            PBCPageContainer (user = user, navController = navController) {
                 QuestionListUI(navController = navController)
             }
         }

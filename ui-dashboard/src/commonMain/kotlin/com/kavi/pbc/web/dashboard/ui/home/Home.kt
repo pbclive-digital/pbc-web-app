@@ -352,7 +352,7 @@ private fun NewsColum(navController: NavController, viewModel: HomeViewModel) {
 }
 
 @Composable
-fun AboutUs() {
+private fun AboutUs() {
     Column (
         modifier = Modifier.padding(8.dp),
         horizontalAlignment = Alignment.Start,
@@ -380,7 +380,7 @@ fun AboutUs() {
 }
 
 @Composable
-fun ContactUs() {
+private fun ContactUs() {
     Column (
         modifier = Modifier.padding(top = 8.dp, end = 8.dp, bottom = 8.dp, start = 30.dp),
         horizontalAlignment = Alignment.Start

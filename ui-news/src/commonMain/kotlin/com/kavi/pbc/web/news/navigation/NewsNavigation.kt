@@ -22,7 +22,7 @@ fun NavGraphBuilder.newsNavGraph(navController: NavHostController) {
     navigation(startDestination = NewsPath.NewsList.toString(), route = NewsPath.ROUTE) {
         // Path: news/news-list-ui
         composable<NewsPath.NewsList> {
-            PBCPageContainer (user = user) {
+            PBCPageContainer (user = user, navController = navController) {
                 NewsListUI(navController = navController)
             }
         }

@@ -67,6 +67,7 @@ fun DashboardUI(navController: NavController) {
     )
 
     PBCDashboardContainer (
+        navController = navController,
         authTabItemList = authTabItemList,
         unAuthTabItemList = unAuthTabItemList,
         user = user.value,

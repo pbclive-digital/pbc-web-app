@@ -24,14 +24,14 @@ fun NavGraphBuilder.eventNavGraph(navController: NavHostController) {
     navigation(startDestination = EventPath.EventList.toString(), route = EventPath.ROUTE) {
         // Path: event/event-list-ui
         composable<EventPath.EventList> {
-            PBCPageContainer (user = user) {
+            PBCPageContainer (user = user, navController = navController) {
                 EventListUI(navController = navController)
             }
         }
         // Path: event/event-selected/<event-id>
         composable<EventPath.EventDetails> { backStackEntry ->
             val eventArgs = backStackEntry.toRoute<EventPath.EventDetails>()
-            PBCPageContainer (user = user) {
+            PBCPageContainer (user = user, navController = navController) {
                 SelectedEvent(navController = navController, eventId = eventArgs.eventId)
             }
         }

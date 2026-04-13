@@ -37,6 +37,8 @@ kotlin {
                 implementation(libs.compose.components.resources)
                 implementation(libs.compose.ui.tooling.preview)
 
+                // Compose navigation
+                implementation(libs.jetbrains.navigation.compose)
                 // Async image loading
                 implementation(libs.coil3.compose)
                 implementation(libs.coil3.network.ktor)
