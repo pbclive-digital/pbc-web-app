@@ -24,6 +24,8 @@ concurrency:
 jobs:
   build-pbc-web-app:
     runs-on: ubuntu-latest
+    outputs:
+      env_type: ${{ steps.get_env.outputs.app_env }}
 
     steps:
       - name: Checkout repository
