@@ -29,6 +29,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step to parse gradle.properties
+      - name: Detect Environment
+        id: get_env
+        run: |
+          # Grabs the value of app.env and removes whitespace
+          APP_ENV=$(grep 'app.env' gradle.properties | cut -d'=' -f2 | xargs)
+          echo "Detected environment: $APP_ENV"
+          echo "app_env=$APP_ENV" >> $GITHUB_OUTPUT
+
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -41,6 +50,18 @@ jobs:
       - name: Assemble the app for distribution
         run: ./gradlew clean --no-build-cache :composeApp:wasmJsBrowserDistribution
 
+  deploy-staging:
+    needs: build-pbc-web-app
+
+    # Only runs if app.env=staging
+    if: needs:build-pbc-web-app.outputs.env_type == 'staging'
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
       - name: Zip Generated Archive
         run: |
           cd composeApp/build/dist/wasmJs/productionExecutable
@@ -64,7 +85,7 @@ jobs:
           else
             git checkout --orphan staging-deployment
           fi
-          
+
       - name: Extract assembled archive
         run: |
           unzip pbc-web-app-staging.zip
@@ -80,3 +101,15 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
           git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
+      
+  deploy-production:
+    needs: build-pbc-web-app
+
+    # Only runs if app.env=prod
+    if: needs:build-pbc-web-app.outputs.env_type == 'prod'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Firebase hosting deployment
+        run: |
+          echo "This is just a test task to test different deployment conditions."
