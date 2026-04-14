@@ -49,18 +49,6 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
 
-  deploy-staging:
-    needs: build-pbc-web-app
-
-    # Only runs if app.env=staging
-    if: needs.build-pbc-web-app.outputs.env_type == 'staging'
-    runs-on: ubuntu-latest
-
-    permissions:
-      pages: write
-      id-token: write
-
-    steps:
       - name: Assemble the app for distribution
         run: ./gradlew clean --no-build-cache :composeApp:wasmJsBrowserDistribution
 
@@ -73,6 +61,30 @@ jobs:
         run: |
           shopt -s extglob
           rm -rf !(pbc-web-app-staging.zip|.git)
+
+      - name: Upload Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: .
+
+  deploy-staging:
+    needs: build-pbc-web-app
+
+    # Only runs if app.env=staging
+    if: needs.build-pbc-web-app.outputs.env_type == 'staging'
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: .
 
       - name: Checkout to staging-deployment
         run: |
@@ -112,9 +124,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Assemble the app for distribution
-        run: ./gradlew clean --no-build-cache :composeApp:wasmJsBrowserDistribution
-
       - name: Firebase hosting deployment
         run: |
           echo "This is just a test task to test different deployment conditions."
