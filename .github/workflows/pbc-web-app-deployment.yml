@@ -93,7 +93,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: web-dist
-          path: .
+          path: dist
 
 #      - name: Checkout to staging-deployment
 #        run: |
@@ -112,21 +112,21 @@ jobs:
       - name: Extract assembled archive
         run: |
           shopt -s extglob
-          rm -rf -- !(pbc-web-app-staging.zip|.git)
+          rm -rf -- !(dist|.git)
           ls -la
-          unzip pbc-web-app-staging.zip
-          rm -rf pbc-web-app-staging.zip
-          rm -rf .gradle
+#          unzip pbc-web-app-staging.zip
+#          rm -rf pbc-web-app-staging.zip
+#          rm -rf .gradle
 
-          touch .nojekyll  # Prevent GitHub from treating it as a Jekyll site
-          git add .
-          git commit -m "Deploy PBC Web App" || echo "No changes to commit"
+#          touch .nojekyll  # Prevent GitHub from treating it as a Jekyll site
+#          git add .
+#          git commit -m "Deploy PBC Web App" || echo "No changes to commit"
 
-      - name: Push Changes with SSH
-        run: |
-          eval "$(ssh-agent -s)"
-          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
-          git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
+#      - name: Push Changes with SSH
+#        run: |
+#          eval "$(ssh-agent -s)"
+#          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
+#          git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
       
   deploy-production:
     needs: build-pbc-web-app
