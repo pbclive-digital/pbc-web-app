@@ -60,7 +60,7 @@ jobs:
       - name: Remove all files except assembled archive
         run: |
           shopt -s extglob
-          rm -rf !(pbc-web-app-staging.zip|.git)
+          rm -rf !(pbc-web-app-staging.zip)
 
       - name: Upload Build
         uses: actions/upload-artifact@v4
@@ -111,6 +111,7 @@ jobs:
 
       - name: Extract assembled archive
         run: |
+          shopt -s extglob
           rm -rf !(pbc-web-app-staging.zip)
           unzip pbc-web-app-staging.zip
           rm -rf pbc-web-app-staging.zip
