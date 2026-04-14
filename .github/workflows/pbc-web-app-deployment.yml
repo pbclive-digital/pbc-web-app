@@ -112,7 +112,7 @@ jobs:
       - name: Extract assembled archive
         run: |
           shopt -s extglob
-          rm -rf -- !(pbc-web-app-staging.zip|.git) .
+          rm -rf -- !(pbc-web-app-staging.zip|.git)
           ls -la
           unzip pbc-web-app-staging.zip
           rm -rf pbc-web-app-staging.zip
