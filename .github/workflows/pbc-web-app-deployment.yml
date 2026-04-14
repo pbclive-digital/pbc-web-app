@@ -80,25 +80,34 @@ jobs:
       id-token: write
 
     steps:
+      - name: Clone PBC Web-App staging-deployment branch
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git clone -b staging-deployment --single-branch git@github.com:pbclive-digital/pbc-web-app.git
+          cd pbc-web-app
+          rm -rf !(.git)
+
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
           name: web-dist
           path: .
 
-      - name: Checkout to staging-deployment
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Check if staging-deployment exists
-          if git ls-remote --exit-code --heads origin staging-deployment; then
-            git fetch origin staging-deployment
-            git checkout staging-deployment
-            git rm -rf .
-          else
-            git checkout --orphan staging-deployment
-          fi
+#      - name: Checkout to staging-deployment
+#        run: |
+#          git config --global user.name "github-actions[bot]"
+#          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#
+#          # Check if staging-deployment exists
+#          if git ls-remote --exit-code --heads origin staging-deployment; then
+#            git fetch origin staging-deployment
+#            git checkout staging-deployment
+#            git rm -rf .
+#          else
+#            git checkout --orphan staging-deployment
+#          fi
 
       - name: Extract assembled archive
         run: |
