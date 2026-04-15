@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-pbc-web-app:
+  identify-env:
     runs-on: ubuntu-latest
     outputs:
       env_type: ${{ steps.get_env.outputs.app_env }}
@@ -39,6 +39,20 @@ jobs:
           APP_ENV=$(grep 'app.env' gradle.properties | cut -d'=' -f2 | xargs)
           echo "Detected environment: $APP_ENV"
           echo "app_env=$APP_ENV" >> $GITHUB_OUTPUT
+
+  build-deploy-staging:
+    needs: identify-env
+    # Only runs if app.env=staging
+    if: needs.build-pbc-web-app.outputs.env_type == 'staging'
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -60,75 +74,39 @@ jobs:
       - name: Remove all files except assembled archive
         run: |
           shopt -s extglob
-          rm -rf !(pbc-web-app-staging.zip)
+          rm -rf !(pbc-web-app-staging.zip|.git)
 
-      - name: Upload Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-dist
-          path: .
-
-  deploy-staging:
-    needs: build-pbc-web-app
-
-    # Only runs if app.env=staging
-    if: needs.build-pbc-web-app.outputs.env_type == 'staging'
-    runs-on: ubuntu-latest
-
-    permissions:
-      pages: write
-      id-token: write
-
-    steps:
-      - name: Clone PBC Web-App staging-deployment branch
+      - name: Checkout to staging-deployment
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git clone -b staging-deployment --single-branch https://github.com/pbclive-digital/pbc-web-app.git
-          cd pbc-web-app
-#          rm -rf !(.git)
 
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: web-dist
-          path: dist
-
-#      - name: Checkout to staging-deployment
-#        run: |
-#          git config --global user.name "github-actions[bot]"
-#          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-#
-#          # Check if staging-deployment exists
-#          if git ls-remote --exit-code --heads origin staging-deployment; then
-#            git fetch origin staging-deployment
-#            git checkout staging-deployment
-#            git rm -rf .
-#          else
-#            git checkout --orphan staging-deployment
-#          fi
+          # Check if staging-deployment exists
+          if git ls-remote --exit-code --heads origin staging-deployment; then
+            git fetch origin staging-deployment
+            git checkout staging-deployment
+            git rm -rf .
+          else
+            git checkout --orphan staging-deployment
+          fi
 
       - name: Extract assembled archive
         run: |
-          shopt -s extglob
-          rm -rf -- !(dist|.git)
-          ls -la
-#          unzip pbc-web-app-staging.zip
-#          rm -rf pbc-web-app-staging.zip
-#          rm -rf .gradle
+          unzip pbc-web-app-staging.zip
+          rm -rf pbc-web-app-staging.zip
+          rm -rf .gradle
 
-#          touch .nojekyll  # Prevent GitHub from treating it as a Jekyll site
-#          git add .
-#          git commit -m "Deploy PBC Web App" || echo "No changes to commit"
+          touch .nojekyll  # Prevent GitHub from treating it as a Jekyll site
+          git add .
+          git commit -m "Deploy PBC Web App" || echo "No changes to commit"
 
-#      - name: Push Changes with SSH
-#        run: |
-#          eval "$(ssh-agent -s)"
-#          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
-#          git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
+      - name: Push Changes with SSH
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
+          git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
       
-  deploy-production:
+  build-deploy-production:
     needs: build-pbc-web-app
 
     # Only runs if app.env=prod
