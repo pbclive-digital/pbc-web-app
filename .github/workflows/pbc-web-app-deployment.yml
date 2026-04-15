@@ -43,7 +43,7 @@ jobs:
   build-deploy-staging:
     needs: identify-env
     # Only runs if app.env=staging
-    if: needs.build-pbc-web-app.outputs.env_type == 'staging'
+    if: needs.identify-env.outputs.env_type == 'staging'
     runs-on: ubuntu-latest
 
     permissions:
@@ -107,10 +107,10 @@ jobs:
           git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
       
   build-deploy-production:
-    needs: build-pbc-web-app
+    needs: identify-env
 
     # Only runs if app.env=prod
-    if: needs.build-pbc-web-app.outputs.env_type == 'prod'
+    if: needs.identify-env.outputs.env_type == 'prod'
     runs-on: ubuntu-latest
 
     steps:
