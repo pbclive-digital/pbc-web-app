@@ -100,6 +100,8 @@ import pbcwebapp.ui_event.generated.resources.event_label_meeting_url
 import pbcwebapp.ui_event.generated.resources.event_label_pick_image
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_is_potluck_held
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_setup_in_admin
+import pbcwebapp.ui_event.generated.resources.event_label_program_schedule_available
+import pbcwebapp.ui_event.generated.resources.event_label_program_schedule_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_registration_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_registration_required
 import pbcwebapp.ui_event.generated.resources.event_label_title
@@ -113,6 +115,7 @@ import pbcwebapp.ui_event.generated.resources.event_phrase_additional_sign_up_sh
 import pbcwebapp.ui_event.generated.resources.event_phrase_create_or_modify_empty_fields
 import pbcwebapp.ui_event.generated.resources.event_phrase_create_or_modify_failure
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_setup_in_admin
+import pbcwebapp.ui_event.generated.resources.event_phrase_program_schedule_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_registration_in_admin
 
 @Composable
@@ -200,6 +203,9 @@ fun EventCreateUI(
 
                         // This will contain all text inputs
                         EventCreationForm(viewModel = viewModel)
+
+                        // This will contain UI for create program schedule
+                        EventProgramSchedule(viewModel = viewModel)
 
                         // This will contain UI for set-up event registration
                         EventRegistrationSetup(viewModel = viewModel)
@@ -647,6 +653,70 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
             },
             onDismiss = { showTimePicker = false }
         )
+    }
+}
+
+@Composable
+private fun EventProgramSchedule(viewModel: EventCreateViewModel) {
+    val createOrModifyEvent by viewModel.createOrModifyEvent.collectAsState()
+
+    // TODO: Need to assign from view-model
+    var isProgramScheduleAvailable by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp, start = 8.dp, end = 8.dp, bottom = 8.dp)
+    ) {
+        Text(
+            text = stringResource(Res.string.event_label_program_schedule_in_admin),
+            fontFamily = PBCFontFamily,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
+        HorizontalDivider(
+            modifier = Modifier.padding(2.dp),
+            thickness = 2.dp
+        )
+
+        Text(
+            text = stringResource(Res.string.event_phrase_program_schedule_in_admin),
+            fontFamily = PBCFontFamily,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Justify,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(Res.string.event_label_program_schedule_available),
+                fontFamily = PBCFontFamily,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Checkbox(
+                checked = isProgramScheduleAvailable,
+                onCheckedChange = { newCheckedState ->
+                    isProgramScheduleAvailable = newCheckedState
+                    //viewModel.updateRegistrationRequiredFlag(newCheckedState)
+                }
+            )
+        }
     }
 }
 

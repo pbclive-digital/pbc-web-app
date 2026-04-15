@@ -108,6 +108,10 @@
     <string name="event_label_available_search_count">Available seat count:</string>
     <string name="event_label_count">Count</string>
 
+    <string name="event_label_program_schedule_in_admin">Program Schedule</string>
+    <string name="event_phrase_program_schedule_in_admin">Do we have a program schedule to display in event description? If yes, add the program schedule as steps in here.</string>
+    <string name="event_label_program_schedule_available">Is program schedule available?</string>
+
     <string name="event_label_potluck_setup_in_admin">Setup Event Potluck</string>
     <string name="event_phrase_potluck_setup_in_admin">Is this event plans to have potluck? If yes, then add the potluck food items and their relevant availabilities.</string>
     <string name="event_label_potluck_is_potluck_held">Will potluck held with this event?</string>
