@@ -56,6 +56,8 @@ import com.kavi.pbc.web.data.event.potluck.PotluckItem
 import com.kavi.pbc.web.data.event.signup.SignUpSheet
 import com.kavi.pbc.web.event.data.model.EventManageMode
 import com.kavi.pbc.web.event.data.model.EventManageOrCreate
+import com.kavi.pbc.web.event.ui.admin.common.AgendaItem
+import com.kavi.pbc.web.event.ui.admin.common.AgendaItemUI
 import com.kavi.pbc.web.event.ui.admin.manage.dialog.DeleteConfirmationDialog
 import com.kavi.pbc.web.event.ui.admin.manage.dialog.PublishConfirmationDialog
 import com.kavi.pbc.web.event.ui.common.EventItemForAdmin
@@ -71,6 +73,7 @@ import pbcwebapp.ui_event.generated.resources.event_icon_location
 import pbcwebapp.ui_event.generated.resources.event_icon_online_meeting
 import pbcwebapp.ui_event.generated.resources.event_image_pbc
 import pbcwebapp.ui_event.generated.resources.event_label_active
+import pbcwebapp.ui_event.generated.resources.event_label_agenda
 import pbcwebapp.ui_event.generated.resources.event_label_at
 import pbcwebapp.ui_event.generated.resources.event_label_create
 import pbcwebapp.ui_event.generated.resources.event_label_draft
@@ -92,6 +95,7 @@ import pbcwebapp.ui_event.generated.resources.event_phrase_manage
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_sign_up_sheet_in_admin
+import kotlin.collections.forEachIndexed
 import kotlin.js.ExperimentalWasmJsInterop
 
 @Composable
@@ -581,6 +585,40 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            if (selectedEvent.value.agendaAvailable) {
+                Column (
+                    modifier = Modifier.padding(top = 20.dp)
+                ) {
+                    Text(
+                        text = stringResource(Res.string.event_label_agenda),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(2.dp),
+                        thickness = 2.dp
+                    )
+
+                    selectedEvent.value.agendaItemList?.let { itemList ->
+                        itemList.forEachIndexed { index, agendaItem ->
+                            AgendaItemUI(agendaItem = agendaItem)
+                            if (index < itemList.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 16.dp, end = 8.dp),
+                                    thickness = 1.dp,
+                                    color = themeAdditionalColors.shadow
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
             if (selectedEvent.value.registrationRequired) {
                 Column (
                     modifier = Modifier.padding(top = 20.dp)
@@ -625,7 +663,7 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
 
                     Text(
                         text = stringResource(Res.string.event_phrase_reg_in_admin) +
-                                "${stringResource(Res.string.event_label_reg_in_admin_seat_count)}: " +
+                                " ${stringResource(Res.string.event_label_reg_in_admin_seat_count)}: " +
                                 "${selectedEvent.value.openSeatCount}",
                         fontFamily = PBCFontFamily,
                         fontSize = 16.sp,

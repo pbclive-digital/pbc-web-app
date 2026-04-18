@@ -10,10 +10,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
+import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 
 @Composable
 fun AppOutlineTextField(
@@ -38,6 +40,9 @@ fun AppOutlineTextField(
             unfocusedIndicatorColor = MaterialTheme.colorScheme.tertiary,
             cursorColor = MaterialTheme.colorScheme.tertiary,
             focusedLabelColor = themeAdditionalColors.quaternary,
+        ),
+        textStyle = TextStyle(
+            fontFamily = PBCFontFamily
         ),
         value = contentText.value,
         maxLines = 1,
@@ -73,6 +78,9 @@ fun AppOutlineMultiLineTextField(
             unfocusedIndicatorColor = MaterialTheme.colorScheme.tertiary,
             cursorColor = MaterialTheme.colorScheme.tertiary,
             focusedLabelColor = themeAdditionalColors.quaternary,
+        ),
+        textStyle = TextStyle(
+            fontFamily = PBCFontFamily
         ),
         value = contentText.value,
         maxLines = maxLines,

@@ -36,6 +36,9 @@ class EventCreateViewModel: ViewModel() {
     ))
     val createOrModifyEvent: StateFlow<Event> = _createOrModifyEvent
 
+    private var _agendaItemList = MutableStateFlow<MutableList<String>>(mutableListOf())
+    val agendaItemList: StateFlow<List<String>> = _agendaItemList
+
     private var _potluckItemList = MutableStateFlow<MutableList<PotluckItem>>(mutableListOf())
     val potluckItemList: StateFlow<List<PotluckItem>> = _potluckItemList
 
@@ -206,8 +209,26 @@ class EventCreateViewModel: ViewModel() {
         _createOrModifyEvent.value.endTime = endTime
     }
 
+    fun updateAgendaFlag(isProgramScheduleAvailable: Boolean) {
+        _createOrModifyEvent.value.agendaAvailable = isProgramScheduleAvailable
+    }
+
     fun updateRegistrationRequiredFlag(isRegistrationRequired: Boolean) {
         _createOrModifyEvent.value.registrationRequired = isRegistrationRequired
+    }
+
+    fun addAgendaItem(agendaItem: String) {
+        _agendaItemList.update { currentList ->
+            (currentList + agendaItem) as MutableList<String>
+        }
+        _createOrModifyEvent.value.agendaItemList = _agendaItemList.value
+    }
+
+    fun removeAgendaItem(agendaItem: String) {
+        _agendaItemList.value = _agendaItemList.value
+            .filterNot { it == agendaItem }
+            .toMutableList()
+        _createOrModifyEvent.value.agendaItemList = _agendaItemList.value
     }
 
     fun updateSeatCount(seatCount: Int) {

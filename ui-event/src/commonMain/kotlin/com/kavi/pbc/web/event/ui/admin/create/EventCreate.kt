@@ -72,6 +72,8 @@ import com.kavi.pbc.web.data.util.DateTimeUtil
 import com.kavi.pbc.web.event.data.model.EventCreateOrModifyUiState
 import com.kavi.pbc.web.event.data.model.EventManageOrCreate
 import com.kavi.pbc.web.event.data.model.TimePickerMode
+import com.kavi.pbc.web.event.ui.admin.common.AgendaItem
+import com.kavi.pbc.web.event.ui.admin.common.AgendaItemEdit
 import com.kavi.pbc.web.event.ui.admin.common.PotluckListItem
 import com.kavi.pbc.web.event.ui.admin.common.SignUpSheetListItem
 import com.kavi.pbc.web.event.ui.admin.create.dialog.PotluckItemCreateDialog
@@ -100,8 +102,8 @@ import pbcwebapp.ui_event.generated.resources.event_label_meeting_url
 import pbcwebapp.ui_event.generated.resources.event_label_pick_image
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_is_potluck_held
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_setup_in_admin
-import pbcwebapp.ui_event.generated.resources.event_label_program_schedule_available
-import pbcwebapp.ui_event.generated.resources.event_label_program_schedule_in_admin
+import pbcwebapp.ui_event.generated.resources.event_label_agenda_available
+import pbcwebapp.ui_event.generated.resources.event_label_agenda_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_registration_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_registration_required
 import pbcwebapp.ui_event.generated.resources.event_label_title
@@ -115,7 +117,7 @@ import pbcwebapp.ui_event.generated.resources.event_phrase_additional_sign_up_sh
 import pbcwebapp.ui_event.generated.resources.event_phrase_create_or_modify_empty_fields
 import pbcwebapp.ui_event.generated.resources.event_phrase_create_or_modify_failure
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_setup_in_admin
-import pbcwebapp.ui_event.generated.resources.event_phrase_program_schedule_in_admin
+import pbcwebapp.ui_event.generated.resources.event_phrase_agenda_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_registration_in_admin
 
 @Composable
@@ -205,7 +207,7 @@ fun EventCreateUI(
                         EventCreationForm(viewModel = viewModel)
 
                         // This will contain UI for create program schedule
-                        EventProgramSchedule(viewModel = viewModel)
+                        EventAgenda(viewModel = viewModel)
 
                         // This will contain UI for set-up event registration
                         EventRegistrationSetup(viewModel = viewModel)
@@ -657,11 +659,12 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
 }
 
 @Composable
-private fun EventProgramSchedule(viewModel: EventCreateViewModel) {
+private fun EventAgenda(viewModel: EventCreateViewModel) {
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
     val createOrModifyEvent by viewModel.createOrModifyEvent.collectAsState()
+    val agenda by viewModel.agendaItemList.collectAsState()
 
-    // TODO: Need to assign from view-model
-    var isProgramScheduleAvailable by remember { mutableStateOf(false) }
+    var isAgendaChecked by remember { mutableStateOf(createOrModifyEvent.agendaAvailable) }
 
     Column(
         modifier = Modifier
@@ -669,7 +672,7 @@ private fun EventProgramSchedule(viewModel: EventCreateViewModel) {
             .padding(top = 20.dp, start = 8.dp, end = 8.dp, bottom = 8.dp)
     ) {
         Text(
-            text = stringResource(Res.string.event_label_program_schedule_in_admin),
+            text = stringResource(Res.string.event_label_agenda_in_admin),
             fontFamily = PBCFontFamily,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
@@ -684,7 +687,7 @@ private fun EventProgramSchedule(viewModel: EventCreateViewModel) {
         )
 
         Text(
-            text = stringResource(Res.string.event_phrase_program_schedule_in_admin),
+            text = stringResource(Res.string.event_phrase_agenda_in_admin),
             fontFamily = PBCFontFamily,
             fontSize = 16.sp,
             textAlign = TextAlign.Justify,
@@ -700,7 +703,7 @@ private fun EventProgramSchedule(viewModel: EventCreateViewModel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(Res.string.event_label_program_schedule_available),
+                text = stringResource(Res.string.event_label_agenda_available),
                 fontFamily = PBCFontFamily,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -710,12 +713,40 @@ private fun EventProgramSchedule(viewModel: EventCreateViewModel) {
             Spacer(modifier = Modifier.weight(1f))
 
             Checkbox(
-                checked = isProgramScheduleAvailable,
+                checked = isAgendaChecked,
                 onCheckedChange = { newCheckedState ->
-                    isProgramScheduleAvailable = newCheckedState
-                    //viewModel.updateRegistrationRequiredFlag(newCheckedState)
+                    isAgendaChecked = newCheckedState
+                    viewModel.updateAgendaFlag(newCheckedState)
                 }
             )
+        }
+
+        if (isAgendaChecked) {
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                agenda.forEachIndexed { index, agendaItem ->
+                    AgendaItem(agendaItem = agendaItem, onDelete = { deleteItem ->
+                        viewModel.removeAgendaItem(agendaItem = deleteItem)
+                    })
+                    if (index < agenda.lastIndex) {
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 8.dp),
+                            thickness = 1.dp,
+                            color = themeAdditionalColors.shadow
+                        )
+                    }
+                }
+            }
+            AgendaItemEdit { newItem ->
+                viewModel.addAgendaItem(agendaItem = newItem)
+            }
         }
     }
 }

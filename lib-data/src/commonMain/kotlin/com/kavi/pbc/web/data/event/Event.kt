@@ -30,6 +30,8 @@ data class Event(
     val creator: String = "",
     var eventImage: String? = null,
     var eventType: EventType = EventType.DEFAULT,
+    var agendaAvailable: Boolean = false,
+    var agendaItemList: MutableList<String>? = mutableListOf(),
     var registrationRequired: Boolean = false,
     var openSeatCount: Int? = null,
     var potluckAvailable: Boolean = false,

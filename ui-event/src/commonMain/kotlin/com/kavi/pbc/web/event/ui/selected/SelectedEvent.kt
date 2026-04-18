@@ -44,6 +44,7 @@ import coil3.compose.AsyncImage
 import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
 import com.kavi.pbc.web.common.ui.component.AppFullScreenLoader
 import com.kavi.pbc.web.common.ui.component.AppIconButton
+import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
@@ -52,6 +53,7 @@ import com.kavi.pbc.web.data.event.EventType
 import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheet
 import com.kavi.pbc.web.event.data.model.EventActionUiState
+import com.kavi.pbc.web.event.ui.admin.common.AgendaItemUI
 import com.kavi.pbc.web.event.ui.common.SignUpSheetItemUI
 import com.kavi.pbc.web.event.ui.selected.action.PotluckSheetUI
 import com.kavi.pbc.web.event.ui.selected.action.RegistrationSheetUI
@@ -69,6 +71,7 @@ import pbcwebapp.ui_event.generated.resources.event_image_pbc
 import pbcwebapp.ui_event.generated.resources.event_icon_potluck_register
 import pbcwebapp.ui_event.generated.resources.event_icon_register
 import pbcwebapp.ui_event.generated.resources.event_label_additional_sign_ups
+import pbcwebapp.ui_event.generated.resources.event_label_agenda
 import pbcwebapp.ui_event.generated.resources.event_label_at
 import pbcwebapp.ui_event.generated.resources.event_label_from
 import pbcwebapp.ui_event.generated.resources.event_label_invite_heading
@@ -79,6 +82,7 @@ import pbcwebapp.ui_event.generated.resources.event_label_potluck_details
 import pbcwebapp.ui_event.generated.resources.event_label_register_or_unregister
 import pbcwebapp.ui_event.generated.resources.event_label_registration
 import pbcwebapp.ui_event.generated.resources.event_phrase_additional_sign_ups
+import pbcwebapp.ui_event.generated.resources.event_phrase_agenda
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_details
 import pbcwebapp.ui_event.generated.resources.event_phrase_registration_details
 
@@ -260,6 +264,8 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
     val showSignUpSheetBottomSheet = remember { mutableStateOf(false) }
     val selectedSignUpSheetItem = remember { mutableStateOf(EventSignUpSheet()) }
 
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
+
     Column (
         modifier = modifier
             .padding(top = 20.dp)
@@ -401,6 +407,60 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
             }
         }
 
+        if (selectedEvent.agendaAvailable) {
+
+            var agendaBottomPadding = 0.dp
+            if (!selectedEvent.registrationRequired) {
+                agendaBottomPadding = 40.dp
+            }
+
+            Column (
+                modifier = Modifier.padding(top = 8.dp, bottom = agendaBottomPadding)
+            ) {
+                Text(
+                    text = stringResource(Res.string.event_label_agenda),
+                    fontFamily = PBCFontFamily,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(2.dp),
+                    thickness = 2.dp
+                )
+
+                Text(
+                    text = stringResource(Res.string.event_phrase_agenda),
+                    fontFamily = PBCFontFamily,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Justify,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
+                Column (
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    selectedEvent.agendaItemList?.let { itemList ->
+                        itemList.forEachIndexed { index, agendaItem ->
+                            AgendaItemUI(agendaItem = agendaItem)
+                            if (index < itemList.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 16.dp, end = 8.dp),
+                                    thickness = 1.dp,
+                                    color = themeAdditionalColors.shadow
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         if (selectedEvent.registrationRequired && selectedEvent.eventStatus == EventStatus.PUBLISHED) {
 
             var registrationBottomPadding = 0.dp
@@ -409,7 +469,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
             }
 
             Column(
-                modifier = Modifier.padding(top = 8.dp, bottom = registrationBottomPadding)
+                modifier = Modifier.padding(top = 20.dp, bottom = registrationBottomPadding)
             ) {
                 Text(
                     text = stringResource(Res.string.event_label_registration),

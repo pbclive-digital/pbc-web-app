@@ -8,6 +8,7 @@
     <string name="event_label_tip_download_reg_list">Download registration list</string>
     <string name="event_label_tip_download_potluck_list">Download potluck contribution list</string>
     <string name="event_label_tip_download_signup_list">Download sign-up list</string>
+    <string name="event_label_tip_add_to_agenda">Add item to agenda</string>
 
     <string name="event_label_upcoming">Upcoming Events</string>
     <string name="event_phrase_upcoming">Following are the future events / programs that Pittsburgh Buddhist Center is organizing or participation. You all are welcome to take part of these events.</string>
@@ -28,6 +29,9 @@
     <string name="event_label_no">No</string>
     <string name="event_label_close">Close</string>
     <string name="event_label_view_more">View More</string>
+
+    <string name="event_label_agenda">Event Agenda</string>
+    <string name="event_phrase_agenda">This is the agenda for our event. We are always trying to be on time and take our event according to following schedule.</string>
 
     <string name="event_label_registration">Registration</string>
     <string name="event_phrase_registration_details">Because of the limited space availability, we expect you to register for this event to reserve your seat.</string>
@@ -108,9 +112,9 @@
     <string name="event_label_available_search_count">Available seat count:</string>
     <string name="event_label_count">Count</string>
 
-    <string name="event_label_program_schedule_in_admin">Program Schedule</string>
-    <string name="event_phrase_program_schedule_in_admin">Do we have a program schedule to display in event description? If yes, add the program schedule as steps in here.</string>
-    <string name="event_label_program_schedule_available">Is program schedule available?</string>
+    <string name="event_label_agenda_in_admin">Event Agenda</string>
+    <string name="event_phrase_agenda_in_admin">Do we have an agenda to display in event description? If yes, add the agenda as steps in here.</string>
+    <string name="event_label_agenda_available">Is agenda available?</string>
 
     <string name="event_label_potluck_setup_in_admin">Setup Event Potluck</string>
     <string name="event_phrase_potluck_setup_in_admin">Is this event plans to have potluck? If yes, then add the potluck food items and their relevant availabilities.</string>
