@@ -53,6 +53,9 @@ class EventCreateViewModel: ViewModel() {
             createdTime = Clock.System.now().toEpochMilliseconds(),
         )
 
+        // clearing the agenda item list
+        _agendaItemList.value.clear()
+
         // clearing the potluck list
         _potluckItemList.value.clear()
 
@@ -62,6 +65,13 @@ class EventCreateViewModel: ViewModel() {
 
     fun setModifyEvent(event: Event) {
         _createOrModifyEvent.value = event
+
+        // Assign agenda items if that available
+        if (event.agendaAvailable) {
+            event.agendaItemList?.let {
+                _agendaItemList.value = it
+            }
+        }
 
         // Assign potluck items if that available
         if(event.potluckAvailable) {

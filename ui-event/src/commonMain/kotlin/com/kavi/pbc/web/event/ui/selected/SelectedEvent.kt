@@ -445,7 +445,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 ) {
                     selectedEvent.agendaItemList?.let { itemList ->
                         itemList.forEachIndexed { index, agendaItem ->
-                            AgendaItemUI(agendaItem = agendaItem)
+                            AgendaItemUI(modifier = Modifier.padding(8.dp), agendaItem = agendaItem)
                             if (index < itemList.lastIndex) {
                                 HorizontalDivider(
                                     modifier = Modifier

@@ -133,7 +133,9 @@ fun AgendaItem(
         enableDismissFromStartToEnd = false,
         content = {
             AgendaItemUI(
-                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp),
                 agendaItem = agendaItem
             )
         })
@@ -146,8 +148,7 @@ fun AgendaItemUI(
 ) {
     Row (
         modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.Top
     ) {
         Text(
@@ -157,8 +158,8 @@ fun AgendaItemUI(
             text = agendaItem,
             color = MaterialTheme.colorScheme.onSurface,
             fontFamily = PBCFontFamily,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold
         )
     }
 }

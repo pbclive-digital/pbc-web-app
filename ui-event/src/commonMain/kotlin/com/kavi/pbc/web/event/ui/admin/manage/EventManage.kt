@@ -91,6 +91,8 @@ import pbcwebapp.ui_event.generated.resources.event_label_tip_download_reg_list
 import pbcwebapp.ui_event.generated.resources.event_label_tip_download_signup_list
 import pbcwebapp.ui_event.generated.resources.event_label_tip_location
 import pbcwebapp.ui_event.generated.resources.event_label_tip_open_meeting
+import pbcwebapp.ui_event.generated.resources.event_phrase_agenda
+import pbcwebapp.ui_event.generated.resources.event_phrase_agenda_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_manage
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_in_admin
@@ -602,9 +604,19 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                         thickness = 2.dp
                     )
 
+                    Text(
+                        text = stringResource(Res.string.event_phrase_agenda_admin),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Justify,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
                     selectedEvent.value.agendaItemList?.let { itemList ->
                         itemList.forEachIndexed { index, agendaItem ->
-                            AgendaItemUI(agendaItem = agendaItem)
+                            AgendaItemUI(modifier = Modifier.padding(8.dp), agendaItem = agendaItem)
                             if (index < itemList.lastIndex) {
                                 HorizontalDivider(
                                     modifier = Modifier

@@ -666,6 +666,11 @@ private fun EventAgenda(viewModel: EventCreateViewModel) {
 
     var isAgendaChecked by remember { mutableStateOf(createOrModifyEvent.agendaAvailable) }
 
+    // Sync local state when ViewModel state changes
+    LaunchedEffect(createOrModifyEvent) {
+        isAgendaChecked = createOrModifyEvent.agendaAvailable
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
