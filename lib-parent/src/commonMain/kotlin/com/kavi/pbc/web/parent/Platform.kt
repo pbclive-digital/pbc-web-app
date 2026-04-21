@@ -1,3 +1,3 @@
 package com.kavi.pbc.web.parent
 
-expect fun openUrlInNewTab(url: String)
+expect fun openUrlInNewTab(url: String, closeBlankPage: Boolean)

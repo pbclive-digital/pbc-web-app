@@ -654,7 +654,7 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                                         val addressUrl = it.replace(" ", "+")
                                         val locationUrl =
                                             "https://www.google.com/maps/place/$addressUrl"
-                                        openUrl(url = locationUrl)
+                                        openUrl(url = locationUrl, closeBlankPage = true)
                                     }
                                 }
                             }

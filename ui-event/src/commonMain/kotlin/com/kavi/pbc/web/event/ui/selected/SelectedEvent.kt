@@ -382,7 +382,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                     selectedEvent.venueAddress?.let {
                         val addressUrl = it.replace(" ", "+")
                         val locationUrl = "https://www.google.com/maps/place/$addressUrl"
-                        openUrl(url = locationUrl)
+                        openUrl(url = locationUrl, closeBlankPage = true)
                     }
                 }
             } else {
