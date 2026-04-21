@@ -84,12 +84,6 @@ fun PBCDashboardContainer(
     val profileActionConfig = ProfileActionConfig(
             appAuthStatus = appAuthStatus,
             profileUserImageUrl = user.profilePicUrl,
-            onProfileClick = {
-                if (Session.isLogIn()) {
-                    // Navigate to profile screen
-                    println("Profile Tap")
-                }
-            },
             onSignOutClick = {
                 // Invoke user authentication
                 if (Session.isLogIn()) {

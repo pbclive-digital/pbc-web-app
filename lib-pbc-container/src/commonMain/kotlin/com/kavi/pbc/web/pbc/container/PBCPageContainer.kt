@@ -2,6 +2,7 @@ package com.kavi.pbc.web.pbc.container
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -69,12 +70,6 @@ fun PBCPageContainer(
     val profileActionConfig = ProfileActionConfig(
         appAuthStatus = appAuthStatus,
         profileUserImageUrl = user?.profilePicUrl,
-        onProfileClick = {
-            if (Session.isLogIn()) {
-                // Navigate to profile screen
-                println("Profile Tap")
-            }
-        },
         onSignOutClick = {
             // Invoke user authentication
             if (Session.isLogIn()) {
@@ -168,7 +163,11 @@ private fun PageContainer(
                             modifier = Modifier
                                 .size(100.dp)
                                 .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surface),
+                                .background(MaterialTheme.colorScheme.surface)
+                                .clickable {
+                                    // Navigate to HOME
+                                    navController.navigate(DashboardPath.DashboardUI)
+                                },
                             contentAlignment = Alignment.Center
                         ) {
                             Image(
