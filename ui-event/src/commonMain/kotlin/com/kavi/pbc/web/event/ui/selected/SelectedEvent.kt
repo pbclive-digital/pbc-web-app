@@ -61,6 +61,7 @@ import com.kavi.pbc.web.event.ui.selected.action.SignUpSheetBottomSheetUI
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
+import com.kavi.pbc.web.parent.extention.openMaps
 import com.kavi.pbc.web.parent.extention.openUrl
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -382,7 +383,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                     selectedEvent.venueAddress?.let {
                         val addressUrl = it.replace(" ", "+")
                         val locationUrl = "https://www.google.com/maps/place/$addressUrl"
-                        openUrl(url = locationUrl, closeBlankPage = true)
+                        openMaps(mapUrl = locationUrl)
                     }
                 }
             } else {

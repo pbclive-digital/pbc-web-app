@@ -62,6 +62,7 @@ import com.kavi.pbc.web.event.ui.admin.manage.dialog.DeleteConfirmationDialog
 import com.kavi.pbc.web.event.ui.admin.manage.dialog.PublishConfirmationDialog
 import com.kavi.pbc.web.event.ui.common.EventItemForAdmin
 import com.kavi.pbc.web.network.Network
+import com.kavi.pbc.web.parent.extention.openMaps
 import com.kavi.pbc.web.parent.extention.openUrl
 import kotlinx.browser.window
 import org.jetbrains.compose.resources.painterResource
@@ -654,7 +655,7 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                                         val addressUrl = it.replace(" ", "+")
                                         val locationUrl =
                                             "https://www.google.com/maps/place/$addressUrl"
-                                        openUrl(url = locationUrl, closeBlankPage = true)
+                                        openMaps(mapUrl = locationUrl)
                                     }
                                 }
                             }
