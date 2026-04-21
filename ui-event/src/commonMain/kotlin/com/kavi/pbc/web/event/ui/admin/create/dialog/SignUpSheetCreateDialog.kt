@@ -71,7 +71,7 @@ fun SignUpSheetCreateContent(onCreate: (signUpSheetItem: SignUpSheet) -> Unit, o
     val signUpSheetName = remember { mutableStateOf(TextFieldValue("")) }
     val signUpSheetDescription = remember { mutableStateOf(TextFieldValue("")) }
     val signUpAvailabilityCount = remember { mutableStateOf(TextFieldValue("")) }
-    var multiSignUpStatus by remember { mutableStateOf(false) }
+    var multiSignUpStatus by remember { mutableStateOf(true) }
 
     Box (
         modifier = Modifier
