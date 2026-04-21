@@ -42,6 +42,8 @@
     <string name="event_label_unregister">Un-Register</string>
     <string name="event_label_registering">Registering to Event</string>
     <string name="event_label_unregistering">Un-Registering from Event</string>
+    <string name="event_label_current_list">Registration List</string>
+    <string name="event_phrase_current_list">Following are the current list of devotees who registered their participation to this event. To add your participation, go back and register to the event.</string>
     <string name="event_label_remaining_seats">Remaining seats: %s</string>
     <string name="event_phrase_registering">We are delight to have you in the event of "%s"!!! Once you register, we will reserve a space for you. For any reason, if you are not going to attend, please make sure to unregister.</string>
     <string name="event_phrase_unregistering">We are sad not to see you in the event of "%s"!!! Once you un-register, your reservation will revoke. Thank you so much to make your space available due to your unavailability.</string>
@@ -65,6 +67,8 @@
     <string name="event_label_additional_sign_ups">Additional Sign-up Sheet(s)</string>
     <string name="event_phrase_additional_sign_ups">This event is having following additional sign-up sheet(s). Following sign-up sheet(s) help PBC to track devotee's participation and contributions to this events.</string>
     <string name="event_label_sign_up_sheet_title">Sign-up sheet - %s</string>
+    <string name="event_label_sign_up_sheet_registration_list">Sign-up sheet - Registration List</string>
+    <string name="event_phrase_sign_up_sheet_registration_list">Following are the current list of devotees who contribute to this sign-up sheet. To add your contribution, go back and contribute to the sign-up sheet.</string>
     <string name="event_label_sign_up">Sign-up to Sheet</string>
     <string name="event_label_sign_out">Sign-out from Sheet</string>
     <string name="event_label_or">OR</string>

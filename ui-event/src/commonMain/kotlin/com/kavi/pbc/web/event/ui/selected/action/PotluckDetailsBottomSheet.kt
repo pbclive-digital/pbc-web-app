@@ -50,7 +50,7 @@ private enum class PotluckViewMode {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PotluckSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>,
-                   viewModel: SelectedEventViewModel, isPhoneScreen: Boolean
+                   viewModel: SelectedEventViewModel
 ) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
     var viewMode by remember { mutableStateOf(PotluckViewMode.CONTRIBUTING_MODE) }
@@ -71,37 +71,26 @@ fun PotluckSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>,
         ) {
             if (Session.isLogIn()) {
                 Column {
-                    if (isPhoneScreen) {
-                        Text(
-                            text = stringResource(Res.string.event_label_contribute_potluck),
-                            fontFamily = PBCFontFamily,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    } else {
-                        when(viewMode) {
-                            PotluckViewMode.CONTRIBUTING_MODE -> {
-                                TitleWithAction(
-                                    titleText = stringResource(Res.string.event_label_contribute_potluck),
-                                    textSize = 24,
-                                    actionPainter = painterResource(Res.drawable.event_icon_view),
-                                    actionPainterSize = 28.dp,
-                                    isIcon = true
-                                ) {
-                                    viewMode = PotluckViewMode.CONTRIBUTION_VIEW_MODE
-                                }
+                    when (viewMode) {
+                        PotluckViewMode.CONTRIBUTING_MODE -> {
+                            TitleWithAction(
+                                titleText = stringResource(Res.string.event_label_contribute_potluck),
+                                textSize = 24,
+                                actionPainter = painterResource(Res.drawable.event_icon_view),
+                                actionPainterSize = 28.dp,
+                                isIcon = true
+                            ) {
+                                viewMode = PotluckViewMode.CONTRIBUTION_VIEW_MODE
                             }
-                            PotluckViewMode.CONTRIBUTION_VIEW_MODE -> {
-                                TitleWithBackNav(
-                                    titleText = stringResource(Res.string.event_label_contribute_potluck),
-                                    textSize = 24,
-                                    backIconSize = 24.dp
-                                ) {
-                                    viewMode = PotluckViewMode.CONTRIBUTING_MODE
-                                }
+                        }
+
+                        PotluckViewMode.CONTRIBUTION_VIEW_MODE -> {
+                            TitleWithBackNav(
+                                titleText = stringResource(Res.string.event_label_contribute_potluck),
+                                textSize = 24,
+                                backIconSize = 24.dp
+                            ) {
+                                viewMode = PotluckViewMode.CONTRIBUTING_MODE
                             }
                         }
                     }
@@ -111,11 +100,12 @@ fun PotluckSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>,
                         thickness = 2.dp
                     )
 
-                    when(viewMode) {
+                    when (viewMode) {
                         PotluckViewMode.CONTRIBUTING_MODE -> {
                             // Contributing Mode
                             ShowContributingMode(viewModel = viewModel)
                         }
+
                         PotluckViewMode.CONTRIBUTION_VIEW_MODE -> {
                             // Show current contributions mode
                             ShowCurrentContributionsModel(viewModel = viewModel)

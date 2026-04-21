@@ -625,8 +625,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
         PotluckSheetUI(
             sheetState = potluckSheetState,
             showSheet = showPotluckSheet,
-            viewModel = viewModel,
-            isPhoneScreen = isPhoneScreen
+            viewModel = viewModel
         )
     }
 
