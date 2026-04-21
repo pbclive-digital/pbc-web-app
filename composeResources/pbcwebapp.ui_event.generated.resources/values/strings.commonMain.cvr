@@ -32,6 +32,7 @@ string|event_label_meeting_url|TWVldGluZyBMaW5r
 string|event_label_new_sign_up_sheet|QWRkIHNpZ24tdXAgc2hlZXQgdG8gZXZlbnQ=
 string|event_label_no_active|Tm8gYW55IGFjdGl2ZSBFdmVudHMgYXZhaWxhYmxlLg==
 string|event_label_no_draft|Tm8gYW55IGRyYWZ0ZWQgRXZlbnRzIGF2YWlsYWJsZS4=
+string|event_label_no_recurring_admin|Tm8gYW55IHJlY3VycmluZyBFdmVudHMgYXZhaWxhYmxlLg==
 string|event_label_no|Tm8=
 string|event_label_on|T246IA==
 string|event_label_or|T1I=
@@ -45,6 +46,7 @@ string|event_label_potluck_item_name|SXRlbSBOYW1l
 string|event_label_potluck_setup_in_admin|U2V0dXAgRXZlbnQgUG90bHVjaw==
 string|event_label_potluck|UG90bHVjaw==
 string|event_label_publish_ready|UHVibGlzaCBSZWFkeT8=
+string|event_label_recurring_admin|UmVjdXJyaW5nIEV2ZW50cw==
 string|event_label_recurring|UmVjdXJyaW5nIEV2ZW50cw==
 string|event_label_reg_in_admin_seat_count|T3BlbiBTZWF0IENvdW50
 string|event_label_reg_in_admin|UmVnaXN0cmF0aW9uIFJlcXVpcmVk
