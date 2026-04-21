@@ -1,5 +1,6 @@
 package com.kavi.pbc.web.common.ui.component
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -11,8 +12,16 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import pbcwebapp.lib_common_ui.generated.resources.Res
+import pbcwebapp.lib_common_ui.generated.resources.common_date_picker_cancel
+import pbcwebapp.lib_common_ui.generated.resources.common_date_picker_pick
 import kotlin.time.Clock
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,12 +39,21 @@ fun AppDatePickerDialog(
                 // Handle selected date from datePickerState.selectedDateMillis
                 onConfirmAction.invoke()
             }) {
-                Text("OK")
+                Text(
+                    modifier = Modifier.padding(end = 4.dp),
+                    text = stringResource(Res.string.common_date_picker_pick),
+                    fontFamily = PBCFontFamily,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = { onDismissAction.invoke() }) {
-                Text("Cancel")
+                Text(
+                    text = stringResource(Res.string.common_date_picker_cancel),
+                    fontFamily = PBCFontFamily,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     ) {
@@ -75,12 +93,20 @@ fun AppTimePickerDialog (
                 onConfirm(timePickerState.hour, timePickerState.minute)
                 onDismiss()
             }) {
-                Text("OK")
+                Text(
+                    text = stringResource(Res.string.common_date_picker_pick),
+                    fontFamily = PBCFontFamily,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(
+                    text = stringResource(Res.string.common_date_picker_cancel),
+                    fontFamily = PBCFontFamily,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     )

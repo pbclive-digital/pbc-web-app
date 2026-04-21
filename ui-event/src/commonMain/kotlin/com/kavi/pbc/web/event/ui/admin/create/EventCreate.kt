@@ -336,7 +336,7 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
     val createOrModifyEvent by viewModel.createOrModifyEvent.collectAsState()
 
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = DateTimeUtil.datePickerInitializeMills(),
+        // initialSelectedDateMillis = DateTimeUtil.datePickerInitializeMills(),
         // TODO: Make this as just only input due to the issue in picker-library. When this fixed from library, make it picker
         initialDisplayMode = DisplayMode.Input
     )
