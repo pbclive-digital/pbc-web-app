@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -51,12 +52,12 @@ import com.kavi.pbc.web.common.ui.component.TitleWithActionComposable
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.EventType
 import com.kavi.pbc.web.data.event.VenueType
 import com.kavi.pbc.web.data.event.potluck.PotluckItem
 import com.kavi.pbc.web.data.event.signup.SignUpSheet
 import com.kavi.pbc.web.event.data.model.EventManageMode
 import com.kavi.pbc.web.event.data.model.EventManageOrCreate
-import com.kavi.pbc.web.event.ui.admin.common.AgendaItem
 import com.kavi.pbc.web.event.ui.admin.common.AgendaItemUI
 import com.kavi.pbc.web.event.ui.admin.manage.dialog.DeleteConfirmationDialog
 import com.kavi.pbc.web.event.ui.admin.manage.dialog.PublishConfirmationDialog
@@ -520,7 +521,7 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
     val viewModel: EventManageViewModel = viewModel { EventManageViewModel() }
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
@@ -528,6 +529,8 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
             .padding(40.dp),
         contentAlignment = Alignment.CenterStart
     ) {
+        val maxWidth = this.maxWidth
+
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -571,53 +574,133 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                         color = MaterialTheme.colorScheme.onBackground
                     )
 
-                    Row (
-                        modifier = Modifier.padding(top = 16.dp),
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.Start,
-                            verticalArrangement = Arrangement.Center,
+                    if (maxWidth < 550.dp) {
+                        Column (
+                            modifier = Modifier.padding(top = 16.dp),
                         ) {
-                            Text(
-                                text = stringResource(Res.string.event_label_on),
-                                fontFamily = PBCFontFamily,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 20.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
+                            Column(
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.event_label_on),
+                                    fontFamily = PBCFontFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 20.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
 
-                            Text(
-                                modifier = Modifier.padding(top = 8.dp),
-                                text = selectedEvent.value.getFormatDate(),
-                                fontFamily = PBCFontFamily,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 20.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
+                                when(selectedEvent.value.eventType) {
+                                    EventType.RECURRING -> {
+                                        Text(
+                                            modifier = Modifier.padding(top = 8.dp),
+                                            text = selectedEvent.value.recurringDay.name,
+                                            fontFamily = PBCFontFamily,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 20.sp,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    }
+                                    else -> {
+                                        Text(
+                                            modifier = Modifier.padding(top = 8.dp),
+                                            text = selectedEvent.value.getFormatDate(),
+                                            fontFamily = PBCFontFamily,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 20.sp,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Column(
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.event_label_from),
+                                    fontFamily = PBCFontFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 20.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+
+                                Text(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    text = "${selectedEvent.value.startTime} - ${selectedEvent.value.endTime}",
+                                    fontFamily = PBCFontFamily,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 20.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
                         }
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Column(
-                            horizontalAlignment = Alignment.Start,
-                            verticalArrangement = Arrangement.Center,
+                    } else {
+                        Row (
+                            modifier = Modifier.padding(top = 16.dp),
                         ) {
-                            Text(
-                                text = stringResource(Res.string.event_label_from),
-                                fontFamily = PBCFontFamily,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 20.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
+                            Column(
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.event_label_on),
+                                    fontFamily = PBCFontFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 20.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
 
-                            Text(
-                                modifier = Modifier.padding(top = 8.dp),
-                                text = "${selectedEvent.value.startTime} - ${selectedEvent.value.endTime}",
-                                fontFamily = PBCFontFamily,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 20.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
+                                when(selectedEvent.value.eventType) {
+                                    EventType.RECURRING -> {
+                                        Text(
+                                            modifier = Modifier.padding(top = 8.dp),
+                                            text = selectedEvent.value.recurringDay.name,
+                                            fontFamily = PBCFontFamily,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 20.sp,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    }
+                                    else -> {
+                                        Text(
+                                            modifier = Modifier.padding(top = 8.dp),
+                                            text = selectedEvent.value.getFormatDate(),
+                                            fontFamily = PBCFontFamily,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 20.sp,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Column(
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.event_label_from),
+                                    fontFamily = PBCFontFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 20.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+
+                                Text(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    text = "${selectedEvent.value.startTime} - ${selectedEvent.value.endTime}",
+                                    fontFamily = PBCFontFamily,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 20.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
                         }
                     }
 
