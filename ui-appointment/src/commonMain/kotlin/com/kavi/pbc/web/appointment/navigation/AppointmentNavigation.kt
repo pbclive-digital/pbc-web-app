@@ -22,7 +22,7 @@ fun NavGraphBuilder.appointmentNavGraph(navController: NavHostController) {
     navigation(startDestination = AppointmentPath.Dashboard.toString(), route = AppointmentPath.ROUTE) {
         // Path: appointment/dashboard-ui
         composable<AppointmentPath.Dashboard> {
-            PBCPageContainer (user = user) {
+            PBCPageContainer (user = user, navController = navController) {
                 AppointmentDashboardUI(navController = navController)
             }
         }

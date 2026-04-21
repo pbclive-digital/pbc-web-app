@@ -37,6 +37,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.kavi.pbc.web.common.ui.component.AppLinkButton
 import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
@@ -47,8 +49,10 @@ import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
+import com.kavi.pbc.web.parent.navigation.DashboardPath
 import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
 import com.kavi.pbc.web.pbc.container.model.TabItem
+import com.kavi.pbc.web.pbc.container.ui.AdditionalActionComponent
 import com.kavi.pbc.web.pbc.container.ui.ProfileActionComponent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -61,6 +65,7 @@ import pbcwebapp.lib_pbc_container.generated.resources.container_label_pbc_name_
 @OptIn(ExperimentalMaterial3Api::class)
 fun PBCDashboardContainer(
     modifier: Modifier = Modifier,
+    navController: NavController,
     authTabItemList: MutableState<MutableList<TabItem>>,
     user: User,
     isAdminUser: Boolean,
@@ -216,7 +221,17 @@ fun PBCDashboardContainer(
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        ProfileActionComponent(profileActionConfig = profileActionConfig)
+                        Column (
+                            horizontalAlignment = Alignment.End,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            // TODO: Uncomment this when it ready
+                            // AdditionalActionComponent(navController = navController)
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            ProfileActionComponent(profileActionConfig = profileActionConfig)
+                        }
                     }
                 }
             }

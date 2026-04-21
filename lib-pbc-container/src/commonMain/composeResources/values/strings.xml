@@ -7,4 +7,7 @@
     <string name="container_label_sign_up">Sign Up</string>
     <string name="container_label_profile">Profile</string>
     <string name="container_label_close">Close</string>
+
+    <string name="container_label_about_us">About Us</string>
+    <string name="container_label_contact_us">Contract Us</string>
 </resources>

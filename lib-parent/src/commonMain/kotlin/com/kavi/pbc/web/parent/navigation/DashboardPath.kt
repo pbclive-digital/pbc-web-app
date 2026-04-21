@@ -9,4 +9,12 @@ object DashboardPath {
     @Serializable
     @SerialName("${ROUTE}/dashboard-ui")
     object DashboardUI
+
+    @Serializable
+    @SerialName("${ROUTE}/about-us")
+    object AboutUs
+
+    @Serializable
+    @SerialName("${ROUTE}/contact-us")
+    object ContactUs
 }

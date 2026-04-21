@@ -1,12 +1,36 @@
 package com.kavi.pbc.web.pbc.container
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.kavi.pbc.web.common.ui.component.AppLinkButton
+import com.kavi.pbc.web.common.ui.component.Title
+import com.kavi.pbc.web.common.ui.util.ScreenType
+import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.data.user.User
 import com.kavi.pbc.web.datastore.AppLocalStore
@@ -14,13 +38,22 @@ import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
+import com.kavi.pbc.web.parent.navigation.DashboardPath
 import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
-import com.kavi.pbc.web.pbc.container.ui.PageContainer
+import com.kavi.pbc.web.pbc.container.ui.AdditionalActionComponent
+import com.kavi.pbc.web.pbc.container.ui.ProfileActionComponent
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import pbcwebapp.lib_pbc_container.generated.resources.Res
+import pbcwebapp.lib_pbc_container.generated.resources.container_image_pbc
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_pbc_name
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_pbc_name_short
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PBCPageContainer(
     modifier: Modifier = Modifier,
+    navController: NavController,
     user: User? = null,
     content: @Composable () -> Unit
 ) {
@@ -91,5 +124,107 @@ fun PBCPageContainer(
         )
     }
 
-    PageContainer(modifier = modifier, profileActionConfig = profileActionConfig, content = content)
+    PageContainer(modifier = modifier, navController = navController, profileActionConfig = profileActionConfig, content = content)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PageContainer(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    profileActionConfig: ProfileActionConfig,
+    content: @Composable () -> Unit
+) {
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        val maxWidth = this.maxWidth
+        val screenType = UIUtil.screenType(maxWidth)
+
+        val sidePadding = when (screenType) {
+            ScreenType.PHONE -> 8.dp
+            ScreenType.TABLET, ScreenType.COMPUTER -> {
+                (maxWidth.value * .1).dp
+            }
+        }
+
+        Column {
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .background(MaterialTheme.colorScheme.secondary),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Column {
+                    Row (
+                        modifier = Modifier.padding(start = sidePadding, end = sidePadding),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box (
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surface),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .size(90.dp),
+                                painter = painterResource(Res.drawable.container_image_pbc),
+                                contentDescription = "PBC image with name"
+                            )
+                        }
+
+                        Column (
+                            modifier = Modifier.padding(start = 20.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            when (screenType) {
+                                ScreenType.PHONE -> {
+                                    Title(
+                                        titleText = stringResource(Res.string.container_label_pbc_name_short),
+                                        textSize = 32,
+                                        textColor = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                                else -> {
+                                    Title(
+                                        titleText = stringResource(Res.string.container_label_pbc_name),
+                                        textSize = 32,
+                                        textColor = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Column (
+                            horizontalAlignment = Alignment.End,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            // TODO: Uncomment this when it ready
+                            // AdditionalActionComponent(navController = navController)
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            ProfileActionComponent(profileActionConfig = profileActionConfig)
+                        }
+                    }
+                }
+            }
+
+            Box (
+                modifier = Modifier.padding(start = sidePadding, end = sidePadding),
+                contentAlignment = Alignment.Center,
+            ) {
+                content.invoke()
+            }
+        }
+    }
 }
