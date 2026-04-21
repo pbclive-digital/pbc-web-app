@@ -155,20 +155,22 @@ private fun EventListPhoneUI(viewModel: EventListViewModel, navController: NavCo
         Row (
             modifier = Modifier.padding(start = 8.dp, end = 8.dp)
         ) {
-            recurringEventList.forEachIndexed { index, event ->
-                RecurringEventListItem(event = event) {
-                    /**
-                     * Alternative way to do the same navigation as a path
-                     * navController.navigate("event/event-selected/${event.id}")
-                     */
-                    navController.navigate(EventPath.EventDetails(eventId = event.id!!))
-                }
-                if (index < recurringEventList.lastIndex) {
-                    HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth(),
-                        thickness = 1.dp,
-                        color = Color.LightGray
-                    )
+            Column {
+                recurringEventList.forEachIndexed { index, event ->
+                    RecurringEventListItem(event = event) {
+                        /**
+                         * Alternative way to do the same navigation as a path
+                         * navController.navigate("event/event-selected/${event.id}")
+                         */
+                        navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+                    }
+                    if (index < recurringEventList.lastIndex) {
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            thickness = 1.dp,
+                            color = Color.LightGray
+                        )
+                    }
                 }
             }
         }
