@@ -8,6 +8,7 @@
     <string name="event_label_tip_download_reg_list">Download registration list</string>
     <string name="event_label_tip_download_potluck_list">Download potluck contribution list</string>
     <string name="event_label_tip_download_signup_list">Download sign-up list</string>
+    <string name="event_label_tip_add_to_agenda">Add item to agenda</string>
 
     <string name="event_label_upcoming">Upcoming Events</string>
     <string name="event_phrase_upcoming">Following are the future events / programs that Pittsburgh Buddhist Center is organizing or participation. You all are welcome to take part of these events.</string>
@@ -29,6 +30,10 @@
     <string name="event_label_close">Close</string>
     <string name="event_label_view_more">View More</string>
 
+    <string name="event_label_agenda">Event Agenda</string>
+    <string name="event_phrase_agenda_admin">This is the agenda for our event. You can delete or add new agenda items by modify this event.</string>
+    <string name="event_phrase_agenda">This is the agenda for our event. We are always trying to be on time and take our event according to following schedule.</string>
+
     <string name="event_label_registration">Registration</string>
     <string name="event_phrase_registration_details">Because of the limited space availability, we expect you to register for this event to reserve your seat.</string>
     <string name="event_label_register_or_unregister">Register / Un-register</string>
@@ -37,6 +42,8 @@
     <string name="event_label_unregister">Un-Register</string>
     <string name="event_label_registering">Registering to Event</string>
     <string name="event_label_unregistering">Un-Registering from Event</string>
+    <string name="event_label_current_list">Registration List</string>
+    <string name="event_phrase_current_list">Following are the current list of devotees who registered their participation to this event. To add your participation, go back and register to the event.</string>
     <string name="event_label_remaining_seats">Remaining seats: %s</string>
     <string name="event_phrase_registering">We are delight to have you in the event of "%s"!!! Once you register, we will reserve a space for you. For any reason, if you are not going to attend, please make sure to unregister.</string>
     <string name="event_phrase_unregistering">We are sad not to see you in the event of "%s"!!! Once you un-register, your reservation will revoke. Thank you so much to make your space available due to your unavailability.</string>
@@ -60,6 +67,8 @@
     <string name="event_label_additional_sign_ups">Additional Sign-up Sheet(s)</string>
     <string name="event_phrase_additional_sign_ups">This event is having following additional sign-up sheet(s). Following sign-up sheet(s) help PBC to track devotee's participation and contributions to this events.</string>
     <string name="event_label_sign_up_sheet_title">Sign-up sheet - %s</string>
+    <string name="event_label_sign_up_sheet_registration_list">Sign-up sheet - Registration List</string>
+    <string name="event_phrase_sign_up_sheet_registration_list">Following are the current list of devotees who contribute to this sign-up sheet. To add your contribution, go back and contribute to the sign-up sheet.</string>
     <string name="event_label_sign_up">Sign-up to Sheet</string>
     <string name="event_label_sign_out">Sign-out from Sheet</string>
     <string name="event_label_or">OR</string>
@@ -73,6 +82,8 @@
     <string name="event_label_no_draft">No any drafted Events available.</string>
     <string name="event_label_active">Active Events</string>
     <string name="event_label_no_active">No any active Events available.</string>
+    <string name="event_label_recurring_admin">Recurring Events</string>
+    <string name="event_label_no_recurring_admin">No any recurring Events available.</string>
     <string name="event_label_reg_in_admin">Registration Required</string>
     <string name="event_phrase_reg_in_admin">This event enabled registration required. Therefore, to consumer, this event will open up for registration.</string>
     <string name="event_label_reg_in_admin_seat_count">Open Seat Count</string>
@@ -107,6 +118,10 @@
     <string name="event_label_registration_required">Is registration required?</string>
     <string name="event_label_available_search_count">Available seat count:</string>
     <string name="event_label_count">Count</string>
+
+    <string name="event_label_agenda_in_admin">Event Agenda</string>
+    <string name="event_phrase_agenda_in_admin">Do we have an agenda to display in event description? If yes, add the agenda as steps in here.</string>
+    <string name="event_label_agenda_available">Is agenda available?</string>
 
     <string name="event_label_potluck_setup_in_admin">Setup Event Potluck</string>
     <string name="event_phrase_potluck_setup_in_admin">Is this event plans to have potluck? If yes, then add the potluck food items and their relevant availabilities.</string>

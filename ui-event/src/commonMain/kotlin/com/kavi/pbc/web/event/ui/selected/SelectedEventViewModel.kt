@@ -26,6 +26,7 @@ class SelectedEventViewModel: ViewModel() {
     val selectedEvent: StateFlow<Event> = _selectedEvent
 
     private val _eventRegistrationData = MutableStateFlow(EventRegistration("", 0))
+    val eventRegistrationData: StateFlow<EventRegistration> = _eventRegistrationData
 
     private val _eventPotluckData = MutableStateFlow(EventPotluck("", mutableListOf()))
     val eventPotluckData: StateFlow<EventPotluck> = _eventPotluckData

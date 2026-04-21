@@ -56,10 +56,13 @@ import com.kavi.pbc.web.data.event.potluck.PotluckItem
 import com.kavi.pbc.web.data.event.signup.SignUpSheet
 import com.kavi.pbc.web.event.data.model.EventManageMode
 import com.kavi.pbc.web.event.data.model.EventManageOrCreate
+import com.kavi.pbc.web.event.ui.admin.common.AgendaItem
+import com.kavi.pbc.web.event.ui.admin.common.AgendaItemUI
 import com.kavi.pbc.web.event.ui.admin.manage.dialog.DeleteConfirmationDialog
 import com.kavi.pbc.web.event.ui.admin.manage.dialog.PublishConfirmationDialog
 import com.kavi.pbc.web.event.ui.common.EventItemForAdmin
 import com.kavi.pbc.web.network.Network
+import com.kavi.pbc.web.parent.extention.openMaps
 import com.kavi.pbc.web.parent.extention.openUrl
 import kotlinx.browser.window
 import org.jetbrains.compose.resources.painterResource
@@ -71,6 +74,7 @@ import pbcwebapp.ui_event.generated.resources.event_icon_location
 import pbcwebapp.ui_event.generated.resources.event_icon_online_meeting
 import pbcwebapp.ui_event.generated.resources.event_image_pbc
 import pbcwebapp.ui_event.generated.resources.event_label_active
+import pbcwebapp.ui_event.generated.resources.event_label_agenda
 import pbcwebapp.ui_event.generated.resources.event_label_at
 import pbcwebapp.ui_event.generated.resources.event_label_create
 import pbcwebapp.ui_event.generated.resources.event_label_draft
@@ -78,8 +82,10 @@ import pbcwebapp.ui_event.generated.resources.event_label_from
 import pbcwebapp.ui_event.generated.resources.event_label_manage
 import pbcwebapp.ui_event.generated.resources.event_label_no_active
 import pbcwebapp.ui_event.generated.resources.event_label_no_draft
+import pbcwebapp.ui_event.generated.resources.event_label_no_recurring_admin
 import pbcwebapp.ui_event.generated.resources.event_label_on
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_in_admin
+import pbcwebapp.ui_event.generated.resources.event_label_recurring_admin
 import pbcwebapp.ui_event.generated.resources.event_label_reg_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_reg_in_admin_seat_count
 import pbcwebapp.ui_event.generated.resources.event_label_sign_up_sheet_in_admin
@@ -88,10 +94,13 @@ import pbcwebapp.ui_event.generated.resources.event_label_tip_download_reg_list
 import pbcwebapp.ui_event.generated.resources.event_label_tip_download_signup_list
 import pbcwebapp.ui_event.generated.resources.event_label_tip_location
 import pbcwebapp.ui_event.generated.resources.event_label_tip_open_meeting
+import pbcwebapp.ui_event.generated.resources.event_phrase_agenda
+import pbcwebapp.ui_event.generated.resources.event_phrase_agenda_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_manage
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_sign_up_sheet_in_admin
+import kotlin.collections.forEachIndexed
 import kotlin.js.ExperimentalWasmJsInterop
 
 @Composable
@@ -168,6 +177,18 @@ fun EventManageUI(
                             isSelected = isInitialEventSelected,
                             publishConfirmation = showPublishConfirmationDialog,
                             publishingId = publishingEventId,
+                            deleteConfirmation = showDeleteConfirmationDialog,
+                            deletingId = deletingEventId,
+                            eventManageOrCreate = eventManageOrCreate,
+                            selectedForModify = selectedEventForModify,
+                            eventMode = eventManageMode
+                        ) { event ->
+                            selectedEvent.value = event
+                        }
+
+                        RecurringEventBlock(
+                            viewModel = viewModel,
+                            isSelected = isInitialEventSelected,
                             deleteConfirmation = showDeleteConfirmationDialog,
                             deletingId = deletingEventId,
                             eventManageOrCreate = eventManageOrCreate,
@@ -310,6 +331,93 @@ private fun DraftEventBlock(
             ) {
                 Text(
                     text = stringResource(Res.string.event_label_no_draft),
+                    textAlign = TextAlign.Center,
+                    fontFamily = PBCFontFamily,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecurringEventBlock(
+    viewModel: EventManageViewModel,
+    isSelected: MutableState<Boolean>,
+    deleteConfirmation: MutableState<Boolean>,
+    deletingId: MutableState<String>,
+    eventManageOrCreate: MutableState<EventManageOrCreate>,
+    selectedForModify: MutableState<Event?>,
+    eventMode: MutableState<EventManageMode>,
+    onSelect:(event: Event) -> Unit
+) {
+
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
+    val recurringEventList by viewModel.recurringEventList.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchRecurringEvents()
+    }
+
+    Text(
+        text = stringResource(Res.string.event_label_recurring_admin),
+        fontFamily = PBCFontFamily,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier
+            .padding(top = 12.dp)
+            .fillMaxWidth()
+    )
+
+    Column {
+        if (recurringEventList.isNotEmpty()) {
+            // Set initial selected Event
+            if (!isSelected.value) {
+                onSelect.invoke(recurringEventList[0])
+                isSelected.value = true
+            }
+
+            recurringEventList.forEachIndexed { index, event ->
+                EventItemForAdmin(
+                    modifier = Modifier.clickable {
+                        onSelect.invoke(event)
+                    },
+                    event = event,
+                    isDraftEvent = false,
+                    onModify = {
+                        selectedForModify.value = event
+                        eventManageOrCreate.value = EventManageOrCreate.CREATE
+                    },
+                    onPublish = {
+                        /* Nothing to implement */
+                    },
+                    onDelete = {
+                        deleteConfirmation.value = true
+                        eventMode.value = EventManageMode.RECURRING
+                        deletingId.value = event.id!!
+                    }
+                )
+                if (index < recurringEventList.lastIndex) {
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = themeAdditionalColors.shadow
+                    )
+                }
+            }
+        } else {
+            Box (
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(Res.string.event_label_no_recurring_admin),
                     textAlign = TextAlign.Center,
                     fontFamily = PBCFontFamily,
                     fontSize = 16.sp,
@@ -547,7 +655,7 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
                                         val addressUrl = it.replace(" ", "+")
                                         val locationUrl =
                                             "https://www.google.com/maps/place/$addressUrl"
-                                        openUrl(url = locationUrl)
+                                        openMaps(mapUrl = locationUrl)
                                     }
                                 }
                             }
@@ -580,6 +688,50 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+
+            if (selectedEvent.value.agendaAvailable) {
+                Column (
+                    modifier = Modifier.padding(top = 20.dp)
+                ) {
+                    Text(
+                        text = stringResource(Res.string.event_label_agenda),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(2.dp),
+                        thickness = 2.dp
+                    )
+
+                    Text(
+                        text = stringResource(Res.string.event_phrase_agenda_admin),
+                        fontFamily = PBCFontFamily,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Justify,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                    selectedEvent.value.agendaItemList?.let { itemList ->
+                        itemList.forEachIndexed { index, agendaItem ->
+                            AgendaItemUI(modifier = Modifier.padding(8.dp), agendaItem = agendaItem)
+                            if (index < itemList.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 16.dp, end = 8.dp),
+                                    thickness = 1.dp,
+                                    color = themeAdditionalColors.shadow
+                                )
+                            }
+                        }
+                    }
+                }
+            }
 
             if (selectedEvent.value.registrationRequired) {
                 Column (
@@ -625,7 +777,7 @@ private fun SelectedEventUI(selectedEvent: MutableState<Event>) {
 
                     Text(
                         text = stringResource(Res.string.event_phrase_reg_in_admin) +
-                                "${stringResource(Res.string.event_label_reg_in_admin_seat_count)}: " +
+                                " ${stringResource(Res.string.event_label_reg_in_admin_seat_count)}: " +
                                 "${selectedEvent.value.openSeatCount}",
                         fontFamily = PBCFontFamily,
                         fontSize = 16.sp,

@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -21,14 +25,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kavi.pbc.web.common.ui.component.AppFilledButton
 import com.kavi.pbc.web.common.ui.component.AppOutlineButton
+import com.kavi.pbc.web.common.ui.component.TitleWithAction
+import com.kavi.pbc.web.common.ui.component.TitleWithBackNav
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.signup.EventSignUpSheet
@@ -44,19 +54,30 @@ import pbcwebapp.ui_event.generated.resources.event_icon_process_failed
 import pbcwebapp.ui_event.generated.resources.event_icon_register_success
 import pbcwebapp.ui_event.generated.resources.event_icon_remove_item
 import pbcwebapp.ui_event.generated.resources.event_icon_unregister_success
+import pbcwebapp.ui_event.generated.resources.event_icon_view
 import pbcwebapp.ui_event.generated.resources.event_label_close
+import pbcwebapp.ui_event.generated.resources.event_label_current_list
 import pbcwebapp.ui_event.generated.resources.event_label_or
 import pbcwebapp.ui_event.generated.resources.event_label_reg_success
 import pbcwebapp.ui_event.generated.resources.event_label_reg_un_reg_failure
+import pbcwebapp.ui_event.generated.resources.event_label_registering
 import pbcwebapp.ui_event.generated.resources.event_label_remaining_seats
 import pbcwebapp.ui_event.generated.resources.event_label_sign_out
 import pbcwebapp.ui_event.generated.resources.event_label_sign_up
+import pbcwebapp.ui_event.generated.resources.event_label_sign_up_sheet_registration_list
 import pbcwebapp.ui_event.generated.resources.event_label_sign_up_sheet_title
 import pbcwebapp.ui_event.generated.resources.event_label_un_reg_success
+import pbcwebapp.ui_event.generated.resources.event_label_unregistering
 import pbcwebapp.ui_event.generated.resources.event_label_user_sign_up_count
+import pbcwebapp.ui_event.generated.resources.event_phrase_current_list
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_success
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_un_reg_failure
+import pbcwebapp.ui_event.generated.resources.event_phrase_sign_up_sheet_registration_list
 import pbcwebapp.ui_event.generated.resources.event_phrase_un_reg_success
+
+private enum class SignUpSheetViewMode {
+    REG_OR_UN_REG_MODE, REG_LIST_VIEW_MODE
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,7 +135,55 @@ fun SignUpSheetBottomSheetUI(sheetState: SheetState,
 }
 
 @Composable
-fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUpSheet: EventSignUpSheet) {
+private fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUpSheet: EventSignUpSheet) {
+
+    var viewMode by remember { mutableStateOf(SignUpSheetViewMode.REG_OR_UN_REG_MODE) }
+
+    Column {
+        Column {
+            when(viewMode) {
+                SignUpSheetViewMode.REG_OR_UN_REG_MODE -> {
+                    TitleWithAction(
+                        titleText = stringResource(Res.string.event_label_sign_up_sheet_title)
+                            .replace("%s", selectedSignUpSheet.sheetName),
+                        textSize = 24,
+                        actionPainter = painterResource(Res.drawable.event_icon_view),
+                        actionPainterSize = 28.dp,
+                        isIcon = true
+                    ) {
+                        viewMode = SignUpSheetViewMode.REG_LIST_VIEW_MODE
+                    }
+                }
+                SignUpSheetViewMode.REG_LIST_VIEW_MODE -> {
+                    TitleWithBackNav(
+                        titleText = stringResource(Res.string.event_label_sign_up_sheet_registration_list),
+                        textSize = 24,
+                        backIconSize = 24.dp
+                    ) {
+                        viewMode = SignUpSheetViewMode.REG_OR_UN_REG_MODE
+                    }
+                }
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(2.dp),
+                thickness = 2.dp
+            )
+
+            when(viewMode) {
+                SignUpSheetViewMode.REG_OR_UN_REG_MODE -> {
+                    SignUpSheetRegUnRegAction(viewModel = viewModel, selectedSignUpSheet = selectedSignUpSheet)
+                }
+                SignUpSheetViewMode.REG_LIST_VIEW_MODE -> {
+                    SignUpSheetRegistrationList(selectedSignUpSheet = selectedSignUpSheet)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SignUpSheetRegUnRegAction(viewModel: SelectedEventViewModel, selectedSignUpSheet: EventSignUpSheet) {
     var isSignUp = false
     var signUpCount = 0
     if (selectedSignUpSheet.allowMultiSignUps) {
@@ -124,67 +193,75 @@ fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUp
     }
 
     Column {
-        Column {
-            Text(
-                text = stringResource(Res.string.event_label_sign_up_sheet_title)
-                    .replace("%s", selectedSignUpSheet.sheetName),
-                fontFamily = PBCFontFamily,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(2.dp),
-                thickness = 2.dp
-            )
-
-            Row(
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if(selectedSignUpSheet.allowMultiSignUps) {
-                    Image(
-                        painter = painterResource(Res.drawable.event_icon_add_item),
-                        contentDescription = "Provided icon",
-                        modifier = Modifier
-                            .size(80.dp)
-                    )
-                    Text(
-                        text = stringResource(Res.string.event_label_or),
-                        fontFamily = PBCFontFamily,
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(start = 4.dp, end = 8.dp)
-                    )
-                    Image(
-                        painter = painterResource(Res.drawable.event_icon_remove_item),
-                        contentDescription = "Provided icon",
-                        modifier = Modifier
-                            .size(80.dp)
-                    )
-                } else {
-                    Image(
-                        painter = if (isSignUp)
-                            painterResource(Res.drawable.event_icon_remove_item)
-                        else
-                            painterResource(Res.drawable.event_icon_add_item),
-                        contentDescription = "Provided icon",
-                        modifier = Modifier
-                            .size(100.dp)
-                    )
-                }
+        Row(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if(selectedSignUpSheet.allowMultiSignUps) {
+                Image(
+                    painter = painterResource(Res.drawable.event_icon_add_item),
+                    contentDescription = "Provided icon",
+                    modifier = Modifier
+                        .size(80.dp)
+                )
+                Text(
+                    text = stringResource(Res.string.event_label_or),
+                    fontFamily = PBCFontFamily,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(start = 4.dp, end = 8.dp)
+                )
+                Image(
+                    painter = painterResource(Res.drawable.event_icon_remove_item),
+                    contentDescription = "Provided icon",
+                    modifier = Modifier
+                        .size(80.dp)
+                )
+            } else {
+                Image(
+                    painter = if (isSignUp)
+                        painterResource(Res.drawable.event_icon_remove_item)
+                    else
+                        painterResource(Res.drawable.event_icon_add_item),
+                    contentDescription = "Provided icon",
+                    modifier = Modifier
+                        .size(100.dp)
+                )
             }
+        }
 
+        Text(
+            text = selectedSignUpSheet.sheetDescription,
+            fontFamily = PBCFontFamily,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        )
+
+        Text(
+            text = stringResource(Res.string.event_label_remaining_seats)
+                .replace("%s", viewModel.remainingSignUpCountInSignUpSheet(selectedSignUpSheet.sheetId).toString()),
+            fontFamily = PBCFontFamily,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        )
+
+        if (selectedSignUpSheet.allowMultiSignUps && signUpCount > 0) {
             Text(
-                text = selectedSignUpSheet.sheetDescription,
+                text = stringResource(Res.string.event_label_user_sign_up_count)
+                    .replace("%s", signUpCount.toString()),
                 fontFamily = PBCFontFamily,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
@@ -193,72 +270,91 @@ fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUp
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             )
+        }
 
-            Text(
-                text = stringResource(Res.string.event_label_remaining_seats)
-                    .replace("%s", viewModel.remainingSignUpCountInSignUpSheet(selectedSignUpSheet.sheetId).toString()),
-                fontFamily = PBCFontFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
+        if (selectedSignUpSheet.allowMultiSignUps) {
+            Row (
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-
-            if (selectedSignUpSheet.allowMultiSignUps && signUpCount > 0) {
-                Text(
-                    text = stringResource(Res.string.event_label_user_sign_up_count)
-                        .replace("%s", signUpCount.toString()),
-                    fontFamily = PBCFontFamily,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                AppOutlineButton(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                )
-            }
-
-            if (selectedSignUpSheet.allowMultiSignUps) {
-                Row (
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                        .padding(end = 4.dp)
+                        .weight(.5f),
+                    label = stringResource(Res.string.event_label_sign_out),
+                    labelTextSize = 10.sp
                 ) {
-                    AppOutlineButton(
-                        modifier = Modifier
-                            .padding(end = 4.dp)
-                            .weight(.5f),
-                        label = stringResource(Res.string.event_label_sign_out),
-                        labelTextSize = 10.sp
-                    ) {
-                        viewModel.signOutFromSheet(selectedSignUpSheet.sheetId)
-                    }
-                    AppFilledButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 4.dp)
-                            .weight(.5f),
-                        label = stringResource(Res.string.event_label_sign_up),
-                        labelTextSize = 10.sp
-                    ) {
-                        viewModel.signUpToSheet(selectedSignUpSheet.sheetId)
-                    }
+                    viewModel.signOutFromSheet(selectedSignUpSheet.sheetId)
                 }
-            } else {
                 AppFilledButton(
                     modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxWidth(),
-                    label = if (isSignUp)
-                        stringResource(Res.string.event_label_sign_out) else stringResource(Res.string.event_label_sign_up)) {
+                        .fillMaxWidth()
+                        .padding(start = 4.dp)
+                        .weight(.5f),
+                    label = stringResource(Res.string.event_label_sign_up),
+                    labelTextSize = 10.sp
+                ) {
+                    viewModel.signUpToSheet(selectedSignUpSheet.sheetId)
+                }
+            }
+        } else {
+            AppFilledButton(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
+                label = if (isSignUp)
+                    stringResource(Res.string.event_label_sign_out) else stringResource(Res.string.event_label_sign_up)) {
 
-                    if (isSignUp)
-                        viewModel.signOutFromSheet(selectedSignUpSheet.sheetId)
-                    else
-                        viewModel.signUpToSheet(selectedSignUpSheet.sheetId)
+                if (isSignUp)
+                    viewModel.signOutFromSheet(selectedSignUpSheet.sheetId)
+                else
+                    viewModel.signUpToSheet(selectedSignUpSheet.sheetId)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SignUpSheetRegistrationList(selectedSignUpSheet: EventSignUpSheet) {
+    Column {
+        Text(
+            text = stringResource(Res.string.event_phrase_sign_up_sheet_registration_list),
+            fontFamily = PBCFontFamily,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Justify,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        )
+
+        LazyColumn (
+            modifier = Modifier
+                .padding(top = 12.dp)
+        ) {
+            items(selectedSignUpSheet.contributorList) { contributor ->
+                Column {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(6.dp),
+                            text = contributor.contributorName,
+                            fontFamily = PBCFontFamily,
+                            fontSize = 14.sp,
+                            lineHeight = 14.sp,
+                            fontWeight = FontWeight.Thin,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Start,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
             }
         }
@@ -266,7 +362,7 @@ fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUp
 }
 
 @Composable
-fun SignUpSheetRegUnRegSuccess(viewModel: SelectedEventViewModel, regUnRegType: RegUnRegType, showSheet: MutableState<Boolean>) {
+private fun SignUpSheetRegUnRegSuccess(viewModel: SelectedEventViewModel, regUnRegType: RegUnRegType, showSheet: MutableState<Boolean>) {
     Column {
         Text(
             text = when(regUnRegType){
@@ -327,7 +423,7 @@ fun SignUpSheetRegUnRegSuccess(viewModel: SelectedEventViewModel, regUnRegType: 
 }
 
 @Composable
-fun SignUpSheetRegUnRegFailure(viewModel: SelectedEventViewModel, showSheet: MutableState<Boolean>) {
+private fun SignUpSheetRegUnRegFailure(viewModel: SelectedEventViewModel, showSheet: MutableState<Boolean>) {
     Column {
         Text(
             text = stringResource(Res.string.event_label_reg_un_reg_failure),
