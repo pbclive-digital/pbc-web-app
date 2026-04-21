@@ -81,8 +81,10 @@ import pbcwebapp.ui_event.generated.resources.event_label_from
 import pbcwebapp.ui_event.generated.resources.event_label_manage
 import pbcwebapp.ui_event.generated.resources.event_label_no_active
 import pbcwebapp.ui_event.generated.resources.event_label_no_draft
+import pbcwebapp.ui_event.generated.resources.event_label_no_recurring_admin
 import pbcwebapp.ui_event.generated.resources.event_label_on
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_in_admin
+import pbcwebapp.ui_event.generated.resources.event_label_recurring_admin
 import pbcwebapp.ui_event.generated.resources.event_label_reg_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_reg_in_admin_seat_count
 import pbcwebapp.ui_event.generated.resources.event_label_sign_up_sheet_in_admin
@@ -174,6 +176,18 @@ fun EventManageUI(
                             isSelected = isInitialEventSelected,
                             publishConfirmation = showPublishConfirmationDialog,
                             publishingId = publishingEventId,
+                            deleteConfirmation = showDeleteConfirmationDialog,
+                            deletingId = deletingEventId,
+                            eventManageOrCreate = eventManageOrCreate,
+                            selectedForModify = selectedEventForModify,
+                            eventMode = eventManageMode
+                        ) { event ->
+                            selectedEvent.value = event
+                        }
+
+                        RecurringEventBlock(
+                            viewModel = viewModel,
+                            isSelected = isInitialEventSelected,
                             deleteConfirmation = showDeleteConfirmationDialog,
                             deletingId = deletingEventId,
                             eventManageOrCreate = eventManageOrCreate,
@@ -316,6 +330,93 @@ private fun DraftEventBlock(
             ) {
                 Text(
                     text = stringResource(Res.string.event_label_no_draft),
+                    textAlign = TextAlign.Center,
+                    fontFamily = PBCFontFamily,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecurringEventBlock(
+    viewModel: EventManageViewModel,
+    isSelected: MutableState<Boolean>,
+    deleteConfirmation: MutableState<Boolean>,
+    deletingId: MutableState<String>,
+    eventManageOrCreate: MutableState<EventManageOrCreate>,
+    selectedForModify: MutableState<Event?>,
+    eventMode: MutableState<EventManageMode>,
+    onSelect:(event: Event) -> Unit
+) {
+
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
+    val recurringEventList by viewModel.recurringEventList.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchRecurringEvents()
+    }
+
+    Text(
+        text = stringResource(Res.string.event_label_recurring_admin),
+        fontFamily = PBCFontFamily,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier
+            .padding(top = 12.dp)
+            .fillMaxWidth()
+    )
+
+    Column {
+        if (recurringEventList.isNotEmpty()) {
+            // Set initial selected Event
+            if (!isSelected.value) {
+                onSelect.invoke(recurringEventList[0])
+                isSelected.value = true
+            }
+
+            recurringEventList.forEachIndexed { index, event ->
+                EventItemForAdmin(
+                    modifier = Modifier.clickable {
+                        onSelect.invoke(event)
+                    },
+                    event = event,
+                    isDraftEvent = false,
+                    onModify = {
+                        selectedForModify.value = event
+                        eventManageOrCreate.value = EventManageOrCreate.CREATE
+                    },
+                    onPublish = {
+                        /* Nothing to implement */
+                    },
+                    onDelete = {
+                        deleteConfirmation.value = true
+                        eventMode.value = EventManageMode.RECURRING
+                        deletingId.value = event.id!!
+                    }
+                )
+                if (index < recurringEventList.lastIndex) {
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = themeAdditionalColors.shadow
+                    )
+                }
+            }
+        } else {
+            Box (
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(Res.string.event_label_no_recurring_admin),
                     textAlign = TextAlign.Center,
                     fontFamily = PBCFontFamily,
                     fontSize = 16.sp,

@@ -3,6 +3,7 @@ package com.kavi.pbc.web.event.ui.admin.manage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.EventType
 import com.kavi.pbc.web.event.data.model.EventManageMode
 import com.kavi.pbc.web.event.data.repository.remote.EventRemoteRepository
 import com.kavi.pbc.web.network.model.ResultWrapper
@@ -18,6 +19,9 @@ class EventManageViewModel: ViewModel() {
     private val _draftEventList = MutableStateFlow<List<Event>>(mutableListOf())
     val draftEventList: StateFlow<List<Event>> = _draftEventList
 
+    private val _recurringEventList = MutableStateFlow<List<Event>>(mutableListOf())
+    val recurringEventList: StateFlow<List<Event>> = _recurringEventList
+
     private val _activeEventList = MutableStateFlow<List<Event>>(mutableListOf())
     val activeEventList: StateFlow<List<Event>> = _activeEventList
 
@@ -30,6 +34,21 @@ class EventManageViewModel: ViewModel() {
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
                         _draftEventList.value = it
+                    }
+                }
+            }
+        }
+    }
+
+    fun fetchRecurringEvents() {
+        viewModelScope.launch {
+            when(val response = eventRemoteRepository.getRecurringEvents()) {
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+
+                }
+                is ResultWrapper.Success -> {
+                    response.value.body?.let {
+                        _recurringEventList.value = it
                     }
                 }
             }
@@ -68,8 +87,17 @@ class EventManageViewModel: ViewModel() {
                                 .filterNot { it.id == eventId }
                                 .toMutableList()
 
-                            _activeEventList.update { currentList ->
-                                (currentList + updatedEvent) as MutableList<Event>
+                            when(updatedEvent.eventType) {
+                                EventType.RECURRING -> {
+                                    _recurringEventList.update { currentList ->
+                                        (currentList + updatedEvent) as MutableList<Event>
+                                    }
+                                }
+                                else -> {
+                                    _activeEventList.update { currentList ->
+                                        (currentList + updatedEvent) as MutableList<Event>
+                                    }
+                                }
                             }
                         }
                     }
@@ -89,6 +117,11 @@ class EventManageViewModel: ViewModel() {
                         when(eventManageMode) {
                             EventManageMode.DRAFT -> {
                                 _draftEventList.value = _draftEventList.value
+                                    .filterNot { it.id == eventId }
+                                    .toMutableList()
+                            }
+                            EventManageMode.RECURRING -> {
+                                _recurringEventList.value = _recurringEventList.value
                                     .filterNot { it.id == eventId }
                                     .toMutableList()
                             }

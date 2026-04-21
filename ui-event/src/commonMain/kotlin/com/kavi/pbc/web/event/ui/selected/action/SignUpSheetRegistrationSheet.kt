@@ -135,7 +135,7 @@ fun SignUpSheetBottomSheetUI(sheetState: SheetState,
 }
 
 @Composable
-fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUpSheet: EventSignUpSheet) {
+private fun SignUpSheetRegUnRegInitial(viewModel: SelectedEventViewModel, selectedSignUpSheet: EventSignUpSheet) {
 
     var viewMode by remember { mutableStateOf(SignUpSheetViewMode.REG_OR_UN_REG_MODE) }
 
@@ -362,7 +362,7 @@ private fun SignUpSheetRegistrationList(selectedSignUpSheet: EventSignUpSheet) {
 }
 
 @Composable
-fun SignUpSheetRegUnRegSuccess(viewModel: SelectedEventViewModel, regUnRegType: RegUnRegType, showSheet: MutableState<Boolean>) {
+private fun SignUpSheetRegUnRegSuccess(viewModel: SelectedEventViewModel, regUnRegType: RegUnRegType, showSheet: MutableState<Boolean>) {
     Column {
         Text(
             text = when(regUnRegType){
@@ -423,7 +423,7 @@ fun SignUpSheetRegUnRegSuccess(viewModel: SelectedEventViewModel, regUnRegType: 
 }
 
 @Composable
-fun SignUpSheetRegUnRegFailure(viewModel: SelectedEventViewModel, showSheet: MutableState<Boolean>) {
+private fun SignUpSheetRegUnRegFailure(viewModel: SelectedEventViewModel, showSheet: MutableState<Boolean>) {
     Column {
         Text(
             text = stringResource(Res.string.event_label_reg_un_reg_failure),

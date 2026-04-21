@@ -82,6 +82,8 @@
     <string name="event_label_no_draft">No any drafted Events available.</string>
     <string name="event_label_active">Active Events</string>
     <string name="event_label_no_active">No any active Events available.</string>
+    <string name="event_label_recurring_admin">Recurring Events</string>
+    <string name="event_label_no_recurring_admin">No any recurring Events available.</string>
     <string name="event_label_reg_in_admin">Registration Required</string>
     <string name="event_phrase_reg_in_admin">This event enabled registration required. Therefore, to consumer, this event will open up for registration.</string>
     <string name="event_label_reg_in_admin_seat_count">Open Seat Count</string>

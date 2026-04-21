@@ -24,6 +24,7 @@ import com.kavi.pbc.web.common.ui.component.AppTooltipWrap
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.EventType
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
@@ -62,16 +63,32 @@ fun EventItemForAdmin(
         Spacer(modifier = Modifier.height(4.dp))
 
         Row {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "on ${event.getFormatDate()} at ${event.getPlace()}",
-                color = MaterialTheme.colorScheme.onSurface,
-                fontFamily = PBCFontFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+            when(event.eventType) {
+                EventType.RECURRING -> {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = "on every ${event.recurringDay.name} at ${event.getPlace()}",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontFamily = PBCFontFamily,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                else -> {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = "on ${event.getFormatDate()} at ${event.getPlace()}",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontFamily = PBCFontFamily,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
