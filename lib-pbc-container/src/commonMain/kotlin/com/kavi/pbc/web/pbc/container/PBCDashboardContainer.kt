@@ -52,6 +52,7 @@ import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.navigation.DashboardPath
 import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
 import com.kavi.pbc.web.pbc.container.model.TabItem
+import com.kavi.pbc.web.pbc.container.ui.AdditionalActionComponent
 import com.kavi.pbc.web.pbc.container.ui.ProfileActionComponent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -224,25 +225,8 @@ fun PBCDashboardContainer(
                             horizontalAlignment = Alignment.End,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            Row (
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                AppLinkButton(
-                                    label = "Contact Us",
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                ) {
-                                    navController.navigate(DashboardPath.ContactUs)
-                                }
-
-                                Spacer(modifier = Modifier.width(12.dp))
-
-                                AppLinkButton(
-                                    label = "About Us",
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                ) {
-                                    navController.navigate(DashboardPath.AboutUs)
-                                }
-                            }
+                            // TODO: Uncomment this when it ready
+                            // AdditionalActionComponent(navController = navController)
 
                             Spacer(modifier = Modifier.height(12.dp))
 
