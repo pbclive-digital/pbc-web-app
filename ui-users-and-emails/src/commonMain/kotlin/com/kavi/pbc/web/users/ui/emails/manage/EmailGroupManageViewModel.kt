@@ -46,12 +46,47 @@ class EmailGroupManageViewModel: ViewModel() {
                     is ResultWrapper.NetworkError, is ResultWrapper.UnAuthError, is ResultWrapper.HttpError -> {
                         // Do nothing for now
                     }
-
                     is ResultWrapper.Success -> {
                         response.value.body?.let {
                             _selectedEmailGroup.value = it
                             categorizeEmailList()
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    fun addEmailToEmailGroup(selectedGroupId: String, emailItem: EmailItem) {
+        val emailItemList = listOf(emailItem)
+        viewModelScope.launch {
+            when (val response = emailGroupRemoteRepository
+                .addEmailToEmailGroup(groupId = selectedGroupId, emailItemList = emailItemList)) {
+                is ResultWrapper.NetworkError, is ResultWrapper.UnAuthError, is ResultWrapper.HttpError -> {
+                    // Do nothing for now
+                }
+                is ResultWrapper.Success -> {
+                    response.value.body?.let {
+                        _selectedEmailGroup.value = it
+                        categorizeEmailList()
+                    }
+                }
+            }
+        }
+    }
+
+    fun removeEmailFromEmailGroup(selectedGroupId: String, emailItem: EmailItem) {
+        val emailItemList = listOf(emailItem)
+        viewModelScope.launch {
+            when (val response = emailGroupRemoteRepository
+                .removeEmailFromEmailGroup(groupId = selectedGroupId, emailItemList = emailItemList)) {
+                is ResultWrapper.NetworkError, is ResultWrapper.UnAuthError, is ResultWrapper.HttpError -> {
+                    // Do nothing for now
+                }
+                is ResultWrapper.Success -> {
+                    response.value.body?.let {
+                        _selectedEmailGroup.value = it
+                        categorizeEmailList()
                     }
                 }
             }

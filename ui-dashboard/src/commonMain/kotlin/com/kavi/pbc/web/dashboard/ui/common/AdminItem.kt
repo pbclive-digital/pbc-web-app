@@ -29,7 +29,7 @@ fun AdminItem(modifier: Modifier = Modifier, label: String, onSelect: () -> Unit
                 .clickable {
                     onSelect.invoke()
                 },
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center
         ) {
             Text(

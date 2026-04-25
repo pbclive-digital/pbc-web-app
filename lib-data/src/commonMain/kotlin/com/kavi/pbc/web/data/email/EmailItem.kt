@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EmailItem(
-    val email: String,
-    val ownerName: String
+    val email: String = "",
+    val ownerName: String? = null
 )

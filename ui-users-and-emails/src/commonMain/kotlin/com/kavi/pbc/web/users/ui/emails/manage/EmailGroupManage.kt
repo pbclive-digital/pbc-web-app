@@ -2,6 +2,8 @@ package com.kavi.pbc.web.users.ui.emails.manage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,10 +22,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -30,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
+import com.kavi.pbc.web.common.ui.component.AppTooltipWrap
 import com.kavi.pbc.web.common.ui.component.TitleWithAction
 import com.kavi.pbc.web.common.ui.component.TitleWithActionComposable
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
@@ -48,13 +57,20 @@ import com.kavi.pbc.web.data.email.EmailGroupHeading
 import com.kavi.pbc.web.data.email.EmailItem
 import com.kavi.pbc.web.data.news.News
 import com.kavi.pbc.web.users.ui.common.EmailGroupItem
+import com.kavi.pbc.web.users.ui.emails.manage.dialog.AddEmailToEmailGroupDialog
+import com.kavi.pbc.web.users.ui.emails.manage.dialog.RemoveEmailConfirmationDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_users_and_emails.generated.resources.Res
+import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_add_email
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_create
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_delete
+import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_remove_email
+import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_x
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_label_create
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_label_manage
+import pbcwebapp.ui_users_and_emails.generated.resources.email_group_label_tip_add_email
+import pbcwebapp.ui_users_and_emails.generated.resources.email_group_label_tip_remove_email
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_phrase_manage
 
 @Composable
@@ -63,14 +79,17 @@ fun EmailGroupManageUI(
 ) {
     val viewModel: EmailGroupManageViewModel = viewModel { EmailGroupManageViewModel() }
     val selectedEmailGroupHeading = remember { mutableStateOf(EmailGroupHeading()) }
-    val isInitialEmailGroupHeadingSelected = remember { mutableStateOf(false) }
 
     val emailGroupHeadings by viewModel.emailGroupHeadings.collectAsState()
 
-    val themeAdditionalColors = LocalThemeAdditionalColors.current
-
     LaunchedEffect(Unit) {
         viewModel.fetchEmailGroupHeadings()
+    }
+
+    LaunchedEffect(emailGroupHeadings) {
+        if(emailGroupHeadings.isNotEmpty()) {
+            selectedEmailGroupHeading.value = emailGroupHeadings[0]
+        }
     }
 
     Box(
@@ -115,24 +134,6 @@ fun EmailGroupManageUI(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Row {
-                    /*Column (
-                        modifier = Modifier
-                            .weight(.35f)
-                            .verticalScroll(state = rememberScrollState())
-                    ) {
-                        emailGroupHeadings.forEachIndexed { index, emailGroup ->
-                            EmailGroupItem(emailGroup = emailGroup) {
-
-                            }
-                            if (index < emailGroupHeadings.lastIndex) {
-                                HorizontalDivider(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    thickness = 1.dp,
-                                    color = themeAdditionalColors.shadow
-                                )
-                            }
-                        }
-                    }*/
                     LazyColumn (
                         modifier = Modifier
                             .weight(.35f)
@@ -163,7 +164,12 @@ private fun SelectedEmailGroup(
     viewModel: EmailGroupManageViewModel,
     selectedEmailGroupHeading: MutableState<EmailGroupHeading>
 ) {
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
     val letterGroupedEmailList = viewModel.letterGroupedEmailList.collectAsState()
+
+    val showAddEmailDialog = mutableStateOf(false)
+    val showRemoveEmailDialog = mutableStateOf(false)
+    var deletingEmailItem by remember { mutableStateOf(EmailItem("", null)) }
 
     LaunchedEffect(selectedEmailGroupHeading.value) {
         viewModel.fetchEmailGroupEmailList(groupId = selectedEmailGroupHeading.value.id)
@@ -183,20 +189,96 @@ private fun SelectedEmailGroup(
                 textSize = 36,
                 textColor = MaterialTheme.colorScheme.onSurface
             ) {
-                // TODO: Add two buttons to 'Add' & 'Remove' emails from selected email group
+                Row (
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    AppTooltipWrap(
+                        tipLabel = stringResource(Res.string.email_group_label_tip_add_email)
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.email_group_icon_add_email),
+                            contentDescription = "Edit Event",
+                            tint = themeAdditionalColors.shadow,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(4.dp)
+                                .clickable {
+                                    showAddEmailDialog.value = true
+                                }
+                        )
+                    }
+
+                    /*VerticalDivider(
+                        modifier = Modifier
+                            .height(40.dp)
+                            .padding(start = 2.dp, end = 2.dp),
+                        thickness = 2.dp
+                    )
+
+                    AppTooltipWrap(
+                        tipLabel = stringResource(Res.string.email_group_label_tip_remove_email)
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.email_group_icon_remove_email),
+                            contentDescription = "Edit Event",
+                            tint = themeAdditionalColors.shadow,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(4.dp)
+                                .clickable {
+                                    //onModify.invoke()
+                                }
+                        )
+                    }*/
+                }
             }
 
             Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
                 letterGroupedEmailList.value.keys.forEach { key ->
-                    EmailGridContainer(key, letterGroupedEmailList.value[key])
+                    EmailGridContainer(
+                        letter = key,
+                        emailList = letterGroupedEmailList.value[key]
+                    ) { emailItem ->
+                        deletingEmailItem = emailItem
+                        showRemoveEmailDialog.value = true
+                    }
                 }
             }
         }
     }
+
+    AddEmailToEmailGroupDialog(
+        showDialog = showAddEmailDialog,
+        onCreate = { emailItem ->
+            viewModel.addEmailToEmailGroup(
+                selectedGroupId = selectedEmailGroupHeading.value.id,
+                emailItem = emailItem
+            )
+            showAddEmailDialog.value = false
+        },
+        onDismiss = {
+            showAddEmailDialog.value = false
+        }
+    )
+
+    RemoveEmailConfirmationDialog(
+        showDialog = showRemoveEmailDialog,
+        onConfirm = {
+            viewModel.removeEmailFromEmailGroup(
+                selectedGroupId = selectedEmailGroupHeading.value.id,
+                emailItem = deletingEmailItem
+            )
+        },
+        onDismiss = {
+            showRemoveEmailDialog.value = false
+        }
+    )
 }
 
 @Composable
-private fun EmailGridContainer(letter: Char, emailList: List<EmailItem>?) {
+private fun EmailGridContainer(letter: Char, emailList: List<EmailItem>?,
+                               onDelete: (emailItem: EmailItem) -> Unit) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -226,7 +308,22 @@ private fun EmailGridContainer(letter: Char, emailList: List<EmailItem>?) {
                     )
 
                     it.forEach { item ->
-                        SuggestionChip(modifier = Modifier.padding(4.dp), label = { Text(item.email)}, onClick = {})
+                        AssistChip(
+                            modifier = Modifier.padding(4.dp),
+                            label = { Text(item.email)},
+                            onClick = { /*Nothing to do*/ },
+                            trailingIcon = {
+                                Icon(
+                                    painterResource(Res.drawable.email_group_icon_x),
+                                    contentDescription = "Localized description",
+                                    modifier = Modifier
+                                        .size(AssistChipDefaults.IconSize)
+                                        .clickable {
+                                            onDelete.invoke(item)
+                                        }
+                                )
+                            }
+                        )
                     }
                 }
             }

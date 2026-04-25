@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="email_group_label_tip_delete">Delete</string>
+    <string name="email_group_label_tip_add_email">Add new email to group</string>
+    <string name="email_group_label_tip_remove_email">Remove email from group</string>
 
     <string name="email_group_label_manage">Manage Email Group</string>
     <string name="email_group_label_create">Create Group</string>
     <string name="email_group_phrase_manage">This section is to manage all the Email Groups in PBC. From here can create new Groups, modify or remove any existing email group.</string>
+
+    <string name="email_group_label_yes">Yes</string>
+    <string name="email_group_label_no">No</string>
+    <string name="email_group_label_add_to_group">Add Email to Email Group</string>
+    <string name="email_group_phrase_add_to_group">Enter new email and owner name to add the email to the selected email group.</string>
+    <string name="email_group_label_email">Email</string>
+    <string name="email_group_label_owner_name">Owner's Name</string>
+    <string name="email_group_label_add_email">Add Email</string>
+    <string name="email_group_label_cancel">Cancel</string>
+    <string name="email_group_label_remove_confirmation">Are you sure to remove?</string>
+    <string name="email_group_phrase_remove_confirmation">Do you want to remove this email from this email group? Once you remove this, this recipient will not receive any email related to this email group.</string>
 </resources>
