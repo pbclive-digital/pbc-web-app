@@ -57,7 +57,9 @@ import com.kavi.pbc.web.data.email.EmailGroupHeading
 import com.kavi.pbc.web.data.email.EmailItem
 import com.kavi.pbc.web.data.news.News
 import com.kavi.pbc.web.users.ui.common.EmailGroupItem
+import com.kavi.pbc.web.users.ui.emails.create.CreateNewEmailGroupDialog
 import com.kavi.pbc.web.users.ui.emails.manage.dialog.AddEmailToEmailGroupDialog
+import com.kavi.pbc.web.users.ui.emails.manage.dialog.DeleteEmailGroupConfirmationDialog
 import com.kavi.pbc.web.users.ui.emails.manage.dialog.RemoveEmailConfirmationDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -81,6 +83,11 @@ fun EmailGroupManageUI(
     val selectedEmailGroupHeading = remember { mutableStateOf(EmailGroupHeading()) }
 
     val emailGroupHeadings by viewModel.emailGroupHeadings.collectAsState()
+
+    val showCreateEmailGroupDialog = mutableStateOf(false)
+
+    val showDeleteEmailGroupConfirmationDialog = mutableStateOf(false)
+    var deletingEmailGroupId by mutableStateOf("")
 
     LaunchedEffect(Unit) {
         viewModel.fetchEmailGroupHeadings()
@@ -112,7 +119,7 @@ fun EmailGroupManageUI(
                     icon = painterResource(Res.drawable.email_group_icon_create),
                     cornerRadius = 12.dp
                 ) {
-                    //showCreateOrModifyDialog.value = true
+                    showCreateEmailGroupDialog.value = true
                 }
             }
 
@@ -139,7 +146,10 @@ fun EmailGroupManageUI(
                             .weight(.35f)
                     ) {
                         items(emailGroupHeadings) { emailGroup ->
-                            EmailGroupItem(emailGroup = emailGroup, onDelete = {}, onSelect = {
+                            EmailGroupItem(emailGroup = emailGroup, onDelete = {
+                                deletingEmailGroupId = emailGroup.id
+                                showDeleteEmailGroupConfirmationDialog.value = true
+                            }, onSelect = {
                                 selectedEmailGroupHeading.value = emailGroup
                             })
                         }
@@ -156,6 +166,28 @@ fun EmailGroupManageUI(
             }
         }
     }
+
+    CreateNewEmailGroupDialog(
+        showDialog = showCreateEmailGroupDialog,
+        onCreate = { emailGroupName, file ->
+            viewModel.createEmailGroupWithCSVFile(groupName = emailGroupName, uploadedCsvFile = file)
+        },
+        onDismiss = {
+            showCreateEmailGroupDialog.value = false
+        }
+    )
+
+    DeleteEmailGroupConfirmationDialog(
+        showDialog = showDeleteEmailGroupConfirmationDialog,
+        onConfirm = {
+            viewModel.deleteEmailGroup(deletingEmailGroupId)
+            deletingEmailGroupId = ""
+        },
+        onDismiss = {
+            showDeleteEmailGroupConfirmationDialog.value = false
+            deletingEmailGroupId = ""
+        }
+    )
 }
 
 @Composable

@@ -7,6 +7,7 @@ import com.kavi.pbc.web.data.email.EmailGroupHeading
 import com.kavi.pbc.web.data.email.EmailItem
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.users.data.repository.remote.EmailGroupRepository
+import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,6 +24,23 @@ class EmailGroupManageViewModel: ViewModel() {
 
     private val _letterGroupedEmailList = MutableStateFlow(mapOf<Char, List<EmailItem>>())
     val letterGroupedEmailList: StateFlow<Map<Char, List<EmailItem>>> = _letterGroupedEmailList
+
+    fun createEmailGroupWithCSVFile(groupName: String, uploadedCsvFile: PlatformFile) {
+        viewModelScope.launch {
+            when(val response = emailGroupRemoteRepository.createEmailGroupFromFile(
+                groupName, uploadedCsvFile
+            )) {
+                is ResultWrapper.NetworkError, is ResultWrapper.UnAuthError, is ResultWrapper.HttpError -> {
+                    // Do nothing for now
+                }
+                is ResultWrapper.Success -> {
+                    response.value.body?.let {
+                        fetchEmailGroupHeadings()
+                    }
+                }
+            }
+        }
+    }
 
     fun fetchEmailGroupHeadings() {
         viewModelScope.launch {
@@ -87,6 +105,23 @@ class EmailGroupManageViewModel: ViewModel() {
                     response.value.body?.let {
                         _selectedEmailGroup.value = it
                         categorizeEmailList()
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteEmailGroup(deletingGroupId: String) {
+        viewModelScope.launch {
+            when (val response = emailGroupRemoteRepository.deleteEmailGroup(groupId = deletingGroupId)) {
+                is ResultWrapper.NetworkError, is ResultWrapper.UnAuthError, is ResultWrapper.HttpError -> {
+                    // Do nothing for now
+                }
+                is ResultWrapper.Success -> {
+                    response.value.body?.let {
+                        _emailGroupHeadings.value = _emailGroupHeadings.value
+                            .filterNot { it.id == deletingGroupId }
+                            .toMutableList()
                     }
                 }
             }

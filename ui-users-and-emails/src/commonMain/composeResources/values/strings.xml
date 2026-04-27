@@ -18,4 +18,14 @@
     <string name="email_group_label_cancel">Cancel</string>
     <string name="email_group_label_remove_confirmation">Are you sure to remove?</string>
     <string name="email_group_phrase_remove_confirmation">Do you want to remove this email from this email group? Once you remove this, this recipient will not receive any email related to this email group.</string>
+
+    <string name="email_group_label_new_group">Create Email Group</string>
+    <string name="email_group_phrase_new_group">Enter new email group name and upload a .csv file that contain all the emails that need to add into this group. You can download the required .csv file template from here too.</string>
+    <string name="email_group_label_csv_template">Download .csv file template</string>
+    <string name="email_group_label_new_group_name">Email group name</string>
+    <string name="email_group_label_select_file">Select a .csv/.exel file</string>
+    <string name="email_group_label_no_required_fields_create">Missing email-group name or missing email list .csv file. Please provide them and create email group again.</string>
+
+    <string name="email_group_label_delete_confirmation">Are you sure to delete?</string>
+    <string name="email_group_phrase_delete_confirmation">Do you want to delete this email-group? Once you delete this, you will no longer have accesses to those emails and application will not prompt this email group to send emails in the future.</string>
 </resources>
