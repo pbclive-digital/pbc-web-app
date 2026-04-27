@@ -70,6 +70,7 @@ fun PBCDashboardContainer(
     user: User,
     isAdminUser: Boolean,
     unAuthTabItemList: List<TabItem>,
+    givenTabIndex: Int = 0,
     tabContent: @Composable (selectedTabIndex: Int, appAuthStatus: AppAuthStatus?) -> Unit
 ) {
     val showSignUpDialog = remember { mutableStateOf(false) }
@@ -115,7 +116,7 @@ fun PBCDashboardContainer(
             }
         )
 
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(givenTabIndex) }
 
     if (showSignUpDialog.value) {
         ContractServiceLocator.locate(AuthContract::class).ProvideRegisterUI(

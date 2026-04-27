@@ -11,6 +11,12 @@ object DashboardPath {
     object DashboardUI
 
     @Serializable
+    @SerialName("${ROUTE}/dashboard-ui")
+    data class DashboardUIWithTab(
+        val tabName: String
+    )
+
+    @Serializable
     @SerialName("${ROUTE}/about-us")
     object AboutUs
 

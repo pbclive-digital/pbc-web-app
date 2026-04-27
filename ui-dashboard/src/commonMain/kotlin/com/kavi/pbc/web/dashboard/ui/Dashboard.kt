@@ -35,7 +35,7 @@ import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_questions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardUI(navController: NavController) {
+fun DashboardUI(navController: NavController, tabName: String? = null) {
 
     val viewModel: DashboardViewModel = viewModel { DashboardViewModel() }
 
@@ -66,12 +66,19 @@ fun DashboardUI(navController: NavController) {
         TabItem(name = stringResource(Res.string.dashboard_label_questions), icon = Res.drawable.dashboard_icon_ask_question)
     )
 
+    val givenIndex = tabName?.let {
+        findIndexFromName(it)
+    }?: run {
+        0
+    }
+
     PBCDashboardContainer (
         navController = navController,
         authTabItemList = authTabItemList,
         unAuthTabItemList = unAuthTabItemList,
         user = user.value,
-        isAdminUser = isAdminUser.value
+        isAdminUser = isAdminUser.value,
+        givenTabIndex = givenIndex
     ) { selectedTabIndex, appAuthStatus ->
         when(appAuthStatus) {
             AppAuthStatus.SIGN_IN -> {
@@ -105,5 +112,15 @@ fun DashboardUI(navController: NavController) {
                 }
             }
         }
+    }
+}
+
+private fun findIndexFromName(tabName: String): Int {
+    return when(tabName) {
+        "event" -> 0
+        "news" -> 1
+        "questions" -> 2
+        "profile" -> 3
+        else -> 0
     }
 }
