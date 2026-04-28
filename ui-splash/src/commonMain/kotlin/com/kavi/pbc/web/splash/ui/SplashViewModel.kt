@@ -2,9 +2,8 @@ package com.kavi.pbc.web.splash.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kavi.pbc.web.datastore.AppLocalStore
-import com.kavi.pbc.web.datastore.DataKey
 import com.kavi.pbc.web.network.model.ResultWrapper
+import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.splash.data.model.SplashUiState
@@ -31,6 +30,7 @@ class SplashViewModel: ViewModel() {
                 is ResultWrapper.Success -> {
                     // Store configuration
                     response.value.body?.let {
+                        Session.config = it
                         splashLocalRepository.storeAppConfig(it)
                     }
 

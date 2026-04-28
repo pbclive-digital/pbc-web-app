@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -15,21 +14,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -49,13 +43,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.kavi.pbc.web.common.ui.component.AppButtonWithIcon
 import com.kavi.pbc.web.common.ui.component.AppTooltipWrap
-import com.kavi.pbc.web.common.ui.component.TitleWithAction
 import com.kavi.pbc.web.common.ui.component.TitleWithActionComposable
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.email.EmailGroupHeading
 import com.kavi.pbc.web.data.email.EmailItem
-import com.kavi.pbc.web.data.news.News
+import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.users.ui.common.EmailGroupItem
 import com.kavi.pbc.web.users.ui.emails.create.CreateNewEmailGroupDialog
 import com.kavi.pbc.web.users.ui.emails.manage.dialog.AddEmailToEmailGroupDialog
@@ -66,13 +59,10 @@ import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_users_and_emails.generated.resources.Res
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_add_email
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_create
-import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_delete
-import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_remove_email
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_x
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_label_create
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_label_manage
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_label_tip_add_email
-import pbcwebapp.ui_users_and_emails.generated.resources.email_group_label_tip_remove_email
 import pbcwebapp.ui_users_and_emails.generated.resources.email_group_phrase_manage
 
 @Composable
@@ -145,13 +135,35 @@ fun EmailGroupManageUI(
                         modifier = Modifier
                             .weight(.35f)
                     ) {
-                        items(emailGroupHeadings) { emailGroup ->
-                            EmailGroupItem(emailGroup = emailGroup, onDelete = {
-                                deletingEmailGroupId = emailGroup.id
-                                showDeleteEmailGroupConfirmationDialog.value = true
-                            }, onSelect = {
-                                selectedEmailGroupHeading.value = emailGroup
-                            })
+                        Session.config?.generalEmailGroup?.let { generalEmailGroup ->
+                            item {
+                                // GENERAL EMAIL GROUP
+                                EmailGroupItem(emailGroup = generalEmailGroup, hideDelete = true,
+                                    onDelete = {}, onSelect = {
+                                    selectedEmailGroupHeading.value = generalEmailGroup
+                                })
+                            }
+                            items(emailGroupHeadings) { emailGroup ->
+                                // SKIP GENERAL EMAIL GROUP
+                                if (emailGroup.id != generalEmailGroup.id) {
+                                    EmailGroupItem(emailGroup = emailGroup, onDelete = {
+                                        deletingEmailGroupId = emailGroup.id
+                                        showDeleteEmailGroupConfirmationDialog.value = true
+                                    }, onSelect = {
+                                        selectedEmailGroupHeading.value = emailGroup
+                                    })
+                                }
+                            }
+                        }?: run {
+                            // WHEN GENERAL EMAIL GROUP CAN NOT FIND IN SESSION
+                            items(emailGroupHeadings) { emailGroup ->
+                                EmailGroupItem(emailGroup = emailGroup, onDelete = {
+                                    deletingEmailGroupId = emailGroup.id
+                                    showDeleteEmailGroupConfirmationDialog.value = true
+                                }, onSelect = {
+                                    selectedEmailGroupHeading.value = emailGroup
+                                })
+                            }
                         }
                     }
 
@@ -240,29 +252,6 @@ private fun SelectedEmailGroup(
                                 }
                         )
                     }
-
-                    /*VerticalDivider(
-                        modifier = Modifier
-                            .height(40.dp)
-                            .padding(start = 2.dp, end = 2.dp),
-                        thickness = 2.dp
-                    )
-
-                    AppTooltipWrap(
-                        tipLabel = stringResource(Res.string.email_group_label_tip_remove_email)
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.email_group_icon_remove_email),
-                            contentDescription = "Edit Event",
-                            tint = themeAdditionalColors.shadow,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(4.dp)
-                                .clickable {
-                                    //onModify.invoke()
-                                }
-                        )
-                    }*/
                 }
             }
 

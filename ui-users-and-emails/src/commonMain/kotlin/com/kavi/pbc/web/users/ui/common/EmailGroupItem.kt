@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +36,7 @@ import pbcwebapp.ui_users_and_emails.generated.resources.email_group_label_tip_d
 fun EmailGroupItem(
     modifier: Modifier = Modifier,
     emailGroup: EmailGroupHeading,
+    hideDelete: Boolean = false,
     onSelect: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -75,24 +75,26 @@ fun EmailGroupItem(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Column(
-                modifier = Modifier.padding(start = 8.dp),
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                AppTooltipWrap(
-                    tipLabel = stringResource(Res.string.email_group_label_tip_delete)
+            if (!hideDelete) {
+                Column(
+                    modifier = Modifier.padding(start = 8.dp),
+                    verticalArrangement = Arrangement.Bottom
                 ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.email_group_icon_delete),
-                        contentDescription = "Delete News",
-                        tint = themeAdditionalColors.shadow,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(4.dp)
-                            .clickable {
-                                onDelete.invoke()
-                            }
-                    )
+                    AppTooltipWrap(
+                        tipLabel = stringResource(Res.string.email_group_label_tip_delete)
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.email_group_icon_delete),
+                            contentDescription = "Delete News",
+                            tint = themeAdditionalColors.shadow,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(4.dp)
+                                .clickable {
+                                    onDelete.invoke()
+                                }
+                        )
+                    }
                 }
             }
         }
