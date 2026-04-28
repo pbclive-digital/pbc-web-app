@@ -112,6 +112,7 @@ fun EventManageUI(
 ) {
 
     val viewModel: EventManageViewModel = viewModel { EventManageViewModel() }
+    val emailGroupHeadings by viewModel.emailGroupHeadings.collectAsState()
 
     val selectedEvent = remember { mutableStateOf(Event()) }
     val isInitialEventSelected = remember { mutableStateOf(false) }
@@ -227,9 +228,14 @@ fun EventManageUI(
     if (showPublishConfirmationDialog.value) {
         PublishConfirmationDialog(
             showDialog = showPublishConfirmationDialog,
-            onAgree = {
+            emailGroups = emailGroupHeadings,
+            onAgree = { selectedEmailGroups ->
+                println("in PublishConfirmationDialog onAgree")
                 showPublishConfirmationDialog.value = false
-                viewModel.publishDraftEvent(eventId = publishingEventId.value)
+                viewModel.publishDraftEvent(
+                    eventId = publishingEventId.value,
+                    emailGroupHeadings = selectedEmailGroups
+                )
                 publishingEventId.value = ""
             },
             onDisagree = {
@@ -273,6 +279,7 @@ private fun DraftEventBlock(
 
     LaunchedEffect(Unit) {
         viewModel.fetchDraftEvents()
+        viewModel.fetchEmailGroupHeadings()
     }
 
     Text(

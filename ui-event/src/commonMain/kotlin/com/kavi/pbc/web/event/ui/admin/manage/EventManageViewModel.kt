@@ -2,8 +2,10 @@ package com.kavi.pbc.web.event.ui.admin.manage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kavi.pbc.web.data.email.EmailGroupHeading
 import com.kavi.pbc.web.data.event.Event
 import com.kavi.pbc.web.data.event.EventType
+import com.kavi.pbc.web.data.event.PublishEventRequest
 import com.kavi.pbc.web.event.data.model.EventManageMode
 import com.kavi.pbc.web.event.data.repository.remote.EventRemoteRepository
 import com.kavi.pbc.web.network.model.ResultWrapper
@@ -24,6 +26,9 @@ class EventManageViewModel: ViewModel() {
 
     private val _activeEventList = MutableStateFlow<List<Event>>(mutableListOf())
     val activeEventList: StateFlow<List<Event>> = _activeEventList
+
+    private val _emailGroupHeadings = MutableStateFlow<List<EmailGroupHeading>>(mutableListOf())
+    val emailGroupHeadings: StateFlow<List<EmailGroupHeading>> = _emailGroupHeadings
 
     fun fetchDraftEvents() {
         viewModelScope.launch {
@@ -70,16 +75,38 @@ class EventManageViewModel: ViewModel() {
         }
     }
 
-    fun publishDraftEvent(eventId: String) {
+    fun fetchEmailGroupHeadings() {
+        viewModelScope.launch {
+            when(val response = eventRemoteRepository.getEmailGroupHeadings()) {
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+
+                }
+                is ResultWrapper.Success -> {
+                    response.value.body?.let {
+                        _emailGroupHeadings.value = it
+                    }
+                }
+            }
+        }
+    }
+
+    fun publishDraftEvent(eventId: String, emailGroupHeadings: List<EmailGroupHeading>) {
         val eventFilter = _draftEventList.value.filter { it.id == eventId }
         if (eventFilter.isNotEmpty() && eventFilter.size == 1) {
+
+            val publishEventReq = PublishEventRequest(
+                event = eventFilter[0],
+                emailGroupHeadings = emailGroupHeadings
+            )
+
             viewModelScope.launch {
                 when (val response = eventRemoteRepository.publishDraftEvent(
                     eventId = eventId,
-                    event = eventFilter[0]
+                    publishEventReq = publishEventReq
                 )) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
                         // Nothing to do as per now.
+                        println()
                     }
                     is ResultWrapper.Success -> {
                         response.value.body?.let { updatedEvent ->

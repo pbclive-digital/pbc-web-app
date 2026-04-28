@@ -1,7 +1,9 @@
 package com.kavi.pbc.web.event.data.repository.remote
 
 import com.kavi.pbc.web.data.BaseResponse
+import com.kavi.pbc.web.data.email.EmailGroupHeading
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.PublishEventRequest
 import com.kavi.pbc.web.data.event.potluck.EventPotluck
 import com.kavi.pbc.web.data.event.potluck.EventPotluckContributor
 import com.kavi.pbc.web.data.event.potluck.PotluckDownloadLink
@@ -116,8 +118,16 @@ class EventRemoteRepository {
         }
     }
 
+    suspend fun getEmailGroupHeadings(): ResultWrapper<BaseResponse<List<EmailGroupHeading>>> {
+        return Network.shared.invokeApiCall { eventApi.getEmailGroupHeadings() }
+    }
+
     suspend fun publishDraftEvent(eventId: String, event: Event): ResultWrapper<BaseResponse<Event>> {
         return Network.shared.invokeApiCall { eventApi.publishDraftEvent(eventId, event) }
+    }
+
+    suspend fun publishDraftEvent(eventId: String, publishEventReq: PublishEventRequest): ResultWrapper<BaseResponse<Event>> {
+        return Network.shared.invokeApiCall { eventApi.publishDraftEvent(eventId, publishEventReq) }
     }
 
     suspend fun deleteEvent(eventId: String): ResultWrapper<BaseResponse<String>> {

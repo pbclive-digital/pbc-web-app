@@ -1,7 +1,9 @@
 package com.kavi.pbc.web.event.data.repository.remote
 
 import com.kavi.pbc.web.data.BaseResponse
+import com.kavi.pbc.web.data.email.EmailGroupHeading
 import com.kavi.pbc.web.data.event.Event
+import com.kavi.pbc.web.data.event.PublishEventRequest
 import com.kavi.pbc.web.data.event.potluck.EventPotluck
 import com.kavi.pbc.web.data.event.potluck.EventPotluckContributor
 import com.kavi.pbc.web.data.event.potluck.PotluckDownloadLink
@@ -77,8 +79,14 @@ interface EventApi {
                                    @Path("sheetId") sheetId: String,
                                    @Path("contributorId") contributorId: String): BaseResponse<EventSignUpSheetList>
 
+    @GET("email-group/get/all")
+    suspend fun getEmailGroupHeadings(): BaseResponse<List<EmailGroupHeading>>
+
     @PUT("event/put/publish/{eventId}")
     suspend fun publishDraftEvent(@Path("eventId") eventId: String, @Body event: Event): BaseResponse<Event>
+
+    @PUT("event/v2/put/publish/{eventId}")
+    suspend fun publishDraftEvent(@Path("eventId") eventId: String, @Body publishEventReq: PublishEventRequest): BaseResponse<Event>
 
     @DELETE("event/delete/{eventId}")
     suspend fun deleteEvent(@Path("eventId") eventId: String): BaseResponse<String>
