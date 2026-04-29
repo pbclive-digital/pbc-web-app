@@ -2,6 +2,7 @@ package com.kavi.pbc.web.auth.data.repository.remote
 
 import com.kavi.pbc.web.data.BaseResponse
 import com.kavi.pbc.web.data.auth.AuthToken
+import com.kavi.pbc.web.data.email.EmailGroupHeading
 import com.kavi.pbc.web.data.user.User
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.GET
@@ -16,6 +17,9 @@ interface AuthApi {
 
     @GET("user/get/{userId}")
     suspend fun getUser(@Path("userId") userId: String): BaseResponse<User>
+
+    @GET("email-group/get/email-groups/{email}")
+    suspend fun getUserEmailGroupsByEmail(@Path("email") email: String): BaseResponse<List<EmailGroupHeading>>
 
     @GET("auth/get/token/{email}/{userId}")
     suspend fun requestAuthToken(@Path("email") email: String,

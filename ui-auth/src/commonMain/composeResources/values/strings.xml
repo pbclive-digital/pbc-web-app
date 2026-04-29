@@ -20,4 +20,7 @@
     <string name="auth_phrase_profile_pic">This profile picture is extracted from your connected Google Account.</string>
     <string name="auth_label_user_favorite">Favorites</string>
     <string name="auth_phrase_user_favorite">Following are the items you marked as interested, you have picked Events, News etc... as your favorites</string>
+
+    <string name="auth_label_email_groups">Email Groups you are in</string>
+    <string name="auth_phrase_email_groups">Following are the email-groups your email already included. These email groups are used by PBC to create multiple communication channels to our devotees.</string>
 </resources>

@@ -1,11 +1,13 @@
 package com.kavi.pbc.web.auth.ui.profile
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,11 +23,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,10 +57,12 @@ import pbcwebapp.ui_auth.generated.resources.auth_label_address
 import pbcwebapp.ui_auth.generated.resources.auth_label_basic_info
 import pbcwebapp.ui_auth.generated.resources.auth_label_edit
 import pbcwebapp.ui_auth.generated.resources.auth_label_email
+import pbcwebapp.ui_auth.generated.resources.auth_label_email_groups
 import pbcwebapp.ui_auth.generated.resources.auth_label_name
 import pbcwebapp.ui_auth.generated.resources.auth_label_phone_num
 import pbcwebapp.ui_auth.generated.resources.auth_label_user_favorite
 import pbcwebapp.ui_auth.generated.resources.auth_phrase_basic_info
+import pbcwebapp.ui_auth.generated.resources.auth_phrase_email_groups
 import pbcwebapp.ui_auth.generated.resources.auth_phrase_profile_pic
 import pbcwebapp.ui_auth.generated.resources.auth_phrase_user_favorite
 
@@ -124,6 +132,8 @@ private fun PhoneUI(viewModel: UserProfileViewModel) {
 
         BasicInfoCard(profileUser = profileUser)
 
+        UserEmailGroups(viewModel = viewModel)
+
         UserFavorites()
     }
 }
@@ -182,6 +192,8 @@ private fun WebUI(viewModel: UserProfileViewModel) {
                 .verticalScroll(rememberScrollState())
         ) {
             BasicInfoCard(profileUser = profileUser)
+
+            UserEmailGroups(viewModel = viewModel)
 
             UserFavorites()
         }
@@ -333,10 +345,87 @@ private fun BasicInfoCard(profileUser: User) {
 }
 
 @Composable
-private fun UserFavorites() {
+private fun UserEmailGroups(viewModel: UserProfileViewModel) {
+
+    val userEmailGroups by viewModel.emailGroupHeadings.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchUserEmailGroups()
+    }
+
     Card(
         modifier = Modifier
             .padding(top = 20.dp)
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background,
+        ),
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column (
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Title(
+                titleText = stringResource(Res.string.auth_label_email_groups),
+                textSize = 32
+            )
+
+            Text(
+                text = stringResource(Res.string.auth_phrase_email_groups),
+                fontFamily = PBCFontFamily,
+                fontWeight = FontWeight.Light,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth()
+            )
+
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.tertiary,
+                        shape = RoundedCornerShape(8.dp))
+                    .clip( RoundedCornerShape(8.dp)),
+            ) {
+                Column (
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(8.dp)
+                ) {
+                    FlowRow(
+                        maxItemsInEachRow = 10,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        userEmailGroups.forEach { heading ->
+                            SuggestionChip(
+                                modifier = Modifier.padding(4.dp),
+                                label = {
+                                    Text(
+                                        text = heading.name,
+                                        fontFamily = PBCFontFamily,
+                                        fontSize = 14.sp,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                },
+                                onClick = {
+                                    // Nothing to Do
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UserFavorites() {
+    Card(
+        modifier = Modifier
+            .padding(top = 20.dp, bottom = 20.dp)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background,

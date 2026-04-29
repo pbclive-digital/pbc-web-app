@@ -2,6 +2,7 @@ package com.kavi.pbc.web.auth.data.repository.remote
 
 import com.kavi.pbc.web.data.BaseResponse
 import com.kavi.pbc.web.data.auth.AuthToken
+import com.kavi.pbc.web.data.email.EmailGroupHeading
 import com.kavi.pbc.web.data.user.User
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.ResultWrapper
@@ -16,6 +17,10 @@ class AuthRemoteRepository {
 
     suspend fun getUser(userId: String): ResultWrapper<BaseResponse<User>> {
         return Network.shared.invokeApiCall { authApi.getUser(userId = userId) }
+    }
+
+    suspend fun getUserEmailGroupsByEmail(email: String): ResultWrapper<BaseResponse<List<EmailGroupHeading>>> {
+        return Network.shared.invokeApiCall { authApi.getUserEmailGroupsByEmail(email = email) }
     }
 
     suspend fun requestAuthToken(email: String, userId: String): ResultWrapper<BaseResponse<AuthToken>> {
