@@ -185,6 +185,7 @@ private fun QuestionListPager(
 
     val showCreateQuestionDialog = remember { mutableStateOf(false) }
     val showAuthInviteDialog = remember { mutableStateOf(false) }
+    val showSignUpDialog = remember { mutableStateOf(false) }
 
     Column {
         AppFilledButton(
@@ -289,11 +290,16 @@ private fun QuestionListPager(
     }
 
     if (showAuthInviteDialog.value) {
-        ContractServiceLocator.locate(AuthContract::class).ProvideSignUpInviteUI(
+        ContractServiceLocator.locate(AuthContract::class).ProvideCompleteSignInFlow(
             showDialog = showAuthInviteDialog,
-            onCancel = {
-                showAuthInviteDialog.value = false
-            }
+        ) {
+            showSignUpDialog.value = true
+        }
+    }
+
+    if (showSignUpDialog.value) {
+        ContractServiceLocator.locate(AuthContract::class).ProvideCompleteSignUpFlow(
+            showDialog = showSignUpDialog
         )
     }
 }

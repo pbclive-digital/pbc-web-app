@@ -24,6 +24,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -46,6 +47,8 @@ import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.data.user.User
 import com.kavi.pbc.web.datastore.AppLocalStore
 import com.kavi.pbc.web.datastore.DataKey
+import com.kavi.pbc.web.local.events.PBCEventBus
+import com.kavi.pbc.web.local.events.event.PBCAppEvent
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
@@ -80,6 +83,16 @@ fun PBCDashboardContainer(
             AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS)
                 ?: run { AppAuthStatus.NONE }
         )
+    }
+
+    LaunchedEffect(Unit) {
+        PBCEventBus.events.collect { event ->
+            when (event) {
+                is PBCAppEvent.UserLogin -> {
+                    appAuthStatus = event.authStatus
+                }
+            }
+        }
     }
 
     val profileActionConfig = ProfileActionConfig(

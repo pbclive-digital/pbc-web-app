@@ -22,7 +22,10 @@ interface AuthContract: CommonContract {
                           onCreatedWithoutAuth: () -> Unit, onCancel: () -> Unit)
 
     @Composable
-    fun ProvideSignUpInviteUI(showDialog: MutableState<Boolean>, onCancel: () -> Unit)
+    fun ProvideCompleteSignInFlow(showDialog: MutableState<Boolean>, onRegRequired: () -> Unit)
+
+    @Composable
+    fun ProvideCompleteSignUpFlow(showDialog: MutableState<Boolean>)
 
     @Composable
     fun GetUserProfileUI(navController: NavController)

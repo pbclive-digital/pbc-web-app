@@ -252,6 +252,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
     val eventSignUpSheetData by viewModel.eventSignUpSheetData.collectAsState()
 
     val showAuthInviteDialog = remember { mutableStateOf(false) }
+    val showSignUpDialog = remember { mutableStateOf(false) }
 
     val registrationSheetState = rememberModalBottomSheetState()
     val showRegistrationSheet = remember { mutableStateOf(false) }
@@ -610,11 +611,16 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
     }
 
     if (showAuthInviteDialog.value) {
-        ContractServiceLocator.locate(AuthContract::class).ProvideSignUpInviteUI(
+        ContractServiceLocator.locate(AuthContract::class).ProvideCompleteSignInFlow(
             showDialog = showAuthInviteDialog,
-            onCancel = {
-                showAuthInviteDialog.value = false
-            }
+        ) {
+            showSignUpDialog.value = true
+        }
+    }
+
+    if (showSignUpDialog.value) {
+        ContractServiceLocator.locate(AuthContract::class).ProvideCompleteSignUpFlow(
+            showDialog = showSignUpDialog
         )
     }
 

@@ -84,6 +84,7 @@ fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) {
     var modifyAppointment: Appointment? by remember { mutableStateOf(null) }
 
     val showAuthInviteDialog = remember { mutableStateOf(false) }
+    val showSignUpDialog = remember { mutableStateOf(false) }
 
     Row {
         Column(
@@ -336,11 +337,16 @@ fun WebContent(maxHeight: Dp, viewModel: AppointmentDashboardViewModel) {
     }
 
     if (showAuthInviteDialog.value) {
-        ContractServiceLocator.locate(AuthContract::class).ProvideSignUpInviteUI(
+        ContractServiceLocator.locate(AuthContract::class).ProvideCompleteSignInFlow(
             showDialog = showAuthInviteDialog,
-            onCancel = {
-                showAuthInviteDialog.value = false
-            }
+        ) {
+            showSignUpDialog.value = true
+        }
+    }
+
+    if (showSignUpDialog.value) {
+        ContractServiceLocator.locate(AuthContract::class).ProvideCompleteSignUpFlow(
+            showDialog = showSignUpDialog
         )
     }
 }

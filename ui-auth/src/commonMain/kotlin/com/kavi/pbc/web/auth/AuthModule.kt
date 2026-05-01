@@ -11,8 +11,13 @@ import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.data.user.User
 import com.kavi.pbc.web.datastore.AppLocalStore
 import com.kavi.pbc.web.datastore.DataKey
+import com.kavi.pbc.web.local.events.PBCEventBus
+import com.kavi.pbc.web.local.events.event.PBCAppEvent
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.model.AuthContract
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AuthModule: AuthContract {
 
@@ -69,9 +74,60 @@ class AuthModule: AuthContract {
     }
 
     @Composable
-    override fun ProvideSignUpInviteUI(showDialog: MutableState<Boolean>,
-                                       onCancel: () -> Unit) {
-        SignUpInviteDialog(showDialog = showDialog, onCancel = onCancel)
+    override fun ProvideCompleteSignInFlow(showDialog: MutableState<Boolean>, onRegRequired: () -> Unit) {
+
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+
+        SignUpInviteDialog(showDialog = showDialog, {
+            signInWithGoogle()
+            retrieveCurrentUser { user ->
+                user?.let {
+                    authServiceModel.fetchUserStatus(it.email, it.id!!) { authStatus ->
+                        if (authStatus == AppAuthStatus.SIGN_UP_REQUIRED) {
+                            // Navigate to register screen
+                            onRegRequired.invoke()
+                        } else {
+                            // Re-login and update auth status
+                            AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, authStatus)
+                            // Emit login event
+                            coroutineScope.launch {
+                                PBCEventBus.publish(PBCAppEvent.UserLogin(authStatus = authStatus))
+                            }
+                        }
+                    }
+                }?: run {
+                    // Set to default
+                    AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, AppAuthStatus.NONE)
+                }
+            }
+            showDialog.value = false
+        })
+    }
+
+    @Composable
+    override fun ProvideCompleteSignUpFlow(showDialog: MutableState<Boolean>) {
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+
+        RegisterDialog(
+            showDialog = showDialog,
+            onAuthenticated = {
+                // Re-login and update auth status
+                AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, AppAuthStatus.SIGN_IN)
+                // Emit login event
+                coroutineScope.launch {
+                    PBCEventBus.publish(PBCAppEvent.UserLogin(authStatus = AppAuthStatus.SIGN_IN))
+                }
+                showDialog.value = false
+            },
+            onCreatedWithoutAuth = {
+                // Re-login and update auth status
+                AppLocalStore.shared.storeValue(DataKey.APP_USER_AUTH_STATUS, AppAuthStatus.FAILED)
+                showDialog.value = false
+            },
+            onCancel = {
+                showDialog.value = false
+            }
+        )
     }
 
     @Composable

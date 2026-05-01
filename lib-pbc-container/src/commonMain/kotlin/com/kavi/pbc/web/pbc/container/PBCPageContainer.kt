@@ -14,11 +14,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.kavi.pbc.web.common.ui.component.AppLinkButton
 import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
@@ -36,12 +35,13 @@ import com.kavi.pbc.web.data.auth.AppAuthStatus
 import com.kavi.pbc.web.data.user.User
 import com.kavi.pbc.web.datastore.AppLocalStore
 import com.kavi.pbc.web.datastore.DataKey
+import com.kavi.pbc.web.local.events.PBCEventBus
+import com.kavi.pbc.web.local.events.event.PBCAppEvent
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.navigation.DashboardPath
 import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
-import com.kavi.pbc.web.pbc.container.ui.AdditionalActionComponent
 import com.kavi.pbc.web.pbc.container.ui.ProfileActionComponent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -65,6 +65,16 @@ fun PBCPageContainer(
             AppLocalStore.shared.retrieveValue<AppAuthStatus>(key = DataKey.APP_USER_AUTH_STATUS)
                 ?: run { AppAuthStatus.NONE }
         )
+    }
+
+    LaunchedEffect(Unit) {
+        PBCEventBus.events.collect { event ->
+            when (event) {
+                is PBCAppEvent.UserLogin -> {
+                    appAuthStatus = event.authStatus
+                }
+            }
+        }
     }
 
     val profileActionConfig = ProfileActionConfig(

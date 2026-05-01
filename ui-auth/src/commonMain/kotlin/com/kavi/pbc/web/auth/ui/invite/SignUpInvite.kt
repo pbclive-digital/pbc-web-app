@@ -30,15 +30,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_auth.generated.resources.Res
 import pbcwebapp.ui_auth.generated.resources.auth_image_invite
-import pbcwebapp.ui_auth.generated.resources.auth_label_close
 import pbcwebapp.ui_auth.generated.resources.auth_label_join_us
 import pbcwebapp.ui_auth.generated.resources.auth_phrase_join_us
-import pbcwebapp.ui_auth.generated.resources.auth_phrase_join_us_guide
 
 @Composable
 fun SignUpInviteDialog(
     showDialog: MutableState<Boolean>,
-    onCancel: () -> Unit
+    joinWithUs: () -> Unit
 ) {
     BoxWithConstraints {
         val maxWidth = this.maxWidth
@@ -59,16 +57,16 @@ fun SignUpInviteDialog(
             modifier = modifier,
             showDialog = showDialog.value,
             onDismissRequest = {
-                onCancel.invoke()
+                showDialog.value = false
             }
         ) {
-            SignUpInviteContent(onCancel = onCancel, screenType = screenType)
+            SignUpInviteContent(joinUs = joinWithUs, screenType = screenType)
         }
     }
 }
 
 @Composable
-fun SignUpInviteContent(onCancel: () -> Unit, screenType: ScreenType) {
+private fun SignUpInviteContent(joinUs: () -> Unit, screenType: ScreenType) {
 
     val modifier = when(screenType) {
         ScreenType.PHONE -> Modifier
@@ -124,7 +122,7 @@ fun SignUpInviteContent(onCancel: () -> Unit, screenType: ScreenType) {
                     .fillMaxWidth()
             )
 
-            Text(
+            /*Text(
                 text = stringResource(Res.string.auth_phrase_join_us_guide),
                 fontFamily = PBCFontFamily,
                 fontSize = 14.sp,
@@ -133,15 +131,15 @@ fun SignUpInviteContent(onCancel: () -> Unit, screenType: ScreenType) {
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .fillMaxWidth()
-            )
+            )*/
 
             AppFilledButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                label = stringResource(Res.string.auth_label_close)
+                label = stringResource(Res.string.auth_label_join_us)
             ) {
-                onCancel.invoke()
+                joinUs.invoke()
             }
         }
     }
