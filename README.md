@@ -1,42 +1,79 @@
-This is a Kotlin Multiplatform project targeting Web.
-
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
+# PBC-Web-App
+This is a web application built on top of Compose Multiplatform - Web. This catering user functionalities for Pittsburgh Buddhist Center. This web application compatible with
+all modern web/mobile browsers.
+* [composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+    - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
+    - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
+
+## Prerequisites
+* Java 21
+
+## Technologies & Tools
+* Kotlin -- v2.3.0
+* Gradle -- v9.1.0
+* Firebase - Integration
+
+## Build
+Build the code by running following command. This build is for full gradle build.
+<br />
+````
+$ ./gradlew clean --no-build-cache build
+````
 
 ### Build and Run Web Application
-
 To build and run the development version of the web app, use the run configuration from the run widget
 in your IDE's toolbar or run it directly from the terminal:
 - for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
+    - on macOS/Linux
+      ```shell
+      ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+      ```
+    - on Windows
+      ```shell
+      .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
+      ```
 
----
+## New Development
+In this application development, we are trying to follow trunk-base approach for branching. Therefore, if there is any new development or bug-fx or hot-fix
+available, our development branch will be `main` branch.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+## Release and Deploy
+This application use release naming pattern and this has two deployment environments. One is staging and the other one is for production. 
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+### Release Naming
+Application is following pattern to name the releases. It built with release year, major or feature drop version, minor or bug-fix.
+````
+Pattern : <release-year>.<month>.<release-index> 
+Example : 2026.1.0
+````
+
+### Deploy to Staging
+Github-pages used as `staging` environment of this application. Once new changes merged to `main` branch, that automatically
+deployed to github-pages using github-action.
+
+1. Develop or address the new change in a branch took from `main` branch. Use `feature/<feature or changes name>` naming convention to name feature branches.
+2. Once change is tested locally, pushed that branch to remote and create a pull request to main branch in github.
+3. When admin team check and review the pull-request. Changes will merge to `main` branch and deploy changes to staging environment.
+
+### Deploy to Production
+Firebase Hosting is using as production environment for this application. Once changes are testing in staging environment, use firebase cli
+to deploy changes to production from `main` branch.
+
+### Steps to follow in new staging-release
+1. From feature branch update the application version and set application environment to `staging` in `gradle.properties` file.
+2. Create a pull-request from feature branch to `main` branch.
+3. Merge feature branch to `main` branch after having required approvals.
+4. Let github-action to execute from `main` branch to deploy to `staging` environment.
+
+### Steps to follow in new production-release
+1. Create a new release branch from main branch as `release/<release-app-version>`. Eg: `release/2026.1.0`
+2. Update the application environment to `prod` in `gradle.properties` file.
+3. Create a pull request from release branch to `main` branch.
+4. Merge changes to `main` branch after having required approvals.
+5. Checkout to `main` branch and pull changes to local.
+6. Use `Firebase-CLI` to execute the production deployment.
+
+## Notes
+* All tool version is configured in `pbc-web-app/gradle/libs.versions.toml`.
+

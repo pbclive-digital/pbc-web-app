@@ -12,9 +12,11 @@ buildkonfig {
     packageName = "com.kavi.pbc.web.app"
 
     val environment = project.findProperty("app.env")?.toString() ?: "dev"
+    val version = project.findProperty("app.version")?.toString() ?: "0.0.1"
 
     // Default values
     defaultConfigs {
+        buildConfigField(FieldSpec.Type.STRING, "APP_VERSION", version)
         when(environment) {
             "dev" -> { // Development variant
                 buildConfigField(FieldSpec.Type.STRING, "API_SCHEME", "http")

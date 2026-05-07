@@ -22,28 +22,36 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  identify-env:
+  fetch-app-properties:
     runs-on: ubuntu-latest
     outputs:
-      env_type: ${{ steps.get_env.outputs.app_env }}
+      env_type: ${{ steps.get_properties.outputs.app_env }}
+      app_version: ${{ steps.get_properties.outputs.version }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step to parse gradle.properties
+      # Step to parse gradle.properties &
       - name: Detect Environment
-        id: get_env
+        id: get_properties
         run: |
           # Grabs the value of app.env and removes whitespace
           APP_ENV=$(grep 'app.env' gradle.properties | cut -d'=' -f2 | xargs)
+          
+          # Grabs the value of app.version and remove whitespace
+          APP_VERSION=$(grep 'app.version' gradle.properties | cut -d'=' -f2 | xargs)
+          
           echo "Detected environment: $APP_ENV"
           echo "app_env=$APP_ENV" >> $GITHUB_OUTPUT
+          
+          echo "Detected environment: $APP_VERSION"
+          echo "version=$APP_VERSION" >> $GITHUB_OUTPUT
 
   build-deploy-staging:
-    needs: identify-env
+    needs: fetch-app-properties
     # Only runs if app.env=staging
-    if: needs.identify-env.outputs.env_type == 'staging'
+    if: needs.fetch-app-properties.outputs.env_type == 'staging'
     runs-on: ubuntu-latest
 
     permissions:
@@ -107,13 +115,22 @@ jobs:
           git push git@github.com:pbclive-digital/pbc-web-app.git staging-deployment
       
   build-deploy-production:
-    needs: identify-env
+    needs: fetch-app-properties
 
     # Only runs if app.env=prod
-    if: needs.identify-env.outputs.env_type == 'prod'
+    if: needs.fetch-app-properties.outputs.env_type == 'prod'
     runs-on: ubuntu-latest
 
     steps:
       - name: Firebase hosting deployment
         run: |
-          echo "This is just a test task to test different deployment conditions."
+          echo "Master branch is ready for Firebase deployment. Use Firebase CLI to deploy to Firebase"
+
+      - name: Create git-tag for release
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          TAG_NAME="v${needs.fetch-app-properties.outputs.version}"
+          git tag -a "$TAG_NAME" -m "Create a tag for production release $TAG_NAME"
+          git push origin "$TAG_NAME"
