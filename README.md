@@ -35,14 +35,16 @@ in your IDE's toolbar or run it directly from the terminal:
       ```
 
 ## New Development
-In this application development, we are trying to follow trunk-base approach for branching. Therefore, if there is any new development or bug-fx or hot-fix
+In this application development, we are following trunk-base approach for branching. Therefore, if there is any new development or bug-fx or hot-fix
 available, our development branch will be `main` branch.
+* Develop or address the new change in a branch took from `main` branch. Use `feature/<feature or changes name>` naming convention to name feature branches. 
+* Once change is tested locally, pushed that branch to remote and create a pull request to main branch in github. 
 
 ## Release and Deploy
 This application use release naming pattern and this has two deployment environments. One is staging and the other one is for production. 
 
 ### Release Naming
-Application is following pattern to name the releases. It built with release year, major or feature drop version, minor or bug-fix.
+Application release naming pattern is built with release year, release month, and release index for releasing month.
 ````
 Pattern : <release-year>.<month>.<release-index> 
 Example : 2026.1.0
@@ -52,21 +54,17 @@ Example : 2026.1.0
 Github-pages used as `staging` environment of this application. Once new changes merged to `main` branch, that automatically
 deployed to github-pages using github-action.
 
-1. Develop or address the new change in a branch took from `main` branch. Use `feature/<feature or changes name>` naming convention to name feature branches.
-2. Once change is tested locally, pushed that branch to remote and create a pull request to main branch in github.
-3. When admin team check and review the pull-request. Changes will merge to `main` branch and deploy changes to staging environment.
-
-### Deploy to Production
-Firebase Hosting is using as production environment for this application. Once changes are testing in staging environment, use firebase cli
-to deploy changes to production from `main` branch.
-
-### Steps to follow in new staging-release
+#### Steps to follow in new staging-release
 1. From feature branch update the application version and set application environment to `staging` in `gradle.properties` file.
 2. Create a pull-request from feature branch to `main` branch.
 3. Merge feature branch to `main` branch after having required approvals.
 4. Let github-action to execute from `main` branch to deploy to `staging` environment.
 
-### Steps to follow in new production-release
+### Deploy to Production
+Firebase Hosting is using as production environment for this application. Once changes are testing in staging environment, use firebase cli
+to deploy changes to production from `main` branch.
+
+#### Steps to follow in new production-release
 1. Create a new release branch from main branch as `release/<release-app-version>`. Eg: `release/2026.1.0`
 2. Update the application environment to `prod` in `gradle.properties` file.
 3. Create a pull request from release branch to `main` branch.

@@ -5,6 +5,7 @@ import com.kavi.pbc.web.data.config.Config
 import com.kavi.pbc.web.data.user.User
 
 object Session {
+    var appVersion: String = "0.0.1"
     var authToken: AuthToken? = null
     var user: User? = null
     var config: Config? = null

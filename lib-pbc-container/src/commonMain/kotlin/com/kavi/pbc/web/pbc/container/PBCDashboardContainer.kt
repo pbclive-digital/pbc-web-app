@@ -233,7 +233,8 @@ fun PBCDashboardContainer(
                             horizontalAlignment = Alignment.End,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            // TODO: Uncomment this when it ready
+                            // TODO: Uncomment this when it ready.
+                            //  These are the header-link buttons for (Contact Us, About Us, etc...)
                             // AdditionalActionComponent(navController = navController)
 
                             Spacer(modifier = Modifier.height(12.dp))

@@ -17,6 +17,7 @@ import com.kavi.pbc.web.dashboard.DashboardModule
 import com.kavi.pbc.web.event.EventModule
 import com.kavi.pbc.web.network.Network
 import com.kavi.pbc.web.network.model.NetConfig
+import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.news.NewsModule
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AppointmentContract
@@ -40,6 +41,9 @@ fun App(
 
     // Initiate Network
     Network.shared.initiate(NetConfig(BuildKonfig.API_SCHEME, BuildKonfig.API_DOMAIN))
+
+    // Assign application version
+    Session.appVersion = BuildKonfig.APP_VERSION
 
     val navController = rememberNavController()
 
