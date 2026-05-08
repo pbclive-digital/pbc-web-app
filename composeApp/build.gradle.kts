@@ -8,11 +8,14 @@ plugins {
     alias(libs.plugins.buildKonfig)
 }
 
+var environment = project.findProperty("app.env")?.toString() ?: "dev"
+var version = project.findProperty("app.version")?.toString() ?: "0.0.1"
+
 buildkonfig {
     packageName = "com.kavi.pbc.web.app"
 
-    val environment = project.findProperty("app.env")?.toString() ?: "dev"
-    val version = project.findProperty("app.version")?.toString() ?: "0.0.1"
+    environment = project.findProperty("app.env")?.toString() ?: "dev"
+    version = project.findProperty("app.version")?.toString() ?: "0.0.1"
 
     // Default values
     defaultConfigs {
@@ -79,6 +82,23 @@ kotlin {
             implementation(projects.uiUsersAndEmails)
         }
     }
+}
+
+// Task to copy the correct config before the build runs
+tasks.register<Copy>("prepareFirebaseConfig") {
+    from("src/webMain/resources/config/config-$environment.js")
+    into("build/processedResources/wasmJs/main")
+    rename { "firebase-config.js" }
+}
+
+// Specifically for the "Run" button in Android Studio
+tasks.named("wasmJsProcessResources") {
+    dependsOn("prepareFirebaseConfig")
+}
+
+// Make the dependency for `wasmJsBrowserDistribution` task on app distribution bundle
+tasks.named("wasmJsBrowserDistribution") {
+    dependsOn("prepareFirebaseConfig")
 }
 
 
