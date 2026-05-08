@@ -286,6 +286,7 @@ class EventCreateViewModel: ViewModel() {
     }
 
     fun uploadEventImageAndCreateOrUpdateEvent(isModify: Boolean = false) {
+        _eventCreationOrModifyState.value = EventCreateOrModifyUiState.PENDING
         val validationFormResult = isValidNewsForm()
         if (validationFormResult.first) {
             val formatedEventName = _createOrModifyEvent.value.name

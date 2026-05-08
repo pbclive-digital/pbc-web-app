@@ -56,6 +56,7 @@ import com.kavi.pbc.web.common.ui.component.AppDatePickerButton
 import com.kavi.pbc.web.common.ui.component.AppDatePickerDialog
 import com.kavi.pbc.web.common.ui.component.AppDropDownMenu
 import com.kavi.pbc.web.common.ui.component.AppFilledButton
+import com.kavi.pbc.web.common.ui.component.AppLoadingDialog
 import com.kavi.pbc.web.common.ui.component.AppOutlineMultiLineTextField
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
 import com.kavi.pbc.web.common.ui.component.AppTimePickerButton
@@ -104,6 +105,7 @@ import pbcwebapp.ui_event.generated.resources.event_label_potluck_is_potluck_hel
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_setup_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_agenda_available
 import pbcwebapp.ui_event.generated.resources.event_label_agenda_in_admin
+import pbcwebapp.ui_event.generated.resources.event_label_loading_message
 import pbcwebapp.ui_event.generated.resources.event_label_registration_in_admin
 import pbcwebapp.ui_event.generated.resources.event_label_registration_required
 import pbcwebapp.ui_event.generated.resources.event_label_title
@@ -126,6 +128,7 @@ fun EventCreateUI(
     eventManageOrCreate: MutableState<EventManageOrCreate>,
     modifyEvent: Event? = null
 ) {
+    val showLoadingDialog = remember { mutableStateOf(false) }
     val viewModel: EventCreateViewModel = viewModel { EventCreateViewModel() }
     val isModify = modifyEvent != null
 
@@ -313,20 +316,30 @@ fun EventCreateUI(
 
     when(eventCreationOrModifyState) {
         EventCreateOrModifyUiState.NONE -> {}
-        EventCreateOrModifyUiState.PENDING -> {}
+        EventCreateOrModifyUiState.PENDING -> {
+            showLoadingDialog.value = true
+        }
         EventCreateOrModifyUiState.EMPTY_FIELD -> {
+            showLoadingDialog.value = false
             errorBalloonVisibility.value = true
             errorBalloonMessage = stringResource(Res.string.event_phrase_create_or_modify_empty_fields) + eventFormValidationError
         }
         EventCreateOrModifyUiState.FAILURE -> {
+            showLoadingDialog.value = false
             errorBalloonVisibility.value = true
             errorBalloonMessage = stringResource(Res.string.event_phrase_create_or_modify_failure)
         }
         EventCreateOrModifyUiState.SUCCESS -> {
+            showLoadingDialog.value = false
             eventManageOrCreate.value = EventManageOrCreate.MANAGE
             viewModel.revokeEventCreateOrModifyUiState()
         }
     }
+
+    AppLoadingDialog(
+        showLoadingDialog = showLoadingDialog,
+        loadingMessage = stringResource(Res.string.event_label_loading_message)
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

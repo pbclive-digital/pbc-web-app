@@ -20,8 +20,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.lib_common_ui.generated.resources.Res
-import pbcwebapp.lib_common_ui.generated.resources.common_date_picker_cancel
-import pbcwebapp.lib_common_ui.generated.resources.common_date_picker_pick
+import pbcwebapp.lib_common_ui.generated.resources.common_label_date_picker_cancel
+import pbcwebapp.lib_common_ui.generated.resources.common_label_date_picker_pick
 import kotlin.time.Clock
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +41,7 @@ fun AppDatePickerDialog(
             }) {
                 Text(
                     modifier = Modifier.padding(end = 4.dp),
-                    text = stringResource(Res.string.common_date_picker_pick),
+                    text = stringResource(Res.string.common_label_date_picker_pick),
                     fontFamily = PBCFontFamily,
                     fontWeight = FontWeight.Bold
                 )
@@ -50,7 +50,7 @@ fun AppDatePickerDialog(
         dismissButton = {
             TextButton(onClick = { onDismissAction.invoke() }) {
                 Text(
-                    text = stringResource(Res.string.common_date_picker_cancel),
+                    text = stringResource(Res.string.common_label_date_picker_cancel),
                     fontFamily = PBCFontFamily,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -94,7 +94,7 @@ fun AppTimePickerDialog (
                 onDismiss()
             }) {
                 Text(
-                    text = stringResource(Res.string.common_date_picker_pick),
+                    text = stringResource(Res.string.common_label_date_picker_pick),
                     fontFamily = PBCFontFamily,
                     fontWeight = FontWeight.Bold
                 )
@@ -103,7 +103,7 @@ fun AppTimePickerDialog (
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(
-                    text = stringResource(Res.string.common_date_picker_cancel),
+                    text = stringResource(Res.string.common_label_date_picker_cancel),
                     fontFamily = PBCFontFamily,
                     fontWeight = FontWeight.SemiBold
                 )
