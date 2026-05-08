@@ -29,6 +29,7 @@ import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.dashboard.data.model.AdminAction
 import com.kavi.pbc.web.dashboard.ui.common.AdminItem
+import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.EventContract
 import com.kavi.pbc.web.parent.contract.model.NewsContract
@@ -78,6 +79,16 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                         /*AdminItem(label = "Broadcast Messages") {
                             selectedAction = AdminAction.BROADCAST_MSG
                         }*/
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "App Version: ${Session.appVersion}",
+                                fontFamily = PBCFontFamily,
+                                fontSize = 14.sp
+                            )
+                        }
                     }
                     Column(
                         modifier = Modifier
