@@ -17,8 +17,8 @@ all modern web/mobile browsers.
 ## Build
 Build the code by running following command. This build is for full gradle build.
 <br />
-````
-$ ./gradlew clean --no-build-cache build
+````shell
+./gradlew clean --no-build-cache build
 ````
 
 ### Build and Run Web Application
@@ -67,10 +67,15 @@ to deploy changes to production from `main` branch.
 #### Steps to follow in new production-release
 1. Create a new release branch from main branch as `release/<release-app-version>`. Eg: `release/2026.1.0`
 2. Update the application environment to `prod` in `gradle.properties` file.
-3. Create a pull request from release branch to `main` branch.
-4. Merge changes to `main` branch after having required approvals.
-5. Checkout to `main` branch and pull changes to local.
-6. Use `Firebase-CLI` to execute the production deployment.
+3. Generate the web distribution using following command
+   ````shell
+   ./gradlew clean --no-build-cache
+   ./gradlew composeApp:wasmJsBrowserDistribution
+   ````
+4. Create a pull request from release branch to `main` branch.
+5. Merge changes to `main` branch after having required approvals.
+6. Checkout to `main` branch and pull changes to local.
+7. Use `Firebase-CLI` to execute the production deployment.
 
 ## Notes
 * All tool version is configured in `pbc-web-app/gradle/libs.versions.toml`.

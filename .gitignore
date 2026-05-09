@@ -2,6 +2,7 @@
 .kotlin
 .gradle
 **/build/
+.firebase/*
 xcuserdata
 !src/**/build/
 local.properties
