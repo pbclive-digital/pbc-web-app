@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -46,7 +47,7 @@ import com.kavi.pbc.web.event.ui.common.EventItem
 import com.kavi.pbc.web.event.ui.common.EventListItem
 import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
-import com.kavi.pbc.web.event.ui.admin.manage.EventManageViewModel
+import com.kavi.pbc.web.event.data.model.EventListUiState
 import com.kavi.pbc.web.event.ui.common.RecurringEventListItem
 import com.kavi.pbc.web.parent.navigation.EventPath
 import org.jetbrains.compose.resources.stringResource
@@ -226,8 +227,6 @@ private fun EventListPhoneUI(viewModel: EventListViewModel, navController: NavCo
 @Composable
 private fun EventListWebUI(viewModel: EventListViewModel, navController: NavController, maxWidth: Dp) {
 
-    val pastEventList by viewModel.pastEventList.collectAsState()
-
     LaunchedEffect(Unit) {
         viewModel.fetchUpcomingEvents()
         viewModel.fetchRecurringEvents()
@@ -289,6 +288,7 @@ private fun WebUpcomingEvents(
     maxWidth: Dp
 ) {
     val upcomingEventList by viewModel.upcomingEventList.collectAsState()
+    val upcomingEventListUiState by viewModel.upcomingEventListUiState.collectAsState()
 
     Column (modifier = modifier) {
         Text(
@@ -317,28 +317,35 @@ private fun WebUpcomingEvents(
             ScreenType.COMPUTER -> 3
         }
 
-        if (upcomingEventList.isNotEmpty()) {
-            FlowRow(
-                maxItemsInEachRow = columCount,
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalArrangement = Arrangement.Center
-            ) {
-                upcomingEventList.forEach { event ->
-                    EventItem(screenMaxWidth = maxWidth, event = event, onClick = {
-                        /**
-                         * Alternative way to do the same navigation as a path
-                         * navController.navigate("event/event-selected/${event.id}")
-                         */
-                        navController.navigate(EventPath.EventDetails(eventId = event.id!!))
-                    })
+        when(upcomingEventListUiState) {
+            EventListUiState.PENDING -> {
+                LoadingEventsView()
+            }
+            else -> {
+                if (upcomingEventList.isNotEmpty()) {
+                    FlowRow(
+                        maxItemsInEachRow = columCount,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        upcomingEventList.forEach { event ->
+                            EventItem(screenMaxWidth = maxWidth, event = event, onClick = {
+                                /**
+                                 * Alternative way to do the same navigation as a path
+                                 * navController.navigate("event/event-selected/${event.id}")
+                                 */
+                                navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+                            })
+                        }
+                    }
+                } else {
+                    NoEventsView(
+                        modifier = Modifier.padding(top = 16.dp),
+                        message = stringResource(Res.string.event_phrase_empty_upcoming_events)
+                    )
                 }
             }
-        } else {
-            NoEventsView(
-                modifier = Modifier.padding(top = 16.dp),
-                message = stringResource(Res.string.event_phrase_empty_upcoming_events)
-            )
         }
     }
 }
@@ -351,6 +358,7 @@ private fun WebRecurringEvents(
 ) {
 
     val recurringEventList by viewModel.recurringEventList.collectAsState()
+    val recurringEventListUiState by viewModel.recurringEventListUiState.collectAsState()
 
     Column (
         modifier = modifier
@@ -376,33 +384,40 @@ private fun WebRecurringEvents(
             fontSize = 22.sp
         )
 
-        if (recurringEventList.isNotEmpty()) {
-            Column(
-                modifier = Modifier
-                    .padding(start = 8.dp, top = 8.dp, bottom = 12.dp, end = 8.dp),
-            ) {
-                recurringEventList.forEachIndexed { index, event ->
-                    RecurringEventListItem(event = event) {
-                        /**
-                         * Alternative way to do the same navigation as a path
-                         * navController.navigate("event/event-selected/${event.id}")
-                         */
-                        navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+        when(recurringEventListUiState) {
+            EventListUiState.PENDING -> {
+                LoadingEventsView()
+            }
+            else -> {
+                if (recurringEventList.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 8.dp, top = 8.dp, bottom = 12.dp, end = 8.dp),
+                    ) {
+                        recurringEventList.forEachIndexed { index, event ->
+                            RecurringEventListItem(event = event) {
+                                /**
+                                 * Alternative way to do the same navigation as a path
+                                 * navController.navigate("event/event-selected/${event.id}")
+                                 */
+                                navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+                            }
+                            if (index < recurringEventList.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    thickness = 1.dp,
+                                    color = Color.LightGray
+                                )
+                            }
+                        }
                     }
-                    if (index < recurringEventList.lastIndex) {
-                        HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth(),
-                            thickness = 1.dp,
-                            color = Color.LightGray
-                        )
-                    }
+                } else {
+                    NoEventsView(
+                        modifier = Modifier.padding(top = 16.dp),
+                        message = stringResource(Res.string.event_phrase_empty_recurring_events)
+                    )
                 }
             }
-        } else {
-            NoEventsView(
-                modifier = Modifier.padding(top = 16.dp),
-                message = stringResource(Res.string.event_phrase_empty_recurring_events)
-            )
         }
 
         HorizontalDivider(
@@ -422,6 +437,7 @@ private fun WebPastEvents(
     viewModel: EventListViewModel
 ) {
     val pastEventList by viewModel.pastEventList.collectAsState()
+    val pastEventListUiState by viewModel.pastEventListUiState.collectAsState()
 
     Column (modifier = modifier) {
         Text(
@@ -444,28 +460,35 @@ private fun WebPastEvents(
             fontSize = 18.sp
         )
 
-        if (pastEventList.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier.padding(top = 8.dp),
-            ) {
-                items(items = pastEventList) { event ->
-                    EventListItem(
-                        event = event,
-                        modifier = Modifier.clickable {
-                            /**
-                             * Alternative way to do the same navigation as a path
-                             * navController.navigate("event/event-selected/${event.id}")
-                             */
-                            navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+        when(pastEventListUiState) {
+            EventListUiState.PENDING -> {
+                LoadingEventsView()
+            }
+            else -> {
+                if (pastEventList.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier.padding(top = 8.dp),
+                    ) {
+                        items(items = pastEventList) { event ->
+                            EventListItem(
+                                event = event,
+                                modifier = Modifier.clickable {
+                                    /**
+                                     * Alternative way to do the same navigation as a path
+                                     * navController.navigate("event/event-selected/${event.id}")
+                                     */
+                                    navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+                                }
+                            )
                         }
+                    }
+                } else {
+                    NoEventsView(
+                        modifier = Modifier.padding(top = 16.dp),
+                        message = stringResource(Res.string.event_phrase_empty_past_events)
                     )
                 }
             }
-        } else {
-            NoEventsView(
-                modifier = Modifier.padding(top = 16.dp),
-                message = stringResource(Res.string.event_phrase_empty_past_events)
-            )
         }
 
         HorizontalDivider(
@@ -504,6 +527,27 @@ private fun NoEventsView(modifier: Modifier = Modifier, message: String) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+    }
+}
+
+@Composable
+private fun LoadingEventsView(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.background)
+            .padding(20.dp)
+    ) {
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CircularProgressIndicator()
         }
     }
 }

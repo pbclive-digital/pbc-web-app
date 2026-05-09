@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +43,7 @@ import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
 import com.kavi.pbc.web.parent.navigation.DashboardPath
 import com.kavi.pbc.web.pbc.container.model.ProfileActionConfig
+import com.kavi.pbc.web.pbc.container.ui.AdditionalActionComponent
 import com.kavi.pbc.web.pbc.container.ui.ProfileActionComponent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -155,75 +157,140 @@ private fun PageContainer(
             }
         }
 
+        val headerRowHeight = when(screenType) {
+            ScreenType.PHONE -> 200.dp
+            else -> 160.dp
+        }
+
         Column {
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(160.dp)
+                    .height(headerRowHeight)
                     .background(MaterialTheme.colorScheme.secondary),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Column {
-                    Row (
-                        modifier = Modifier.padding(start = sidePadding, end = sidePadding),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box (
-                            modifier = Modifier
-                                .size(100.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surface)
-                                .clickable {
-                                    // Navigate to HOME
-                                    navController.navigate(DashboardPath.DashboardUI)
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                modifier = Modifier
-                                    .size(90.dp),
-                                painter = painterResource(Res.drawable.container_image_pbc),
-                                contentDescription = "PBC image with name"
-                            )
-                        }
+                when(screenType) {
+                    ScreenType.PHONE -> {
+                        Box (modifier = Modifier.fillMaxWidth()) {
+                            Row (
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Row (
+                                    modifier = Modifier.padding(top = 6.dp, end = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    // TODO: Uncomment this when it ready.
+                                    //  These are the header-link buttons for (Contact Us, About Us, etc...)
+                                    // AdditionalActionComponent(navController = navController)
 
-                        Column (
-                            modifier = Modifier.padding(start = 20.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            when (screenType) {
-                                ScreenType.PHONE -> {
-                                    Title(
-                                        titleText = stringResource(Res.string.container_label_pbc_name_short),
-                                        textSize = 32,
-                                        textColor = MaterialTheme.colorScheme.onPrimary,
-                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    ProfileActionComponent(profileActionConfig = profileActionConfig)
                                 }
-                                else -> {
+                            }
+
+                            Row (
+                                modifier = Modifier
+                                    .padding(top = 44.dp)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                Column (
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(100.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.surface),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Image(
+                                            modifier = Modifier
+                                                .size(90.dp),
+                                            painter = painterResource(Res.drawable.container_image_pbc),
+                                            contentDescription = "PBC image with name"
+                                        )
+                                    }
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
                                     Title(
                                         titleText = stringResource(Res.string.container_label_pbc_name),
-                                        textSize = 32,
+                                        textSize = 24,
                                         textColor = MaterialTheme.colorScheme.onPrimary,
                                     )
                                 }
                             }
                         }
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Column (
-                            horizontalAlignment = Alignment.End,
-                            verticalArrangement = Arrangement.Center
+                    }
+                    else -> {
+                        Row (
+                            modifier = Modifier.padding(start = sidePadding, end = sidePadding),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            // TODO: Uncomment this when it ready.
-                            //  These are the header-link buttons for (Contact Us, About Us, etc...)
-                            // AdditionalActionComponent(navController = navController)
+                            Box (
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .clickable {
+                                        // Navigate to HOME
+                                        navController.navigate(DashboardPath.DashboardUI)
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .size(90.dp),
+                                    painter = painterResource(Res.drawable.container_image_pbc),
+                                    contentDescription = "PBC image with name"
+                                )
+                            }
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Column (
+                                modifier = Modifier.padding(start = 20.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                when (screenType) {
+                                    ScreenType.PHONE -> {
+                                        Title(
+                                            titleText = stringResource(Res.string.container_label_pbc_name_short),
+                                            textSize = 32,
+                                            textColor = MaterialTheme.colorScheme.onPrimary,
+                                        )
+                                    }
+                                    else -> {
+                                        Title(
+                                            titleText = stringResource(Res.string.container_label_pbc_name),
+                                            textSize = 32,
+                                            textColor = MaterialTheme.colorScheme.onPrimary,
+                                        )
+                                    }
+                                }
+                            }
 
-                            ProfileActionComponent(profileActionConfig = profileActionConfig)
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Column (
+                                horizontalAlignment = Alignment.End,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                // TODO: Uncomment this when it ready.
+                                //  These are the header-link buttons for (Contact Us, About Us, etc...)
+                                // AdditionalActionComponent(navController = navController)
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                ProfileActionComponent(profileActionConfig = profileActionConfig)
+                            }
                         }
                     }
                 }

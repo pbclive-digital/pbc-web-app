@@ -172,74 +172,138 @@ fun PBCDashboardContainer(
             authTabItemList.value.removeLast()
         }
 
+        val headerRowHeight = when(screenType) {
+            ScreenType.PHONE -> 280.dp
+            else -> 220.dp
+        }
+
+        val menuOptionTopPadding = when(screenType) {
+            ScreenType.PHONE -> 210.dp
+            else -> 160.dp
+        }
+
         Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
+                    .height(headerRowHeight)
                     .background(MaterialTheme.colorScheme.secondary),
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Column {
-                    Spacer(modifier = Modifier.height(20.dp))
+                    when (screenType) {
+                        ScreenType.COMPUTER, ScreenType.TABLET -> {
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+                        else -> {
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                    }
 
                     Row(
                         modifier = Modifier.padding(start = sidePadding, end = sidePadding),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(100.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surface),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                modifier = Modifier
-                                    .size(90.dp),
-                                painter = painterResource(Res.drawable.container_image_pbc),
-                                contentDescription = "PBC image with name"
-                            )
-                        }
+                        when (screenType) {
+                            ScreenType.PHONE -> {
+                                Column (modifier = Modifier.fillMaxWidth()) {
+                                    Row (
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End,
+                                        verticalAlignment = Alignment.Top
+                                    ) {
+                                        Row (
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.End
+                                        ) {
+                                            // TODO: Uncomment this when it ready.
+                                            //  These are the header-link buttons for (Contact Us, About Us, etc...)
+                                            // AdditionalActionComponent(navController = navController)
 
-                        Column(
-                            modifier = Modifier.padding(start = 20.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            when (screenType) {
-                                ScreenType.PHONE -> {
-                                    Title(
-                                        titleText = stringResource(Res.string.container_label_pbc_name_short),
-                                        textSize = 32,
-                                        textColor = MaterialTheme.colorScheme.onPrimary,
+                                            Spacer(modifier = Modifier.width(8.dp))
+
+                                            ProfileActionComponent(profileActionConfig = profileActionConfig)
+                                        }
+                                    }
+
+                                    Row (
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.Bottom
+                                    ) {
+                                        Column (
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(100.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.surface),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Image(
+                                                    modifier = Modifier
+                                                        .size(90.dp),
+                                                    painter = painterResource(Res.drawable.container_image_pbc),
+                                                    contentDescription = "PBC image with name"
+                                                )
+                                            }
+
+                                            Spacer(modifier = Modifier.height(8.dp))
+
+                                            Title(
+                                                titleText = stringResource(Res.string.container_label_pbc_name),
+                                                textSize = 24,
+                                                textColor = MaterialTheme.colorScheme.onPrimary,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            else -> {
+                                Box(
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.surface),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Image(
+                                        modifier = Modifier
+                                            .size(90.dp),
+                                        painter = painterResource(Res.drawable.container_image_pbc),
+                                        contentDescription = "PBC image with name"
                                     )
                                 }
 
-                                else -> {
+                                Column(
+                                    modifier = Modifier.padding(start = 20.dp),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.Start
+                                ) {
                                     Title(
                                         titleText = stringResource(Res.string.container_label_pbc_name),
                                         textSize = 32,
                                         textColor = MaterialTheme.colorScheme.onPrimary,
                                     )
                                 }
+
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                Column (
+                                    horizontalAlignment = Alignment.End,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    // TODO: Uncomment this when it ready.
+                                    //  These are the header-link buttons for (Contact Us, About Us, etc...)
+                                    // AdditionalActionComponent(navController = navController)
+
+                                    Spacer(modifier = Modifier.height(12.dp))
+
+                                    ProfileActionComponent(profileActionConfig = profileActionConfig)
+                                }
                             }
-                        }
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Column (
-                            horizontalAlignment = Alignment.End,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            // TODO: Uncomment this when it ready.
-                            //  These are the header-link buttons for (Contact Us, About Us, etc...)
-                            // AdditionalActionComponent(navController = navController)
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            ProfileActionComponent(profileActionConfig = profileActionConfig)
                         }
                     }
                 }
@@ -248,7 +312,7 @@ fun PBCDashboardContainer(
 
         Column (
             modifier = Modifier
-                .padding(top = 160.dp, start = sidePadding, end = sidePadding)
+                .padding(top = menuOptionTopPadding, start = sidePadding, end = sidePadding)
         ) {
             Row (
                 modifier = Modifier

@@ -262,7 +262,8 @@ fun RegisterUI(onAuthenticated: () -> Unit,
             UserRegisterUiState.NONE -> {}
             UserRegisterUiState.FAILED -> {}
             UserRegisterUiState.PENDING -> {
-                AppFullScreenLoader()
+                // TODO: Find a good way to show a loader
+                //AppFullScreenLoader()
             }
             UserRegisterUiState.AUTH_FAILED -> {
                 onCreatedWithoutAuth.invoke()

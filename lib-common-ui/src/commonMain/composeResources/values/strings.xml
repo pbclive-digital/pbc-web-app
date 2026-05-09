@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_label_info">Info</string>
-    <string name="common_date_picker_pick">Select</string>
-    <string name="common_date_picker_cancel">Cancel</string>
+    <string name="common_label_date_picker_pick">Select</string>
+    <string name="common_label_date_picker_cancel">Cancel</string>
+    <string name="common_label_loading">Loading...</string>
 </resources>
