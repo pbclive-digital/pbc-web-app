@@ -96,18 +96,12 @@ fun QuestionListUI(navController: NavController) {
 
         val screenType = UIUtil.screenType(maxWidth = maxWidth)
 
-        when(openQuestionListUiState) {
+        when (openQuestionListUiState) {
             QuestionListUiState.NONE -> {}
-            QuestionListUiState.EMPTY -> {
-                EmptyQuestionList(
-                    emptyMessage = stringResource(Res.string.question_label_open_question_empty)
-                )
-            }
             QuestionListUiState.PENDING -> {
                 AppFullScreenLoader(isWithBackground = false)
             }
-            QuestionListUiState.FAILURE -> {}
-            QuestionListUiState.SUCCESS -> {
+            else -> {
                 Row {
                     when(screenType) {
                         ScreenType.PHONE -> {
@@ -354,13 +348,11 @@ private fun PersonalQuestionList(
             .padding(top = 10.dp)
     ) {
         when (personalQuestionUiState) {
-            QuestionListUiState.NONE, QuestionListUiState.FAILURE -> {}
-            QuestionListUiState.EMPTY -> {
+            QuestionListUiState.NONE, QuestionListUiState.FAILURE, QuestionListUiState.EMPTY -> {
                 EmptyPersonalQuestionList(
                     emptyMessage = stringResource(Res.string.question_label_personal_question_empty)
                 )
             }
-
             QuestionListUiState.PENDING -> {}
             QuestionListUiState.SUCCESS -> {
                 LazyColumn {
