@@ -74,13 +74,12 @@ fun NewsListUI(navController: NavController) {
 
         when(activeNewsFetchStatus) {
             NewsListUiState.NONE -> {}
-            NewsListUiState.EMPTY -> {
-                EmptyNewsList()
-            }
             NewsListUiState.PENDING -> {
                 AppFullScreenLoader(isWithBackground = false)
             }
-            NewsListUiState.FAILURE -> {}
+            NewsListUiState.FAILURE, NewsListUiState.EMPTY -> {
+                EmptyNewsList()
+            }
             NewsListUiState.SUCCESS -> {
                 Row {
                     when (UIUtil.screenType(maxWidth)) {
