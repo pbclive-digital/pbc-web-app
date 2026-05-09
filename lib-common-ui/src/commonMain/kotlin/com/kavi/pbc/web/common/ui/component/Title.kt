@@ -2,9 +2,11 @@ package com.kavi.pbc.web.common.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -17,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -91,23 +94,28 @@ fun TitleWithAction(modifier: Modifier = Modifier,
     Row (
         modifier = modifier
             .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
+            modifier = Modifier.weight(1f),
             text = titleText,
             fontFamily = PBCFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = textSize.sp,
             lineHeight = textSize.sp,
-            color = textColor
+            color = textColor,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.weight(1f))
+
         if (isIcon) {
             Icon(
                 painter = actionPainter,
                 contentDescription = "Provided icon",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
+                    .padding(start = 12.dp)
                     .size(actionPainterSize)
                     .clickable {
                         action?.invoke()
@@ -119,6 +127,7 @@ fun TitleWithAction(modifier: Modifier = Modifier,
                 contentDescription = "provided image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
+                    .padding(start = 12.dp)
                     .size(actionPainterSize)
                     .clickable {
                         action?.invoke()

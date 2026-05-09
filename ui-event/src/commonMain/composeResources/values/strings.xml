@@ -77,7 +77,7 @@
     <string name="event_label_manage">Manage Events</string>
     <string name="event_label_create">Create</string>
     <string name="event_label_cancel">Cancel</string>
-    <string name="event_label_loading_message">Creating / Updating Event ... </string>
+    <string name="event_label_loading_message">Creating or Updating Event ... </string>
     <string name="event_phrase_manage">This section is to manage all the Events in PBC. From here can create new events, publish drafted events, modify existing events or remove events etc…</string>
     <string name="event_label_draft">Draft Events</string>
     <string name="event_label_no_draft">No any drafted Events available.</string>

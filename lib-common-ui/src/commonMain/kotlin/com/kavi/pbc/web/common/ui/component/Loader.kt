@@ -17,6 +17,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
@@ -68,7 +69,8 @@ fun AppLoadingDialog(
                 modifier = Modifier.padding(start = 12.dp, end = 12.dp),
                 text = loadingMessage,
                 fontFamily = PBCFontFamily,
-                fontSize = 22.sp
+                fontSize = 22.sp,
+                textAlign = TextAlign.Center
             )
         }
     }
