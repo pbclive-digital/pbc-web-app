@@ -1,5 +1,5 @@
 package com.kavi.pbc.web.question.data.model
 
-enum class NewQuestionUiStatus {
+enum class NewQuestionUiState {
     NONE, PENDING, SUCCESS, FAILURE
 }

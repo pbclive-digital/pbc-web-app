@@ -44,4 +44,8 @@ class QuestionRemoteRepository {
             questionApi.modifyQuestion(questionId = questionId, question = question)
         }
     }
+
+    suspend fun deleteQuestion(questionId: String): ResultWrapper<BaseResponse<String>> {
+        return Network.shared.invokeApiCall { questionApi.deleteQuestion(questionId = questionId) }
+    }
 }
