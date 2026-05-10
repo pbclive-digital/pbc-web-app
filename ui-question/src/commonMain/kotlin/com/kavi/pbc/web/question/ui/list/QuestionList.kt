@@ -3,6 +3,7 @@ package com.kavi.pbc.web.question.ui.list
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -39,13 +40,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.kavi.pbc.web.common.ui.component.AppFilledButton
 import com.kavi.pbc.web.common.ui.component.AppFullScreenLoader
-import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.network.session.Session
@@ -53,16 +52,18 @@ import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.AuthContract
+import com.kavi.pbc.web.question.data.model.DeleteQuestionUiState
 import com.kavi.pbc.web.question.data.model.QuestionListUiState
 import com.kavi.pbc.web.question.ui.common.QuestionItem
 import com.kavi.pbc.web.question.ui.common.SelectedQuestion
 import com.kavi.pbc.web.question.ui.create.QuestionAskOrModifyDialog
+import com.kavi.pbc.web.question.ui.list.dialog.QuestionDeleteConfirmationDialog
 import com.kavi.pbc.web.question.ui.sheet.QuestionSelectedBottomSheetUI
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_question.generated.resources.Res
 import pbcwebapp.ui_question.generated.resources.question_label_create_question
+import pbcwebapp.ui_question.generated.resources.question_label_no_selected_question
 import pbcwebapp.ui_question.generated.resources.question_label_open_question
-import pbcwebapp.ui_question.generated.resources.question_label_open_question_empty
 import pbcwebapp.ui_question.generated.resources.question_label_personal_question
 import pbcwebapp.ui_question.generated.resources.question_label_personal_question_empty
 
@@ -111,7 +112,6 @@ fun QuestionListUI(navController: NavController) {
                                     .padding(top = 10.dp)
                             ) {
                                 QuestionListPager(
-                                    screenWidth = maxWidth,
                                     selectedQuestion = selectedQuestion,
                                     viewModel = viewModel,
                                     onQuestionSelect = { question ->
@@ -128,7 +128,6 @@ fun QuestionListUI(navController: NavController) {
                                     .padding(top = 20.dp, start = 15.dp)
                             ) {
                                 QuestionListPager(
-                                    screenWidth = (maxWidth.value * (.35)).dp,
                                     selectedQuestion = selectedQuestion,
                                     viewModel = viewModel,
                                     onQuestionSelect = { question ->
@@ -142,7 +141,14 @@ fun QuestionListUI(navController: NavController) {
                                     .weight(.65f)
                                     .padding(top = 10.dp, start = 15.dp)
                             ) {
-                                SelectedQuestion(selectedQuestion = selectedQuestion, viewModel = viewModel)
+                                if (selectedQuestion.value.id.isNullOrEmpty()) {
+                                    EmptySelectedQuestion(stringResource(Res.string.question_label_no_selected_question))
+                                } else {
+                                    SelectedQuestion(
+                                        selectedQuestion = selectedQuestion,
+                                        viewModel = viewModel
+                                    )
+                                }
                             }
                         }
                     }
@@ -163,13 +169,10 @@ fun QuestionListUI(navController: NavController) {
 
 @Composable
 private fun QuestionListPager(
-    screenWidth: Dp,
     selectedQuestion: MutableState<Question>,
     viewModel: QuestionListViewModel,
     onQuestionSelect: (question: Question) -> Unit
 ) {
-    val themeAdditionalColors = LocalThemeAdditionalColors.current
-
     var selectedPagerIndex by rememberSaveable { mutableIntStateOf(0) }
     val state = rememberPagerState { 2 }
 
@@ -198,10 +201,14 @@ private fun QuestionListPager(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .height(40.dp)
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(if (selectedPagerIndex == 0) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface)
                     .clickable {
                         selectedPagerIndex = 0
                     },
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = stringResource(Res.string.question_label_open_question),
@@ -214,31 +221,20 @@ private fun QuestionListPager(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .height(40.dp)
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(if (selectedPagerIndex == 1) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface)
                     .clickable {
                         selectedPagerIndex = 1
                     },
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = stringResource(Res.string.question_label_personal_question),
                     fontFamily = PBCFontFamily,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-
-        Row {
-            repeat(state.pageCount) { iteration ->
-                val color = if (state.currentPage == iteration)
-                    themeAdditionalColors.quaternary else MaterialTheme.colorScheme.surface
-
-                Box(
-                    modifier = Modifier
-                        .padding(top = 12.dp)
-                        .height(5.dp)
-                        .width(screenWidth / 2)
-                        .background(color)
                 )
             }
         }
@@ -261,7 +257,8 @@ private fun QuestionListPager(
                 1 -> PersonalQuestionList(
                     modifier = Modifier,
                     viewModel = viewModel,
-                    onQuestionSelect = onQuestionSelect
+                    onQuestionSelect = onQuestionSelect,
+                    selectedQuestionId = selectedQuestion.value.id
                 )
             }
         }
@@ -276,7 +273,7 @@ private fun QuestionListPager(
 
                 // Some update happens in questions, therefore refresh-required
                 if (refreshRequired) {
-                    viewModel.fetchOpenQuestionList()
+                    viewModel.fetchOpenQuestionList(forceFetch = true)
                     viewModel.fetchPersonalQuestionList()
                 }
             },
@@ -307,24 +304,35 @@ private fun OpenQuestionListComponent(
     onQuestionSelect: (question: Question) -> Unit
 ) {
 
+    val questionListUiState by viewModel.openQuestionListUiState.collectAsState()
     val openQuestionList by viewModel.openQuestionList.collectAsState()
 
-    selectedQuestion.value = openQuestionList[0]
     Column(
         modifier = modifier
             .padding(top = 10.dp)
     ) {
-        LazyColumn {
-            items(openQuestionList) { question ->
-                QuestionItem(
-                    question = question, onClick = {
-                        onQuestionSelect.invoke(question)
-                    }
+        when(questionListUiState) {
+            QuestionListUiState.NONE, QuestionListUiState.FAILURE, QuestionListUiState.EMPTY -> {
+                EmptyQuestionList(
+                    emptyMessage = stringResource(Res.string.question_label_personal_question_empty)
                 )
             }
-            item {
-                LaunchedEffect(pageIndex) {
-                    viewModel.fetchOpenQuestionList()
+            QuestionListUiState.PENDING -> {}
+            QuestionListUiState.SUCCESS -> {
+                selectedQuestion.value = openQuestionList[0]
+                LazyColumn {
+                    items(openQuestionList) { question ->
+                        QuestionItem(
+                            question = question, onClick = {
+                                onQuestionSelect.invoke(question)
+                            }
+                        )
+                    }
+                    item {
+                        LaunchedEffect(pageIndex) {
+                            viewModel.fetchOpenQuestionList()
+                        }
+                    }
                 }
             }
         }
@@ -335,13 +343,18 @@ private fun OpenQuestionListComponent(
 private fun PersonalQuestionList(
     modifier: Modifier,
     viewModel: QuestionListViewModel,
+    selectedQuestionId: String?,
     onQuestionSelect: (question: Question) -> Unit
 ) {
     val personalQuestionUiState by viewModel.personalQuestionListUiState.collectAsState()
     val personalQuestionList by viewModel.personalQuestionList.collectAsState()
+    val questionDeleteUiState by viewModel.questionDeleteUiState.collectAsState()
 
     val showCreateQuestionDialog = remember { mutableStateOf(false) }
     var modifyingQuestion: Question? by remember { mutableStateOf(null) }
+
+    val showDeleteQuestionDialog = remember { mutableStateOf(false) }
+    var deletingQuestion: Question? by remember { mutableStateOf(null) }
 
     Column(
         modifier = modifier
@@ -349,7 +362,7 @@ private fun PersonalQuestionList(
     ) {
         when (personalQuestionUiState) {
             QuestionListUiState.NONE, QuestionListUiState.FAILURE, QuestionListUiState.EMPTY -> {
-                EmptyPersonalQuestionList(
+                EmptyQuestionList(
                     emptyMessage = stringResource(Res.string.question_label_personal_question_empty)
                 )
             }
@@ -366,7 +379,8 @@ private fun PersonalQuestionList(
                                 modifyingQuestion = question
                             },
                             onDelete = {
-
+                                showDeleteQuestionDialog.value = true
+                                deletingQuestion = question
                             }
                         )
                     }
@@ -375,7 +389,7 @@ private fun PersonalQuestionList(
         }
     }
 
-    // Modify Question Block
+    // Modify Question Dialog
     if (showCreateQuestionDialog.value) {
         QuestionAskOrModifyDialog(
             showDialog = showCreateQuestionDialog,
@@ -384,23 +398,45 @@ private fun PersonalQuestionList(
 
                 // Some update happens in questions, therefore refresh-required
                 if (refreshRequired) {
-                    viewModel.fetchOpenQuestionList()
+                    viewModel.fetchOpenQuestionList(forceFetch = true)
                     viewModel.fetchPersonalQuestionList()
                 }
             },
             modifyQuestion = modifyingQuestion)
     }
+
+    // Deleting Questions Dialog
+    QuestionDeleteConfirmationDialog(
+        showDialog = showDeleteQuestionDialog,
+        onAgree = {
+            viewModel.deleteQuestion(deletingQuestion?.id)
+            showDeleteQuestionDialog.value = false
+        },
+        onDisagree = {
+            showDeleteQuestionDialog.value = false
+        }
+    )
+
+    when(questionDeleteUiState) {
+        DeleteQuestionUiState.SUCCESS -> {
+            if (selectedQuestionId == deletingQuestion?.id)
+                onQuestionSelect.invoke(Question())
+        }
+        else -> {
+            // Do nothing
+        }
+    }
 }
 
 @Composable
-fun EmptyQuestionList(emptyMessage: String) {
+fun EmptySelectedQuestion(emptyMessage: String) {
     Box (
         modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .padding(top = 20.dp, start = 16.dp, end = 16.dp, bottom = 30.dp)
+            .fillMaxSize()
+            .padding(bottom = 30.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(20.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -412,7 +448,7 @@ fun EmptyQuestionList(emptyMessage: String) {
 }
 
 @Composable
-fun EmptyPersonalQuestionList(emptyMessage: String) {
+fun EmptyQuestionList(emptyMessage: String) {
     Box (
         modifier = Modifier
             .fillMaxHeight()

@@ -41,7 +41,7 @@ import com.kavi.pbc.web.common.ui.util.ScreenType
 import com.kavi.pbc.web.common.ui.util.UIUtil
 import com.kavi.pbc.web.data.question.PrivacyStatus
 import com.kavi.pbc.web.data.question.Question
-import com.kavi.pbc.web.question.data.model.NewQuestionUiStatus
+import com.kavi.pbc.web.question.data.model.NewQuestionUiState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_question.generated.resources.Res
@@ -242,14 +242,14 @@ private fun QuestionAskOrModifyUI(
         }
 
         when(questionAskOrModifyStatus) {
-            NewQuestionUiStatus.NONE -> {
+            NewQuestionUiState.NONE -> {
                 errorBalloonVisibility.value = false
             }
-            NewQuestionUiStatus.PENDING -> {}
-            NewQuestionUiStatus.FAILURE -> {
+            NewQuestionUiState.PENDING -> {}
+            NewQuestionUiState.FAILURE -> {
                 errorBalloonVisibility.value = true
             }
-            NewQuestionUiStatus.SUCCESS -> {
+            NewQuestionUiState.SUCCESS -> {
                 anyAskOrModificationSuccess = true
                 successBalloonVisibility.value = true
 

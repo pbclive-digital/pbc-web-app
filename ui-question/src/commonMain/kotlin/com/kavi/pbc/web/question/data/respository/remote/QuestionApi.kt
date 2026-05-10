@@ -6,6 +6,7 @@ import com.kavi.pbc.web.data.pagination.PaginationResponse
 import com.kavi.pbc.web.data.question.AnswerComment
 import com.kavi.pbc.web.data.question.Question
 import de.jensklingenberg.ktorfit.http.Body
+import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.PUT
@@ -30,4 +31,7 @@ interface QuestionApi {
     @PUT("question/update/{questionId}")
     suspend fun modifyQuestion(@Path("questionId") questionId: String,
                                @Body question: Question): BaseResponse<Question>
+
+    @DELETE("question/delete/{questionId}")
+    suspend fun deleteQuestion(@Path("questionId") questionId: String): BaseResponse<String>
 }

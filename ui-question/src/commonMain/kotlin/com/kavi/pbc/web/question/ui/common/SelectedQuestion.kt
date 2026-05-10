@@ -42,7 +42,7 @@ import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.extention.copy
-import com.kavi.pbc.web.question.data.model.AddAnswerStatus
+import com.kavi.pbc.web.question.data.model.AddAnswerUiState
 import com.kavi.pbc.web.question.ui.list.QuestionListViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -63,6 +63,7 @@ fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel: Questi
     Box (
         modifier = Modifier
             .fillMaxWidth()
+            .padding(bottom = 30.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.background)
             .padding(20.dp)
@@ -165,7 +166,7 @@ fun SelectedQuestion(selectedQuestion: MutableState<Question>, viewModel: Questi
 
                             Spacer(modifier = Modifier.width(4.dp))
 
-                            if (addAnswerStatus == AddAnswerStatus.PENDING) {
+                            if (addAnswerStatus == AddAnswerUiState.PENDING) {
                                 Box(
                                     modifier = Modifier
                                         .size(50.dp)

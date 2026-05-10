@@ -11,7 +11,8 @@ import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.data.user.UserSummary
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.network.session.Session
-import com.kavi.pbc.web.question.data.model.AddAnswerStatus
+import com.kavi.pbc.web.question.data.model.AddAnswerUiState
+import com.kavi.pbc.web.question.data.model.DeleteQuestionUiState
 import com.kavi.pbc.web.question.data.model.QuestionListUiState
 import com.kavi.pbc.web.question.data.respository.remote.QuestionRemoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,21 +42,29 @@ class QuestionListViewModel: ViewModel() {
     val personalQuestionListUiState: StateFlow<QuestionListUiState> = _personalQuestionListUiState
 
     private val _selectedQuestion = MutableStateFlow(Question())
-    val selectedQuestion: StateFlow<Question> = _selectedQuestion
 
     private val _answerCommentList = MutableStateFlow<MutableList<AnswerComment>>(mutableListOf())
     val answerCommentList: StateFlow<MutableList<AnswerComment>> = _answerCommentList
 
-    private val _addAnswerStatus = MutableStateFlow(AddAnswerStatus.NONE)
-    val addAnswerStatus: StateFlow<AddAnswerStatus> = _addAnswerStatus
+    private val _addAnswerStatus = MutableStateFlow(AddAnswerUiState.NONE)
+    val addAnswerStatus: StateFlow<AddAnswerUiState> = _addAnswerStatus
 
-    fun fetchOpenQuestionList() {
-        if (!isPagingReachedEnd) {
-            if (!isInitialRequestFired.value && paginationRequest.previousPageLastDocKey == null) {
-                isInitialRequestFired.value = true
-                getAllOpenQuestionList()
-            } else if (isInitialRequestFired.value && paginationRequest.previousPageLastDocKey != null) {
-                getAllOpenQuestionList()
+    private val _questionDeleteUiState = MutableStateFlow(DeleteQuestionUiState.NONE)
+    val questionDeleteUiState: StateFlow<DeleteQuestionUiState> = _questionDeleteUiState
+
+    fun fetchOpenQuestionList(forceFetch: Boolean = false) {
+        if (forceFetch) {
+            paginationRequest.previousPageLastDocKey = null
+            isInitialRequestFired.value = true
+            getAllOpenQuestionList()
+        } else {
+            if (!isPagingReachedEnd) {
+                if (!isInitialRequestFired.value && paginationRequest.previousPageLastDocKey == null) {
+                    isInitialRequestFired.value = true
+                    getAllOpenQuestionList()
+                } else if (isInitialRequestFired.value && paginationRequest.previousPageLastDocKey != null) {
+                    getAllOpenQuestionList()
+                }
             }
         }
     }
@@ -97,13 +106,13 @@ class QuestionListViewModel: ViewModel() {
             )
 
             viewModelScope.launch {
-                _addAnswerStatus.value = AddAnswerStatus.PENDING
+                _addAnswerStatus.value = AddAnswerUiState.PENDING
                 when(val response = questionRemoteRepository.createNewAnswer(_selectedQuestion.value.id!!, answerComment)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _addAnswerStatus.value = AddAnswerStatus.FAILURE
+                        _addAnswerStatus.value = AddAnswerUiState.FAILURE
                     }
                     is ResultWrapper.Success -> {
-                        _addAnswerStatus.value = AddAnswerStatus.SUCCESS
+                        _addAnswerStatus.value = AddAnswerUiState.SUCCESS
                         response.value.body?.let {
                             _answerCommentList.update { currentList ->
                                 ((currentList + answerComment) as MutableList<AnswerComment>)
@@ -116,7 +125,35 @@ class QuestionListViewModel: ViewModel() {
     }
 
     fun revokeAddAnswerStatus() {
-        _addAnswerStatus.value = AddAnswerStatus.NONE
+        _addAnswerStatus.value = AddAnswerUiState.NONE
+    }
+
+    fun deleteQuestion(questionId: String?) {
+        questionId?.let { id ->
+            _questionDeleteUiState.value = DeleteQuestionUiState.PENDING
+            viewModelScope.launch {
+                when(questionRemoteRepository.deleteQuestion(questionId = id)) {
+                    is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                        _questionDeleteUiState.value = DeleteQuestionUiState.FAILURE
+                    }
+                    is ResultWrapper.Success -> {
+                        _questionDeleteUiState.value = DeleteQuestionUiState.SUCCESS
+
+                        // Remove from open questions list
+                        _openQuestionList.value = _openQuestionList.value
+                            .filterNot { it.id == id }
+                            .toMutableList()
+
+                        // Remove from personal questions list
+                        _personalQuestionList.value = _personalQuestionList.value
+                            .filterNot { it.id == id }
+                            .toMutableList()
+                    }
+                }
+            }
+        }?: run {
+            _questionDeleteUiState.value = DeleteQuestionUiState.NO_ID
+        }
     }
 
     private fun getAllOpenQuestionList() {
@@ -128,6 +165,9 @@ class QuestionListViewModel: ViewModel() {
                 is ResultWrapper.HttpError -> {
                     if (response.code == 404) {
                         isPagingReachedEnd = true
+                    }
+                    if (response.code == 416) {
+                        _openQuestionListUiState.value = QuestionListUiState.EMPTY
                     }
                 }
                 is ResultWrapper.UnAuthError -> {}

@@ -6,7 +6,7 @@ import com.kavi.pbc.web.data.question.PrivacyStatus
 import com.kavi.pbc.web.data.question.Question
 import com.kavi.pbc.web.network.model.ResultWrapper
 import com.kavi.pbc.web.network.session.Session
-import com.kavi.pbc.web.question.data.model.NewQuestionUiStatus
+import com.kavi.pbc.web.question.data.model.NewQuestionUiState
 import com.kavi.pbc.web.question.data.respository.remote.QuestionRemoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +19,8 @@ class QuestionAskOrModifyViewModel: ViewModel() {
     private val _askOrModifyQuestion: MutableStateFlow<Question?> = MutableStateFlow(Question())
     val askOrModifyQuestion: StateFlow<Question?> = _askOrModifyQuestion
 
-    private val _questionAskOrModifyStatus = MutableStateFlow(NewQuestionUiStatus.NONE)
-    val questionAskOrModifyStatus: StateFlow<NewQuestionUiStatus> = _questionAskOrModifyStatus
+    private val _questionAskOrModifyStatus = MutableStateFlow(NewQuestionUiState.NONE)
+    val questionAskOrModifyStatus: StateFlow<NewQuestionUiState> = _questionAskOrModifyStatus
 
     init {
         Session.user?.let {
@@ -66,25 +66,25 @@ class QuestionAskOrModifyViewModel: ViewModel() {
     fun createOrModifyQuestion(isModify: Boolean) {
         if (!isModify) {
             viewModelScope.launch {
-                _questionAskOrModifyStatus.value = NewQuestionUiStatus.PENDING
+                _questionAskOrModifyStatus.value = NewQuestionUiState.PENDING
                 when(questionRemoteRepository.createNewQuestion(_askOrModifyQuestion.value!!)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _questionAskOrModifyStatus.value = NewQuestionUiStatus.FAILURE
+                        _questionAskOrModifyStatus.value = NewQuestionUiState.FAILURE
                     }
                     is ResultWrapper.Success -> {
-                        _questionAskOrModifyStatus.value = NewQuestionUiStatus.SUCCESS
+                        _questionAskOrModifyStatus.value = NewQuestionUiState.SUCCESS
                     }
                 }
             }
         } else {
             viewModelScope.launch {
-                _questionAskOrModifyStatus.value = NewQuestionUiStatus.PENDING
+                _questionAskOrModifyStatus.value = NewQuestionUiState.PENDING
                 when(questionRemoteRepository.modifyQuestion(_askOrModifyQuestion.value!!.id!!, _askOrModifyQuestion.value!!)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
-                        _questionAskOrModifyStatus.value = NewQuestionUiStatus.FAILURE
+                        _questionAskOrModifyStatus.value = NewQuestionUiState.FAILURE
                     }
                     is ResultWrapper.Success -> {
-                        _questionAskOrModifyStatus.value = NewQuestionUiStatus.SUCCESS
+                        _questionAskOrModifyStatus.value = NewQuestionUiState.SUCCESS
                     }
                 }
             }
@@ -92,6 +92,6 @@ class QuestionAskOrModifyViewModel: ViewModel() {
     }
 
     fun revokeNewQuestionUiState() {
-        _questionAskOrModifyStatus.value = NewQuestionUiStatus.NONE
+        _questionAskOrModifyStatus.value = NewQuestionUiState.NONE
     }
 }
