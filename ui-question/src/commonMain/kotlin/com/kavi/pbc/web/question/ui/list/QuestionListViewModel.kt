@@ -41,7 +41,6 @@ class QuestionListViewModel: ViewModel() {
     val personalQuestionListUiState: StateFlow<QuestionListUiState> = _personalQuestionListUiState
 
     private val _selectedQuestion = MutableStateFlow(Question())
-    val selectedQuestion: StateFlow<Question> = _selectedQuestion
 
     private val _answerCommentList = MutableStateFlow<MutableList<AnswerComment>>(mutableListOf())
     val answerCommentList: StateFlow<MutableList<AnswerComment>> = _answerCommentList
@@ -49,13 +48,19 @@ class QuestionListViewModel: ViewModel() {
     private val _addAnswerStatus = MutableStateFlow(AddAnswerStatus.NONE)
     val addAnswerStatus: StateFlow<AddAnswerStatus> = _addAnswerStatus
 
-    fun fetchOpenQuestionList() {
-        if (!isPagingReachedEnd) {
-            if (!isInitialRequestFired.value && paginationRequest.previousPageLastDocKey == null) {
-                isInitialRequestFired.value = true
-                getAllOpenQuestionList()
-            } else if (isInitialRequestFired.value && paginationRequest.previousPageLastDocKey != null) {
-                getAllOpenQuestionList()
+    fun fetchOpenQuestionList(forceFetch: Boolean = false) {
+        if (forceFetch) {
+            paginationRequest.previousPageLastDocKey = null
+            isInitialRequestFired.value = true
+            getAllOpenQuestionList()
+        } else {
+            if (!isPagingReachedEnd) {
+                if (!isInitialRequestFired.value && paginationRequest.previousPageLastDocKey == null) {
+                    isInitialRequestFired.value = true
+                    getAllOpenQuestionList()
+                } else if (isInitialRequestFired.value && paginationRequest.previousPageLastDocKey != null) {
+                    getAllOpenQuestionList()
+                }
             }
         }
     }
@@ -128,6 +133,9 @@ class QuestionListViewModel: ViewModel() {
                 is ResultWrapper.HttpError -> {
                     if (response.code == 404) {
                         isPagingReachedEnd = true
+                    }
+                    if (response.code == 416) {
+                        _openQuestionListUiState.value = QuestionListUiState.EMPTY
                     }
                 }
                 is ResultWrapper.UnAuthError -> {}

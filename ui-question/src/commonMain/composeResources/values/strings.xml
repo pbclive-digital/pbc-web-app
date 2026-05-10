@@ -2,6 +2,7 @@
 <resources>
     <string name="question_label_open_question_empty">No open Questions available at this time.</string>
     <string name="question_label_personal_question_empty">No personal Questions available at this time.</string>
+    <string name="question_label_no_selected_question">No any questions selected to show details.</string>
 
     <string name="question_label_open_question">All Questions</string>
     <string name="question_label_personal_question">My Questions</string>

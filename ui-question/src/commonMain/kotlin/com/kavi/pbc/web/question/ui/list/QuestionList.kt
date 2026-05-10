@@ -3,6 +3,7 @@ package com.kavi.pbc.web.question.ui.list
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -61,8 +62,8 @@ import com.kavi.pbc.web.question.ui.sheet.QuestionSelectedBottomSheetUI
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_question.generated.resources.Res
 import pbcwebapp.ui_question.generated.resources.question_label_create_question
+import pbcwebapp.ui_question.generated.resources.question_label_no_selected_question
 import pbcwebapp.ui_question.generated.resources.question_label_open_question
-import pbcwebapp.ui_question.generated.resources.question_label_open_question_empty
 import pbcwebapp.ui_question.generated.resources.question_label_personal_question
 import pbcwebapp.ui_question.generated.resources.question_label_personal_question_empty
 
@@ -142,7 +143,14 @@ fun QuestionListUI(navController: NavController) {
                                     .weight(.65f)
                                     .padding(top = 10.dp, start = 15.dp)
                             ) {
-                                SelectedQuestion(selectedQuestion = selectedQuestion, viewModel = viewModel)
+                                if (selectedQuestion.value.id.isNullOrEmpty()) {
+                                    EmptySelectedQuestion(stringResource(Res.string.question_label_no_selected_question))
+                                } else {
+                                    SelectedQuestion(
+                                        selectedQuestion = selectedQuestion,
+                                        viewModel = viewModel
+                                    )
+                                }
                             }
                         }
                     }
@@ -198,10 +206,14 @@ private fun QuestionListPager(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .height(40.dp)
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(if (selectedPagerIndex == 0) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface)
                     .clickable {
                         selectedPagerIndex = 0
                     },
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = stringResource(Res.string.question_label_open_question),
@@ -214,31 +226,20 @@ private fun QuestionListPager(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .height(40.dp)
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(if (selectedPagerIndex == 1) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface)
                     .clickable {
                         selectedPagerIndex = 1
                     },
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = stringResource(Res.string.question_label_personal_question),
                     fontFamily = PBCFontFamily,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-
-        Row {
-            repeat(state.pageCount) { iteration ->
-                val color = if (state.currentPage == iteration)
-                    themeAdditionalColors.quaternary else MaterialTheme.colorScheme.surface
-
-                Box(
-                    modifier = Modifier
-                        .padding(top = 12.dp)
-                        .height(5.dp)
-                        .width(screenWidth / 2)
-                        .background(color)
                 )
             }
         }
@@ -276,7 +277,7 @@ private fun QuestionListPager(
 
                 // Some update happens in questions, therefore refresh-required
                 if (refreshRequired) {
-                    viewModel.fetchOpenQuestionList()
+                    viewModel.fetchOpenQuestionList(forceFetch = true)
                     viewModel.fetchPersonalQuestionList()
                 }
             },
@@ -307,24 +308,35 @@ private fun OpenQuestionListComponent(
     onQuestionSelect: (question: Question) -> Unit
 ) {
 
+    val questionListUiState by viewModel.openQuestionListUiState.collectAsState()
     val openQuestionList by viewModel.openQuestionList.collectAsState()
 
-    selectedQuestion.value = openQuestionList[0]
     Column(
         modifier = modifier
             .padding(top = 10.dp)
     ) {
-        LazyColumn {
-            items(openQuestionList) { question ->
-                QuestionItem(
-                    question = question, onClick = {
-                        onQuestionSelect.invoke(question)
-                    }
+        when(questionListUiState) {
+            QuestionListUiState.NONE, QuestionListUiState.FAILURE, QuestionListUiState.EMPTY -> {
+                EmptyQuestionList(
+                    emptyMessage = stringResource(Res.string.question_label_personal_question_empty)
                 )
             }
-            item {
-                LaunchedEffect(pageIndex) {
-                    viewModel.fetchOpenQuestionList()
+            QuestionListUiState.PENDING -> {}
+            QuestionListUiState.SUCCESS -> {
+                selectedQuestion.value = openQuestionList[0]
+                LazyColumn {
+                    items(openQuestionList) { question ->
+                        QuestionItem(
+                            question = question, onClick = {
+                                onQuestionSelect.invoke(question)
+                            }
+                        )
+                    }
+                    item {
+                        LaunchedEffect(pageIndex) {
+                            viewModel.fetchOpenQuestionList()
+                        }
+                    }
                 }
             }
         }
@@ -349,7 +361,7 @@ private fun PersonalQuestionList(
     ) {
         when (personalQuestionUiState) {
             QuestionListUiState.NONE, QuestionListUiState.FAILURE, QuestionListUiState.EMPTY -> {
-                EmptyPersonalQuestionList(
+                EmptyQuestionList(
                     emptyMessage = stringResource(Res.string.question_label_personal_question_empty)
                 )
             }
@@ -384,7 +396,7 @@ private fun PersonalQuestionList(
 
                 // Some update happens in questions, therefore refresh-required
                 if (refreshRequired) {
-                    viewModel.fetchOpenQuestionList()
+                    viewModel.fetchOpenQuestionList(forceFetch = true)
                     viewModel.fetchPersonalQuestionList()
                 }
             },
@@ -393,14 +405,19 @@ private fun PersonalQuestionList(
 }
 
 @Composable
-fun EmptyQuestionList(emptyMessage: String) {
+fun EmptySelectedQuestion(emptyMessage: String) {
     Box (
         modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.background)
+            .padding(20.dp),
+        /*modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth()
-            .padding(top = 20.dp, start = 16.dp, end = 16.dp, bottom = 30.dp)
+            .padding(top = 20.dp, bottom = 30.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background),*/
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -412,7 +429,7 @@ fun EmptyQuestionList(emptyMessage: String) {
 }
 
 @Composable
-fun EmptyPersonalQuestionList(emptyMessage: String) {
+fun EmptyQuestionList(emptyMessage: String) {
     Box (
         modifier = Modifier
             .fillMaxHeight()
