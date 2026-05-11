@@ -136,4 +136,9 @@ jobs:
           
           TAG_NAME="v${{ needs.fetch-app-properties.outputs.app_version }}"
           git tag -a "$TAG_NAME" -m "Create a tag for production release $TAG_NAME"
+
+      - name: Push Changes with SSH
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
           git push origin "$TAG_NAME"
