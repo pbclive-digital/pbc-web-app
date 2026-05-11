@@ -144,4 +144,4 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
-          git push origin "$TAG_NAME"
+          git push git@github.com:pbclive-digital/pbc-web-app.git "$TAG_NAME"
