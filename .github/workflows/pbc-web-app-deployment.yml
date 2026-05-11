@@ -131,6 +131,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          TAG_NAME="v${needs.fetch-app-properties.outputs.app_version}"
+          TAG_NAME="v${{ needs.fetch-app-properties.outputs.app_version }}"
           git tag -a "$TAG_NAME" -m "Create a tag for production release $TAG_NAME"
           git push origin "$TAG_NAME"
