@@ -126,6 +126,9 @@ jobs:
         run: |
           echo "Master branch is ready for Firebase deployment. Use Firebase CLI to deploy to Firebase"
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Create git-tag for release
         run: |
           git config --global user.name "github-actions[bot]"
