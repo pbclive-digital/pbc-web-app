@@ -72,10 +72,10 @@ to deploy changes to production from `main` branch.
    ./gradlew clean --no-build-cache
    ./gradlew composeApp:wasmJsBrowserDistribution
    ````
-4. Create a pull request from release branch to `main` branch.
-5. Merge changes to `main` branch after having required approvals.
-6. Checkout to `main` branch and pull changes to local.
-7. Use `Firebase-CLI` to execute the production deployment.
+4. Use `Firebase-CLI` to execute the production deployment.
+5. Create a pull request from release branch to `main` branch.
+6. Merge changes to `main` branch after having required approvals.
+7. Checkout to `main` branch and pull changes to local.
 
 ## Notes
 * All tool version is configured in `pbc-web-app/gradle/libs.versions.toml`.
