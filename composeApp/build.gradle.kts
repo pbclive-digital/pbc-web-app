@@ -34,7 +34,7 @@ buildkonfig {
             "prod" -> { // Production variant
                 buildConfigField(FieldSpec.Type.STRING, "API_SCHEME", "https")
                 buildConfigField(FieldSpec.Type.STRING, "API_DOMAIN", "pbc-api-prod-c38d60f1a699.herokuapp.com")
-                buildConfigField(FieldSpec.Type.STRING, "ENVIRONMENT", "staging")
+                buildConfigField(FieldSpec.Type.STRING, "ENVIRONMENT", "prod")
             }
         }
     }

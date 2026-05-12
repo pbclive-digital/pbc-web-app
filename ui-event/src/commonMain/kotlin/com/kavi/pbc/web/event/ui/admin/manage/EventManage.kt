@@ -97,6 +97,7 @@ import pbcwebapp.ui_event.generated.resources.event_label_tip_location
 import pbcwebapp.ui_event.generated.resources.event_label_tip_open_meeting
 import pbcwebapp.ui_event.generated.resources.event_phrase_agenda
 import pbcwebapp.ui_event.generated.resources.event_phrase_agenda_admin
+import pbcwebapp.ui_event.generated.resources.event_phrase_empty_selected_event
 import pbcwebapp.ui_event.generated.resources.event_phrase_manage
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_in_admin
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_in_admin
@@ -216,9 +217,13 @@ fun EventManageUI(
                     Spacer(modifier = Modifier.width(10.dp))
 
                     Column (modifier = Modifier.weight(.65f)) {
-                        SelectedEventUI(
-                            selectedEvent = selectedEvent
-                        )
+                        selectedEvent.value.id?.let {
+                            SelectedEventUI(
+                                selectedEvent = selectedEvent
+                            )
+                        }?: run {
+                            EmptySelectedEventUI()
+                        }
                     }
                 }
             }
@@ -251,6 +256,11 @@ fun EventManageUI(
             onAgree = {
                 showDeleteConfirmationDialog.value = false
                 viewModel.deleteEvent(eventId = deletingEventId.value, eventManageMode = eventManageMode.value)
+                selectedEvent.value.id?.let { selectedId ->
+                    if (selectedId == deletingEventId.value) {
+                        selectedEvent.value = Event()
+                    }
+                }
                 deletingEventId.value = ""
             },
             onDisagree = {
@@ -519,6 +529,29 @@ private fun ActiveEventBlock(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun EmptySelectedEventUI() {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.background)
+            .padding(40.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(Res.string.event_phrase_empty_selected_event),
+            fontFamily = PBCFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 28.sp,
+            lineHeight = 28.sp,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 
