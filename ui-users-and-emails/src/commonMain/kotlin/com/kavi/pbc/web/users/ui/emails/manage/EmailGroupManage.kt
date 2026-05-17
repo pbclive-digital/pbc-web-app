@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
@@ -210,6 +212,7 @@ private fun SelectedEmailGroup(
 ) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
     val letterGroupedEmailList = viewModel.letterGroupedEmailList.collectAsState()
+    val selectedGroupEmailCount by viewModel.selectedGroupEmailCount.collectAsState()
 
     val showAddEmailDialog = mutableStateOf(false)
     val showRemoveEmailDialog = mutableStateOf(false)
@@ -237,6 +240,23 @@ private fun SelectedEmailGroup(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
                 ) {
+                    Box(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.tertiary, CircleShape)
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "$selectedGroupEmailCount",
+                            fontFamily = PBCFontFamily,
+                            fontSize = 20.sp,
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
                     AppTooltipWrap(
                         tipLabel = stringResource(Res.string.email_group_label_tip_add_email)
                     ) {

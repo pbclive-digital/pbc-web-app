@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +60,12 @@ private fun AddEmailContent(
 ) {
     val email = remember { mutableStateOf(TextFieldValue("")) }
     val ownerName = remember { mutableStateOf(TextFieldValue("")) }
+
+    val isAddButtonDisable = remember { mutableStateOf(true) }
+
+    LaunchedEffect(email.value) {
+        isAddButtonDisable.value = !isValidEmail(email = email.value.text)
+    }
 
     Box (
         modifier = Modifier
@@ -112,7 +119,8 @@ private fun AddEmailContent(
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.dp),
-                    label = stringResource(Res.string.email_group_label_add_email)
+                    label = stringResource(Res.string.email_group_label_add_email),
+                    isDisable = isAddButtonDisable
                 ) {
                     onCreate.invoke(EmailItem(
                         email = email.value.text, ownerName = ownerName.value.text
@@ -130,4 +138,9 @@ private fun AddEmailContent(
             }
         }
     }
+}
+
+fun isValidEmail(email: String): Boolean {
+    val emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$".toRegex()
+    return emailRegex.matches(email)
 }

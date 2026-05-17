@@ -22,6 +22,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,13 +49,22 @@ import pbcwebapp.lib_common_ui.generated.resources.icon_clock
 @Composable
 fun AppFilledButton(label: String,
                     labelTextSize: TextUnit? = null,
+                    isDisable: MutableState<Boolean> = mutableStateOf(false),
                     modifier: Modifier = Modifier,
                     onClick: () -> Unit) {
+    val themeAdditionalColors = LocalThemeAdditionalColors.current
+
     Button(
         onClick = onClick,
         modifier = modifier.height(50.dp),
+        enabled = !isDisable.value,
         shape = RoundedCornerShape(5.dp),
-        colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = MaterialTheme.colorScheme.primary)
+        colors = ButtonDefaults.buttonColors(
+            contentColor = MaterialTheme.colorScheme.onPrimary, 
+            containerColor = MaterialTheme.colorScheme.primary,
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = themeAdditionalColors.shadow
+        )
     ) {
         Text(
             text = label.uppercase(),

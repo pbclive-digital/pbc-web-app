@@ -20,10 +20,12 @@ class EmailGroupManageViewModel: ViewModel() {
     val emailGroupHeadings: StateFlow<List<EmailGroupHeading>> = _emailGroupHeadings
 
     private val _selectedEmailGroup = MutableStateFlow(EmailGroup())
-    val selectedEmailGroup: StateFlow<EmailGroup> = _selectedEmailGroup
 
     private val _letterGroupedEmailList = MutableStateFlow(mapOf<Char, List<EmailItem>>())
     val letterGroupedEmailList: StateFlow<Map<Char, List<EmailItem>>> = _letterGroupedEmailList
+
+    private val _selectedGroupEmailCount = MutableStateFlow(0)
+    val selectedGroupEmailCount: StateFlow<Int> = _selectedGroupEmailCount
 
     fun createEmailGroupWithCSVFile(groupName: String, uploadedCsvFile: PlatformFile) {
         viewModelScope.launch {
@@ -67,6 +69,7 @@ class EmailGroupManageViewModel: ViewModel() {
                     is ResultWrapper.Success -> {
                         response.value.body?.let {
                             _selectedEmailGroup.value = it
+                            _selectedGroupEmailCount.value = it.emails.size
                             categorizeEmailList()
                         }
                     }
@@ -130,6 +133,7 @@ class EmailGroupManageViewModel: ViewModel() {
 
     private fun categorizeEmailList() {
         _letterGroupedEmailList.value = _selectedEmailGroup.value.emails
+            .filter { it.email.isNotEmpty() } // Filter items only email available
             .groupBy { it.email.first().lowercaseChar() } // Grouped by first letter of the email
             .toList() // Convert to list
             .sortedBy { (key, _) -> key } // Sort by map key

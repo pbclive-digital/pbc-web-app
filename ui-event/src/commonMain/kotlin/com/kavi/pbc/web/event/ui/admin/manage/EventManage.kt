@@ -235,7 +235,6 @@ fun EventManageUI(
             showDialog = showPublishConfirmationDialog,
             emailGroups = emailGroupHeadings,
             onAgree = { selectedEmailGroups ->
-                println("in PublishConfirmationDialog onAgree")
                 showPublishConfirmationDialog.value = false
                 viewModel.publishDraftEvent(
                     eventId = publishingEventId.value,
