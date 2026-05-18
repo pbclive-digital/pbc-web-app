@@ -120,6 +120,16 @@ fun QuestionListUI(navController: NavController) {
                                     }
                                 )
                             }
+
+                            // Question details bottom sheet
+                            if (showQuestionSheet.value && selectedQuestion.value.id != null) {
+                                QuestionSelectedBottomSheetUI(
+                                    sheetState = selectedQuestionSheetState,
+                                    showSheet = showQuestionSheet,
+                                    selectedQuestion = selectedQuestion,
+                                    viewModel = viewModel
+                                )
+                            }
                         }
                         else -> {
                             Column (
@@ -155,15 +165,6 @@ fun QuestionListUI(navController: NavController) {
                 }
             }
         }
-
-        if (showQuestionSheet.value) {
-            QuestionSelectedBottomSheetUI(
-                sheetState = selectedQuestionSheetState,
-                showSheet = showQuestionSheet,
-                selectedQuestion = selectedQuestion,
-                viewModel = viewModel
-            )
-        }
     }
 }
 
@@ -183,6 +184,8 @@ private fun QuestionListPager(
     val showCreateQuestionDialog = remember { mutableStateOf(false) }
     val showAuthInviteDialog = remember { mutableStateOf(false) }
     val showSignUpDialog = remember { mutableStateOf(false) }
+
+    val modifyingQuestion: MutableState<Question> = remember { mutableStateOf(Question()) }
 
     Column {
         AppFilledButton(
@@ -258,6 +261,10 @@ private fun QuestionListPager(
                     modifier = Modifier,
                     viewModel = viewModel,
                     onQuestionSelect = onQuestionSelect,
+                    onQuestionModify = { question ->
+                        showCreateQuestionDialog.value = true
+                        modifyingQuestion.value = question
+                    },
                     selectedQuestionId = selectedQuestion.value.id
                 )
             }
@@ -265,20 +272,19 @@ private fun QuestionListPager(
     }
 
     // Create New question block
-    if (showCreateQuestionDialog.value) {
-        QuestionAskOrModifyDialog(
-            showDialog = showCreateQuestionDialog,
-            onCancel = { refreshRequired ->
-                showCreateQuestionDialog.value = false
+    QuestionAskOrModifyDialog(
+        showDialog = showCreateQuestionDialog,
+        onCancel = { refreshRequired ->
+            showCreateQuestionDialog.value = false
 
-                // Some update happens in questions, therefore refresh-required
-                if (refreshRequired) {
-                    viewModel.fetchOpenQuestionList(forceFetch = true)
-                    viewModel.fetchPersonalQuestionList()
-                }
-            },
-            modifyQuestion = null)
-    }
+            // Some update happens in questions, therefore refresh-required
+            if (refreshRequired) {
+                viewModel.fetchOpenQuestionList(forceFetch = true)
+                viewModel.fetchPersonalQuestionList()
+            }
+        },
+        modifyQuestion = if (modifyingQuestion.value.id.isNullOrEmpty()) { null } else { modifyingQuestion.value }
+    )
 
     if (showAuthInviteDialog.value) {
         ContractServiceLocator.locate(AuthContract::class).ProvideCompleteSignInFlow(
@@ -344,14 +350,12 @@ private fun PersonalQuestionList(
     modifier: Modifier,
     viewModel: QuestionListViewModel,
     selectedQuestionId: String?,
+    onQuestionModify: (modifyQuestion: Question) -> Unit,
     onQuestionSelect: (question: Question) -> Unit
 ) {
     val personalQuestionUiState by viewModel.personalQuestionListUiState.collectAsState()
     val personalQuestionList by viewModel.personalQuestionList.collectAsState()
     val questionDeleteUiState by viewModel.questionDeleteUiState.collectAsState()
-
-    val showCreateQuestionDialog = remember { mutableStateOf(false) }
-    var modifyingQuestion: Question? by remember { mutableStateOf(null) }
 
     val showDeleteQuestionDialog = remember { mutableStateOf(false) }
     var deletingQuestion: Question? by remember { mutableStateOf(null) }
@@ -375,8 +379,7 @@ private fun PersonalQuestionList(
                                 onQuestionSelect.invoke(question)
                             },
                             onModify = {
-                                showCreateQuestionDialog.value = true
-                                modifyingQuestion = question
+                                onQuestionModify.invoke(question)
                             },
                             onDelete = {
                                 showDeleteQuestionDialog.value = true
@@ -387,22 +390,6 @@ private fun PersonalQuestionList(
                 }
             }
         }
-    }
-
-    // Modify Question Dialog
-    if (showCreateQuestionDialog.value) {
-        QuestionAskOrModifyDialog(
-            showDialog = showCreateQuestionDialog,
-            onCancel = { refreshRequired ->
-                showCreateQuestionDialog.value = false
-
-                // Some update happens in questions, therefore refresh-required
-                if (refreshRequired) {
-                    viewModel.fetchOpenQuestionList(forceFetch = true)
-                    viewModel.fetchPersonalQuestionList()
-                }
-            },
-            modifyQuestion = modifyingQuestion)
     }
 
     // Deleting Questions Dialog

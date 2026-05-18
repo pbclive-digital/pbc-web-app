@@ -16,20 +16,11 @@ class QuestionAskOrModifyViewModel: ViewModel() {
     val questionRemoteRepository = QuestionRemoteRepository()
 
     // Make this question is nullable, because need to clear the question object when creation or modify complete
-    private val _askOrModifyQuestion: MutableStateFlow<Question?> = MutableStateFlow(Question())
-    val askOrModifyQuestion: StateFlow<Question?> = _askOrModifyQuestion
+    private val _askOrModifyQuestion: MutableStateFlow<Question> = MutableStateFlow(Question())
+    val askOrModifyQuestion: StateFlow<Question> = _askOrModifyQuestion
 
     private val _questionAskOrModifyStatus = MutableStateFlow(NewQuestionUiState.NONE)
     val questionAskOrModifyStatus: StateFlow<NewQuestionUiState> = _questionAskOrModifyStatus
-
-    init {
-        Session.user?.let {
-            _askOrModifyQuestion.value = Question(
-                authorId = it.id!!,
-                author = it
-            )
-        }
-    }
 
     fun setModifyingQuestion(question: Question) {
         _askOrModifyQuestion.value = question
@@ -44,30 +35,26 @@ class QuestionAskOrModifyViewModel: ViewModel() {
         }
     }
 
-    fun clearQuestion() {
-        _askOrModifyQuestion.value = null
-    }
-
     fun updateQuestionTitle(title: String) {
-        _askOrModifyQuestion.value?.title = title
+        _askOrModifyQuestion.value.title = title
     }
 
     fun updateQuestionContent(content: String) {
-        _askOrModifyQuestion.value?.content = content
+        _askOrModifyQuestion.value.content = content
     }
 
     fun updatePrivacyStatus(isPrivate: Boolean) {
         if (isPrivate)
-            _askOrModifyQuestion.value?.privacy = PrivacyStatus.PRIVATE
+            _askOrModifyQuestion.value.privacy = PrivacyStatus.PRIVATE
         else
-            _askOrModifyQuestion.value?.privacy = PrivacyStatus.PUBLIC
+            _askOrModifyQuestion.value.privacy = PrivacyStatus.PUBLIC
     }
 
     fun createOrModifyQuestion(isModify: Boolean) {
         if (!isModify) {
             viewModelScope.launch {
                 _questionAskOrModifyStatus.value = NewQuestionUiState.PENDING
-                when(questionRemoteRepository.createNewQuestion(_askOrModifyQuestion.value!!)) {
+                when(questionRemoteRepository.createNewQuestion(_askOrModifyQuestion.value)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
                         _questionAskOrModifyStatus.value = NewQuestionUiState.FAILURE
                     }
@@ -79,7 +66,7 @@ class QuestionAskOrModifyViewModel: ViewModel() {
         } else {
             viewModelScope.launch {
                 _questionAskOrModifyStatus.value = NewQuestionUiState.PENDING
-                when(questionRemoteRepository.modifyQuestion(_askOrModifyQuestion.value!!.id!!, _askOrModifyQuestion.value!!)) {
+                when(questionRemoteRepository.modifyQuestion(_askOrModifyQuestion.value.id!!, _askOrModifyQuestion.value)) {
                     is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
                         _questionAskOrModifyStatus.value = NewQuestionUiState.FAILURE
                     }
