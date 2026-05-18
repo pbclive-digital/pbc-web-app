@@ -56,7 +56,7 @@ class QuestionListViewModel: ViewModel() {
         if (forceFetch) {
             paginationRequest.previousPageLastDocKey = null
             isInitialRequestFired.value = true
-            getAllOpenQuestionList()
+            getAllOpenQuestionList(true)
         } else {
             if (!isPagingReachedEnd) {
                 if (!isInitialRequestFired.value && paginationRequest.previousPageLastDocKey == null) {
@@ -144,10 +144,20 @@ class QuestionListViewModel: ViewModel() {
                             .filterNot { it.id == id }
                             .toMutableList()
 
+                        // Update the open question list Ui state if the list is empty after delete
+                        if (_openQuestionList.value.isEmpty()) {
+                            _openQuestionListUiState.value = QuestionListUiState.EMPTY
+                        }
+
                         // Remove from personal questions list
                         _personalQuestionList.value = _personalQuestionList.value
                             .filterNot { it.id == id }
                             .toMutableList()
+
+                        // Update the personal question list Ui state if the list is empty after delete
+                        if (_openQuestionList.value.isEmpty()) {
+                            _personalQuestionListUiState.value = QuestionListUiState.EMPTY
+                        }
                     }
                 }
             }
@@ -156,7 +166,7 @@ class QuestionListViewModel: ViewModel() {
         }
     }
 
-    private fun getAllOpenQuestionList() {
+    private fun getAllOpenQuestionList(replaceList: Boolean = false) {
         viewModelScope.launch {
             when(val response = questionRemoteRepository.getOpenQuestionList(paginationRequest = paginationRequest)) {
                 is ResultWrapper.NetworkError -> {
@@ -174,8 +184,12 @@ class QuestionListViewModel: ViewModel() {
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
                         _openQuestionListUiState.value = QuestionListUiState.SUCCESS
-                        _openQuestionList.update { currentList ->
-                            (currentList + it.entityList).toMutableList()
+                        if (replaceList) {
+                            _openQuestionList.value = it.entityList
+                        } else {
+                            _openQuestionList.update { currentList ->
+                                (currentList + it.entityList).toMutableList()
+                            }
                         }
                         paginationRequest.previousPageLastDocKey = it.previousPageLastDocKey
                     }

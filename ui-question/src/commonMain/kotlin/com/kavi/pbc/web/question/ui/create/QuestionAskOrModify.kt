@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,7 +35,6 @@ import com.kavi.pbc.web.common.ui.component.AppFilledButton
 import com.kavi.pbc.web.common.ui.component.AppOutlineMultiLineTextField
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
 import com.kavi.pbc.web.common.ui.component.ErrorMessageBalloon
-import com.kavi.pbc.web.common.ui.component.SuccessMessageBalloon
 import com.kavi.pbc.web.common.ui.component.TitleWithAction
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.common.ui.util.ScreenType
@@ -47,13 +47,11 @@ import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_question.generated.resources.Res
 import pbcwebapp.ui_question.generated.resources.question_icon_close_x
 import pbcwebapp.ui_question.generated.resources.question_label_create
-import pbcwebapp.ui_question.generated.resources.question_label_create_new_question
 import pbcwebapp.ui_question.generated.resources.question_label_modify
 import pbcwebapp.ui_question.generated.resources.question_label_question_content
 import pbcwebapp.ui_question.generated.resources.question_label_question_privacy
 import pbcwebapp.ui_question.generated.resources.question_label_question_title
 import pbcwebapp.ui_question.generated.resources.question_phrase_question_create_error
-import pbcwebapp.ui_question.generated.resources.question_phrase_question_create_success
 import pbcwebapp.ui_question.generated.resources.question_phrase_question_privacy
 
 @Composable
@@ -81,28 +79,41 @@ private fun QuestionAskOrModifyUI(
     val viewModel: QuestionAskOrModifyViewModel = viewModel { QuestionAskOrModifyViewModel() }
     var isModify by remember { mutableStateOf(false) }
 
-    modifyQuestion?.let {
-        isModify = true
-        // set modifying question
-        viewModel.setModifyingQuestion(question = it)
-    }?: run {
-        // re-initiate question object if that cleared
-        viewModel.initiateNewQuestion()
-    }
+    val isCreateButtonDisable = remember { mutableStateOf(true) }
 
-    var anyAskOrModificationSuccess by remember { mutableStateOf(false) }
+    LaunchedEffect(modifyQuestion) {
+        if (modifyQuestion != null) {
+            // set modifying question
+            viewModel.setModifyingQuestion(modifyQuestion)
+            isModify = true
+        } else {
+            // re-initiate question object if that cleared
+            viewModel.initiateNewQuestion()
+            isModify = false
+        }
+    }
 
     val askOrModifyQuestion by viewModel.askOrModifyQuestion.collectAsState()
     val questionAskOrModifyStatus by viewModel.questionAskOrModifyStatus.collectAsState()
 
-    val askQuestionTitle = remember { mutableStateOf(TextFieldValue(askOrModifyQuestion?.title ?: "")) }
-    val askQuestionContent = remember { mutableStateOf(TextFieldValue(askOrModifyQuestion?.content ?: "")) }
+    val askQuestionTitle = remember { mutableStateOf(TextFieldValue(askOrModifyQuestion.title)) }
+    val askQuestionContent = remember { mutableStateOf(TextFieldValue(askOrModifyQuestion.content)) }
     var isPrivateQuestion by remember { mutableStateOf(
-        askOrModifyQuestion?.privacy == PrivacyStatus.PRIVATE
+        askOrModifyQuestion.privacy == PrivacyStatus.PRIVATE
     ) }
 
+    LaunchedEffect(askOrModifyQuestion) {
+        askQuestionTitle.value = TextFieldValue(askOrModifyQuestion.title)
+        askQuestionContent.value = TextFieldValue(askOrModifyQuestion.content)
+        isPrivateQuestion = askOrModifyQuestion.privacy == PrivacyStatus.PRIVATE
+    }
+
     val errorBalloonVisibility = remember { mutableStateOf(false) }
-    val successBalloonVisibility = remember { mutableStateOf(false) }
+
+    LaunchedEffect(askQuestionTitle.value.text, askQuestionContent.value.text) {
+        isCreateButtonDisable.value =
+            !(askQuestionTitle.value.text.isNotEmpty() && askQuestionContent.value.text.isNotEmpty())
+    }
 
     BoxWithConstraints(
         contentAlignment = Alignment.Center
@@ -118,29 +129,41 @@ private fun QuestionAskOrModifyUI(
             when(screenType) {
                 ScreenType.PHONE -> {
                     TitleWithAction(
-                        titleText = stringResource(Res.string.question_label_create_new_question),
+                        titleText = if (isModify)
+                            stringResource(Res.string.question_label_modify)
+                        else
+                            stringResource(Res.string.question_label_create),
                         textSize = 40,
                         actionPainter = painterResource(Res.drawable.question_icon_close_x),
                         actionPainterSize = 30.dp,
                         isIcon = true,
                     ) {
-                        viewModel.clearQuestion()
                         errorBalloonVisibility.value = false
+                        // Revoke question create/modify status
                         viewModel.revokeNewQuestionUiState()
-                        onCancel.invoke(anyAskOrModificationSuccess)
+                        // Clear values
+                        viewModel.initiateNewQuestion()
+                        // Cancel with non-success
+                        onCancel.invoke(false)
                     }
                 }
                 else -> {
                     TitleWithAction(
-                        titleText = stringResource(Res.string.question_label_create_new_question),
+                        titleText = if (isModify)
+                            stringResource(Res.string.question_label_modify)
+                        else
+                            stringResource(Res.string.question_label_create),
                         actionPainter = painterResource(Res.drawable.question_icon_close_x),
                         actionPainterSize = 40.dp,
                         isIcon = true,
                     ) {
-                        viewModel.clearQuestion()
                         errorBalloonVisibility.value = false
+                        // Revoke question create/modify status
                         viewModel.revokeNewQuestionUiState()
-                        onCancel.invoke(anyAskOrModificationSuccess)
+                        // Clear values
+                        viewModel.initiateNewQuestion()
+                        // Cancel with non-success
+                        onCancel.invoke(false)
                     }
                 }
             }
@@ -152,16 +175,6 @@ private fun QuestionAskOrModifyUI(
                     errorMessage = stringResource(Res.string.question_phrase_question_create_error),
                     onDismiss = {
                         errorBalloonVisibility.value = false
-                        viewModel.revokeNewQuestionUiState()
-                    }
-                )
-
-                SuccessMessageBalloon(
-                    modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                    showBalloon = successBalloonVisibility,
-                    successMessage = stringResource(Res.string.question_phrase_question_create_success),
-                    onDismiss = {
-                        successBalloonVisibility.value = false
                         viewModel.revokeNewQuestionUiState()
                     }
                 )
@@ -235,7 +248,8 @@ private fun QuestionAskOrModifyUI(
                 else stringResource(Res.string.question_label_create),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp)
+                    .padding(top = 8.dp),
+                isDisable = isCreateButtonDisable
             ) {
                 viewModel.createOrModifyQuestion(isModify = isModify)
             }
@@ -250,13 +264,12 @@ private fun QuestionAskOrModifyUI(
                 errorBalloonVisibility.value = true
             }
             NewQuestionUiState.SUCCESS -> {
-                anyAskOrModificationSuccess = true
-                successBalloonVisibility.value = true
-
-                // Clear the question form
-                askQuestionTitle.value = TextFieldValue("")
-                askQuestionContent.value = TextFieldValue("")
-                isPrivateQuestion = false
+                // Revoke question create/modify status
+                viewModel.revokeNewQuestionUiState()
+                // Clear values
+                viewModel.initiateNewQuestion()
+                // Cancel with success
+                onCancel.invoke(true)
             }
         }
     }
