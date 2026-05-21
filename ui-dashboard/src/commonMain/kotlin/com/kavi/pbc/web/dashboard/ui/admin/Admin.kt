@@ -73,9 +73,9 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                         AdminItem(label = "Email Groups") {
                             selectedAction = AdminAction.EMAIL_GROUP_MANAGEMENT
                         }
-                        /*AdminItem(label = "User Management") {
+                        AdminItem(label = "User Management") {
                             selectedAction = AdminAction.USER_MANAGEMENT
-                        }*/
+                        }
                         /*AdminItem(label = "Broadcast Messages") {
                             selectedAction = AdminAction.BROADCAST_MSG
                         }*/
