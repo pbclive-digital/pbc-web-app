@@ -55,6 +55,8 @@
     <string name="event_phrase_reg_un_reg_failure">At this time, PBC failed to process your request. Please try again later. Sorry for the incontinence</string>
     <string name="event_label_invite_heading">You Are Cordially Invited</string>
     <string name="event_label_invite_message">Please join us for this event to bring our community together. Everyone is welcome!</string>
+    <string name="event_label_thank_heading">Thank you!</string>
+    <string name="event_label_thank_message">We are truly grateful for your participation and support in making our event a success.</string>
 
     <string name="event_label_potluck_details">Potluck Details</string>
     <string name="event_label_potluck">Potluck</string>
