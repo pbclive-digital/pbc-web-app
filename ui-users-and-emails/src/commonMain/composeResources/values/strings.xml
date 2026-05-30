@@ -3,6 +3,8 @@
     <string name="email_group_label_tip_delete">Delete</string>
     <string name="email_group_label_tip_add_email">Add new email to group</string>
     <string name="email_group_label_tip_remove_email">Remove email from group</string>
+    <string name="user_label_tip_view">View User</string>
+    <string name="user_label_tip_modify_role">Modify user role</string>
 
     <string name="email_group_label_manage">Manage Email Group</string>
     <string name="email_group_label_create">Create Group</string>
@@ -31,4 +33,6 @@
 
     <string name="user_label_manage">Manage Users</string>
     <string name="user_phrase_manage">This section is to manage all users in PBC. From here can admin can see user details and modify user roles.</string>
+    <string name="user_label_admin_users">Admin Users</string>
+    <string name="user_label_consumer_users">Consumer Users</string>
 </resources>

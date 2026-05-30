@@ -23,7 +23,7 @@ buildkonfig {
         when(environment) {
             "dev" -> { // Development variant
                 buildConfigField(FieldSpec.Type.STRING, "API_SCHEME", "http")
-                buildConfigField(FieldSpec.Type.STRING, "API_DOMAIN", "localhost:8082")
+                buildConfigField(FieldSpec.Type.STRING, "API_DOMAIN", "192.168.40.37:8082")
                 buildConfigField(FieldSpec.Type.STRING, "ENVIRONMENT", "dev")
             }
             "staging" -> { // Staging variant
