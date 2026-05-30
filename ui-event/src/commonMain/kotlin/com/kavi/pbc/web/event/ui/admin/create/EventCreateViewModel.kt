@@ -45,6 +45,9 @@ class EventCreateViewModel: ViewModel() {
     private var _signUpSheetItemList = MutableStateFlow<MutableList<SignUpSheet>>(mutableListOf())
     val signUpSheetItemList: StateFlow<List<SignUpSheet>> = _signUpSheetItemList
 
+    private var _isRecurringEvent = MutableStateFlow<Boolean>(false)
+    val isRecurringEvent: StateFlow<Boolean> = _isRecurringEvent
+
     private var eventImageFile: PlatformFile? = null
 
     fun initiateNewEvent() {
@@ -166,11 +169,14 @@ class EventCreateViewModel: ViewModel() {
 
     fun updateEventType(eventType: String) {
         when(eventType) {
-            EventType.SPECIAL.name -> _createOrModifyEvent.value.eventType = EventType.SPECIAL
-            EventType.BUDDHISM_CLASS.name -> _createOrModifyEvent.value.eventType = EventType.BUDDHISM_CLASS
-            EventType.MEDITATION.name -> _createOrModifyEvent.value.eventType = EventType.MEDITATION
-            EventType.DHAMMA_TALK.name -> _createOrModifyEvent.value.eventType = EventType.DHAMMA_TALK
-            EventType.RECURRING.name -> _createOrModifyEvent.value.eventType = EventType.RECURRING
+            EventType.SPECIAL.name -> {
+                _createOrModifyEvent.value.eventType = EventType.SPECIAL
+                _isRecurringEvent.value = false
+            }
+            EventType.RECURRING.name -> {
+                _createOrModifyEvent.value.eventType = EventType.RECURRING
+                _isRecurringEvent.value = true
+            }
         }
     }
 

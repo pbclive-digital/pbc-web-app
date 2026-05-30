@@ -208,16 +208,13 @@ private fun EventListPhoneUI(viewModel: EventListViewModel, navController: NavCo
                 columns = GridCells.Fixed(columCount),
             ) {
                 items(pastEventList) { event ->
-                    EventListItem(
-                        event = event,
-                        modifier = Modifier.clickable {
-                            /**
-                             * Alternative way to do the same navigation as a path
-                             * navController.navigate("event/event-selected/${event.id}")
-                             */
-                            navController.navigate(EventPath.EventDetails(eventId = event.id!!))
-                        }
-                    )
+                    EventListItem(event = event) {
+                        /**
+                         * Alternative way to do the same navigation as a path
+                         * navController.navigate("event/event-selected/${event.id}")
+                         */
+                        navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+                    }
                 }
             }
         }
@@ -230,7 +227,7 @@ private fun EventListWebUI(viewModel: EventListViewModel, navController: NavCont
     LaunchedEffect(Unit) {
         viewModel.fetchUpcomingEvents()
         viewModel.fetchRecurringEvents()
-        viewModel.fetchPastEvents()
+        viewModel.fetchPastEventsWithLimit()
     }
 
     Row (
@@ -249,12 +246,6 @@ private fun EventListWebUI(viewModel: EventListViewModel, navController: NavCont
                 maxWidth = maxWidth
             )
 
-            // This is for recurring events (weekly/monthly)
-            WebRecurringEvents(
-                navController = navController,
-                viewModel = viewModel
-            )
-
             Text(
                 modifier = Modifier
                     .padding(top = 24.dp, bottom = 16.dp)
@@ -270,8 +261,16 @@ private fun EventListWebUI(viewModel: EventListViewModel, navController: NavCont
         Spacer(modifier = Modifier.width(12.dp))
 
         Column (
-            modifier = Modifier.weight(.3f)
+            modifier = Modifier
+                .weight(.3f)
+                .verticalScroll(rememberScrollState())
         ) {
+            // This is for recurring events (weekly/monthly)
+            WebRecurringEvents(
+                navController = navController,
+                viewModel = viewModel,
+            )
+
             WebPastEvents(
                 navController = navController,
                 viewModel = viewModel
@@ -466,20 +465,17 @@ private fun WebPastEvents(
             }
             else -> {
                 if (pastEventList.isNotEmpty()) {
-                    LazyColumn(
+                    Column (
                         modifier = Modifier.padding(top = 8.dp),
                     ) {
-                        items(items = pastEventList) { event ->
-                            EventListItem(
-                                event = event,
-                                modifier = Modifier.clickable {
-                                    /**
-                                     * Alternative way to do the same navigation as a path
-                                     * navController.navigate("event/event-selected/${event.id}")
-                                     */
-                                    navController.navigate(EventPath.EventDetails(eventId = event.id!!))
-                                }
-                            )
+                        pastEventList.forEach { event ->
+                            EventListItem(event = event) {
+                                /**
+                                 * Alternative way to do the same navigation as a path
+                                 * navController.navigate("event/event-selected/${event.id}")
+                                 */
+                                navController.navigate(EventPath.EventDetails(eventId = event.id!!))
+                            }
                         }
                     }
                 } else {

@@ -18,7 +18,7 @@
     <string name="event_phrase_empty_past_events">There is no recent past events to show at this time.</string>
     <string name="event_phrase_note_for_events">All the events are free and open to public, unless otherwise noted. All are welcome.</string>
     <string name="event_label_recurring">Recurring Events</string>
-    <string name="event_phrase_recurring">Following are the events that happening every week.</string>
+    <string name="event_phrase_recurring">Following are the events / programs that happening every week.</string>
     <string name="event_phrase_empty_recurring_events">There is no recurring events to show at this time. Soon we will come up with new events / programs.</string>
 
     <string name="event_label_from">From: </string>
