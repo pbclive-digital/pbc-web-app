@@ -80,7 +80,9 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                             selectedAction = AdminAction.BROADCAST_MSG
                         }*/
                         Box(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(

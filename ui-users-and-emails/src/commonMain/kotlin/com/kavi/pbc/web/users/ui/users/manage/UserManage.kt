@@ -27,8 +27,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,11 +46,11 @@ import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.user.User
 import com.kavi.pbc.web.users.ui.common.AdminUserUI
+import com.kavi.pbc.web.users.ui.users.manage.dialog.ViewUserDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_users_and_emails.generated.resources.Res
-import pbcwebapp.ui_users_and_emails.generated.resources.email_group_icon_x
-import pbcwebapp.ui_users_and_emails.generated.resources.user_icon_role_edit
+import pbcwebapp.ui_users_and_emails.generated.resources.user_icon_x
 import pbcwebapp.ui_users_and_emails.generated.resources.user_label_admin_users
 import pbcwebapp.ui_users_and_emails.generated.resources.user_label_consumer_users
 import pbcwebapp.ui_users_and_emails.generated.resources.user_label_manage
@@ -59,7 +62,6 @@ fun UserManageUI(navController: NavController) {
     val viewModel: UserManageViewModel = viewModel { UserManageViewModel() }
 
     val adminUsers by viewModel.adminUserList.collectAsState()
-    val consumerUsersCategories by viewModel.letterGroupedConsumerList.collectAsState()
 
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
@@ -67,6 +69,9 @@ fun UserManageUI(navController: NavController) {
         viewModel.fetchAdmins()
         viewModel.fetchConsumers()
     }
+
+    val showUserViewDialog = mutableStateOf(false)
+    val selectedUser = remember { mutableStateOf(User(email = "")) }
 
     Box(
         modifier = Modifier
@@ -120,8 +125,10 @@ fun UserManageUI(navController: NavController) {
                             itemsIndexed(adminUsers) { index, adminUser ->
                                 AdminUserUI(
                                     user = adminUser,
-                                    onView = {},
-                                    onModifyRole = {}
+                                    onView = {
+                                        showUserViewDialog.value = true
+                                        selectedUser.value = adminUser
+                                    }
                                 )
                                 if (index < adminUsers.lastIndex) {
                                     HorizontalDivider(
@@ -139,19 +146,31 @@ fun UserManageUI(navController: NavController) {
                     Column (modifier = Modifier.weight(.65f)) {
                         ConsumerUserUI(
                             modifier = Modifier.padding(start = 8.dp),
-                            viewModel = viewModel
+                            viewModel = viewModel,
+                            showUserViewDialog = showUserViewDialog,
+                            selectedUser = selectedUser
                         )
                     }
                 }
             }
         }
     }
+
+    ViewUserDialog(
+        showDialog = showUserViewDialog,
+        user = selectedUser,
+        onDismiss = {
+            showUserViewDialog.value = false
+        }
+    )
 }
 
 @Composable
 private fun ConsumerUserUI(
     modifier: Modifier = Modifier,
-    viewModel: UserManageViewModel
+    viewModel: UserManageViewModel,
+    showUserViewDialog: MutableState<Boolean>,
+    selectedUser: MutableState<User>
 ) {
     val letterGroupedConsumerList by viewModel.letterGroupedConsumerList.collectAsState()
 
@@ -176,8 +195,13 @@ private fun ConsumerUserUI(
                     UserGridContainer(
                         letter = key,
                         userList = letterGroupedConsumerList[key],
-                        onView = { user -> },
-                        onDelete = { user -> }
+                        onView = { user ->
+                            showUserViewDialog.value = true
+                            selectedUser.value = user
+                        },
+                        onDelete = { user ->
+                            // TODO - DELETE USER
+                        }
                     )
                 }
             }
@@ -226,7 +250,7 @@ private fun UserGridContainer(letter: Char, userList: List<User>?, onView: (user
                             },
                             trailingIcon = {
                                 Icon(
-                                    painterResource(Res.drawable.user_icon_role_edit),
+                                    painterResource(Res.drawable.user_icon_x),
                                     contentDescription = "Localized description",
                                     modifier = Modifier
                                         .size(AssistChipDefaults.IconSize)

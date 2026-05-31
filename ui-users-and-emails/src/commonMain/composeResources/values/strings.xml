@@ -35,4 +35,15 @@
     <string name="user_phrase_manage">This section is to manage all users in PBC. From here can admin can see user details and modify user roles.</string>
     <string name="user_label_admin_users">Admin Users</string>
     <string name="user_label_consumer_users">Consumer Users</string>
+
+    <string name="user_label_basic_info">Basic Info</string>
+    <string name="user_phrase_basic_info">Basic information and available contact details about selected user.</string>
+    <string name="user_label_email">Email</string>
+    <string name="user_label_phone">Phone #</string>
+    <string name="user_label_address">Address</string>
+    <string name="user_label_modify_role">Modify User's Role</string>
+    <string name="user_phrase_modify_role">This is to assign new role to selected user. You can select any predefined user roles in the app and assign that to user. Below drop-down menu already selected the current role of the selected user.</string>
+    <string name="user_label_user_type">User Type</string>
+    <string name="user_label_resident_monk">Is this a resident monk?</string>
+    <string name="user_label_role_modify">Change User Role</string>
 </resources>

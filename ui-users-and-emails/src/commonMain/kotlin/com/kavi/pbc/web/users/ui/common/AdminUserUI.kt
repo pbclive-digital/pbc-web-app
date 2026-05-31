@@ -26,17 +26,14 @@ import com.kavi.pbc.web.data.user.User
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_users_and_emails.generated.resources.Res
-import pbcwebapp.ui_users_and_emails.generated.resources.user_icon_role_edit
 import pbcwebapp.ui_users_and_emails.generated.resources.user_icon_view
-import pbcwebapp.ui_users_and_emails.generated.resources.user_label_tip_modify_role
 import pbcwebapp.ui_users_and_emails.generated.resources.user_label_tip_view
 
 @Composable
 fun AdminUserUI(
     modifier: Modifier = Modifier,
     user: User,
-    onView: () -> Unit,
-    onModifyRole: () -> Unit
+    onView: () -> Unit
 ) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
@@ -80,26 +77,10 @@ fun AdminUserUI(
                         contentDescription = "Edit News",
                         tint = themeAdditionalColors.shadow,
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(35.dp)
                             .padding(4.dp)
                             .clickable {
                                 onView.invoke()
-                            }
-                    )
-                }
-
-                AppTooltipWrap(
-                    tipLabel = stringResource(Res.string.user_label_tip_modify_role)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.user_icon_role_edit),
-                        contentDescription = "Edit News",
-                        tint = themeAdditionalColors.shadow,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(4.dp)
-                            .clickable {
-                                onModifyRole.invoke()
                             }
                     )
                 }
