@@ -3,6 +3,7 @@ package com.kavi.pbc.web.users.ui.users.manage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -32,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,11 +43,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.kavi.pbc.web.common.ui.component.ErrorMessageBalloon
+import com.kavi.pbc.web.common.ui.component.SuccessMessageBalloon
 import com.kavi.pbc.web.common.ui.component.Title
 import com.kavi.pbc.web.common.ui.theme.LocalThemeAdditionalColors
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.user.User
+import com.kavi.pbc.web.users.data.model.UserDeleteUiState
+import com.kavi.pbc.web.users.data.model.UserRoleUpdateUiState
 import com.kavi.pbc.web.users.ui.common.AdminUserUI
+import com.kavi.pbc.web.users.ui.users.manage.dialog.DeleteUserConfirmationDialog
 import com.kavi.pbc.web.users.ui.users.manage.dialog.ViewUserDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -54,6 +61,11 @@ import pbcwebapp.ui_users_and_emails.generated.resources.user_icon_x
 import pbcwebapp.ui_users_and_emails.generated.resources.user_label_admin_users
 import pbcwebapp.ui_users_and_emails.generated.resources.user_label_consumer_users
 import pbcwebapp.ui_users_and_emails.generated.resources.user_label_manage
+import pbcwebapp.ui_users_and_emails.generated.resources.user_label_resident_monks
+import pbcwebapp.ui_users_and_emails.generated.resources.user_label_user_delete_failed
+import pbcwebapp.ui_users_and_emails.generated.resources.user_label_user_delete_success
+import pbcwebapp.ui_users_and_emails.generated.resources.user_label_user_role_modify_failed
+import pbcwebapp.ui_users_and_emails.generated.resources.user_label_user_role_modify_success
 import pbcwebapp.ui_users_and_emails.generated.resources.user_phrase_manage
 
 @Composable
@@ -62,16 +74,28 @@ fun UserManageUI(navController: NavController) {
     val viewModel: UserManageViewModel = viewModel { UserManageViewModel() }
 
     val adminUsers by viewModel.adminUserList.collectAsState()
+    val residentMonks by viewModel.residentMonksList.collectAsState()
+    val userDeleteUiState by viewModel.userDeleteUiState.collectAsState()
+    val userRoleUpdateUiState by viewModel.userRoleUpdateUiState.collectAsState()
 
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     LaunchedEffect(Unit) {
         viewModel.fetchAdmins()
+        viewModel.fetchResidentMonks()
         viewModel.fetchConsumers()
     }
 
     val showUserViewDialog = mutableStateOf(false)
     val selectedUser = remember { mutableStateOf(User(email = "")) }
+
+    val showUserDeleteConfirmDialog = mutableStateOf(false)
+    val deletingUser = remember { mutableStateOf(User(email = "")) }
+
+    val errorBalloonVisibility = remember { mutableStateOf(false) }
+    var errorBalloonMessage by remember { mutableStateOf("") }
+    val successBalloonVisibility = remember { mutableStateOf(false) }
+    var successBalloonMessage by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -105,23 +129,46 @@ fun UserManageUI(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    // Error or Success message balloon
+                    ErrorMessageBalloon(
+                        modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                        showBalloon = errorBalloonVisibility,
+                        errorMessage = errorBalloonMessage,
+                        onDismiss = {
+                            errorBalloonVisibility.value = false
+                            viewModel.revokeAllUiStates()
+                        }
+                    )
+                    SuccessMessageBalloon(
+                        modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                        showBalloon = successBalloonVisibility,
+                        successMessage = successBalloonMessage,
+                        onDismiss = {
+                            successBalloonVisibility.value = false
+                            viewModel.revokeAllUiStates()
+                        }
+                    )
+                }
+
                 Row {
                     Column (
                         modifier = Modifier
                             .weight(.35f)
                     ) {
-                        Text(
-                            text = stringResource(Res.string.user_label_admin_users),
-                            fontFamily = PBCFontFamily,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .padding(top = 12.dp)
-                                .fillMaxWidth()
-                        )
-
                         LazyColumn {
+                            item {
+                                Text(
+                                    text = stringResource(Res.string.user_label_admin_users),
+                                    fontFamily = PBCFontFamily,
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier
+                                        .padding(top = 12.dp)
+                                        .fillMaxWidth()
+                                )
+                            }
                             itemsIndexed(adminUsers) { index, adminUser ->
                                 AdminUserUI(
                                     user = adminUser,
@@ -131,6 +178,35 @@ fun UserManageUI(navController: NavController) {
                                     }
                                 )
                                 if (index < adminUsers.lastIndex) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        thickness = 1.dp,
+                                        color = themeAdditionalColors.shadow
+                                    )
+                                }
+                            }
+                            item {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = stringResource(Res.string.user_label_resident_monks),
+                                    fontFamily = PBCFontFamily,
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier
+                                        .padding(top = 12.dp)
+                                        .fillMaxWidth()
+                                )
+                            }
+                            itemsIndexed(residentMonks) { index, residentMonk ->
+                                AdminUserUI(
+                                    user = residentMonk,
+                                    onView = {
+                                        showUserViewDialog.value = true
+                                        selectedUser.value = residentMonk
+                                    }
+                                )
+                                if (index < residentMonks.lastIndex) {
                                     HorizontalDivider(
                                         modifier = Modifier.fillMaxWidth(),
                                         thickness = 1.dp,
@@ -148,7 +224,9 @@ fun UserManageUI(navController: NavController) {
                             modifier = Modifier.padding(start = 8.dp),
                             viewModel = viewModel,
                             showUserViewDialog = showUserViewDialog,
-                            selectedUser = selectedUser
+                            selectedUser = selectedUser,
+                            showDeleteConfirmDialog = showUserDeleteConfirmDialog,
+                            deletingUser = deletingUser
                         )
                     }
                 }
@@ -159,10 +237,51 @@ fun UserManageUI(navController: NavController) {
     ViewUserDialog(
         showDialog = showUserViewDialog,
         user = selectedUser,
+        onModifyUserRole = { newUserRole, isResidentMonk, user ->
+            viewModel.modifyUserRole(newUserRole = newUserRole, residentMonkFlag = isResidentMonk, user = user)
+        },
         onDismiss = {
             showUserViewDialog.value = false
         }
     )
+
+    DeleteUserConfirmationDialog(
+        showDialog = showUserDeleteConfirmDialog,
+        onConfirm = {
+            viewModel.deleteConsumerUser(deletingUserId = deletingUser.value.id!!)
+        },
+        onDismiss = {
+            showUserDeleteConfirmDialog.value = false
+        }
+    )
+
+    when(userDeleteUiState) {
+        UserDeleteUiState.FAILURE -> {
+            errorBalloonVisibility.value = true
+            errorBalloonMessage = stringResource(Res.string.user_label_user_delete_failed)
+        }
+        UserDeleteUiState.SUCCESS -> {
+            successBalloonVisibility.value = true
+            successBalloonMessage = stringResource(Res.string.user_label_user_delete_success)
+        }
+        else -> {
+            /* Nothing to do in here*/
+        }
+    }
+
+    when(userRoleUpdateUiState) {
+        UserRoleUpdateUiState.FAILURE -> {
+            errorBalloonVisibility.value = true
+            errorBalloonMessage = stringResource(Res.string.user_label_user_role_modify_failed)
+        }
+        UserRoleUpdateUiState.SUCCESS -> {
+            successBalloonVisibility.value = true
+            successBalloonMessage = stringResource(Res.string.user_label_user_role_modify_success)
+        }
+        else -> {
+            /* Nothing to do in here*/
+        }
+    }
 }
 
 @Composable
@@ -170,7 +289,9 @@ private fun ConsumerUserUI(
     modifier: Modifier = Modifier,
     viewModel: UserManageViewModel,
     showUserViewDialog: MutableState<Boolean>,
-    selectedUser: MutableState<User>
+    selectedUser: MutableState<User>,
+    showDeleteConfirmDialog: MutableState<Boolean>,
+    deletingUser: MutableState<User>
 ) {
     val letterGroupedConsumerList by viewModel.letterGroupedConsumerList.collectAsState()
 
@@ -200,7 +321,8 @@ private fun ConsumerUserUI(
                             selectedUser.value = user
                         },
                         onDelete = { user ->
-                            // TODO - DELETE USER
+                            showDeleteConfirmDialog.value = true
+                            deletingUser.value = user
                         }
                     )
                 }
