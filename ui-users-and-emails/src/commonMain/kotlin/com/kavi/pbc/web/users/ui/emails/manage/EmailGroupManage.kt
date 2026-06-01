@@ -262,7 +262,7 @@ private fun SelectedEmailGroup(
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.email_group_icon_add_email),
-                            contentDescription = "Edit Event",
+                            contentDescription = "Edit Email group",
                             tint = themeAdditionalColors.shadow,
                             modifier = Modifier
                                 .size(40.dp)
