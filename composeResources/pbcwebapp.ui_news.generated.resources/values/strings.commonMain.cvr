@@ -2,7 +2,8 @@ version:0
 string|news_label_active_fetch_empty|Tm8gYWN0aXZlIE5ld3MgYXZhaWxhYmxlIGF0IHRoaXMgdGltZS4=
 string|news_label_active|QWN0aXZlIE5ld3M=
 string|news_label_content|TmV3cyBDb250ZW50
-string|news_label_create_news|Q3JlYXRl
+string|news_label_create_news|Q3JlYXRlIGEgTmV3cw==
+string|news_label_create_short|Q3JlYXRl
 string|news_label_create|Q3JlYXRlIE5ld3M=
 string|news_label_delete_confirmation|QXJlIHlvdSBzdXJlPw==
 string|news_label_draft|RHJhZnQgTmV3cw==
