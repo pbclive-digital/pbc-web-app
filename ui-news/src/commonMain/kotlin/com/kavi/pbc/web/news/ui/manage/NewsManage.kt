@@ -50,7 +50,7 @@ import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_news.generated.resources.Res
 import pbcwebapp.ui_news.generated.resources.news_icon_news
 import pbcwebapp.ui_news.generated.resources.news_label_active
-import pbcwebapp.ui_news.generated.resources.news_label_create_news
+import pbcwebapp.ui_news.generated.resources.news_label_create_short
 import pbcwebapp.ui_news.generated.resources.news_label_draft
 import pbcwebapp.ui_news.generated.resources.news_label_manage
 import pbcwebapp.ui_news.generated.resources.news_label_no_active
@@ -89,7 +89,7 @@ fun NewsManageUI(navController: NavController) {
             ) {
                 AppButtonWithIcon(
                     modifier = Modifier.padding(bottom = 12.dp),
-                    label = stringResource(Res.string.news_label_create_news),
+                    label = stringResource(Res.string.news_label_create_short),
                     icon = painterResource(Res.drawable.news_icon_news),
                     cornerRadius = 12.dp
                 ) {

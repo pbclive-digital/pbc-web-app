@@ -22,14 +22,14 @@ class CreateOrModifyNewsViewModel: ViewModel() {
     val newsCreationOrModifyState: StateFlow<NewsCreateOrModifyUiState> = _newsCreationOrModifyState
 
     // Make this news is nullable, because need to clear the news object when creation or modify complete
-    private val _createOrModifyNews: MutableStateFlow<News?> = MutableStateFlow(News(
+    private val _createOrModifyNews: MutableStateFlow<News> = MutableStateFlow(News(
         createdTime = Clock.System.now().toEpochMilliseconds()
     ))
-    val createOrModifyNews: StateFlow<News?> = _createOrModifyNews
+    val createOrModifyNews: StateFlow<News> = _createOrModifyNews
 
     private var newsImageFile: PlatformFile? = null
 
-    init {
+    fun initiateNewNews() {
         Session.user?.let {
             _createOrModifyNews.value = News(
                 createdTime = Clock.System.now().toEpochMilliseconds(),
@@ -46,15 +46,15 @@ class CreateOrModifyNewsViewModel: ViewModel() {
     }
 
     fun updateNewsHeadline(headline: String) {
-        _createOrModifyNews.value?.title = headline
+        _createOrModifyNews.value.title = headline
     }
 
     fun updateNewsContent(content: String) {
-        _createOrModifyNews.value?.content = content
+        _createOrModifyNews.value.content = content
     }
 
     fun updateNewsLink(newsLink: String) {
-        _createOrModifyNews.value?.facebookLink = newsLink
+        _createOrModifyNews.value.facebookLink = newsLink
     }
 
     fun updateNewsImageFile(newsImage: PlatformFile) {
@@ -102,10 +102,6 @@ class CreateOrModifyNewsViewModel: ViewModel() {
         } else {
             _newsCreationOrModifyState.value = NewsCreateOrModifyUiState.EMPTY_FIELD
         }
-    }
-
-    fun clearNews() {
-        _createOrModifyNews.value = null
     }
 
     fun revokeCreateOrModifyUiStatus() {

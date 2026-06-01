@@ -85,11 +85,13 @@ class EventListViewModel: ViewModel() {
 
     fun fetchPastEventsWithLimit() {
         viewModelScope.launch {
+            _pastEventListUiState.value = EventListUiState.PENDING
             when(val response = eventRemoteRepository.getPastEventsWithLimit(limit = 5)) {
-                is ResultWrapper.NetworkError -> {}
-                is ResultWrapper.HttpError -> {}
-                is ResultWrapper.UnAuthError -> {}
+                is ResultWrapper.NetworkError, is ResultWrapper.HttpError, is ResultWrapper.UnAuthError -> {
+                    _pastEventListUiState.value = EventListUiState.FAILURE
+                }
                 is ResultWrapper.Success -> {
+                    _pastEventListUiState.value = EventListUiState.SUCCESS
                     response.value.body?.let {
                         _pastEventList.value = it
                     }
