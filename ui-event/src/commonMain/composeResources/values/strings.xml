@@ -18,7 +18,7 @@
     <string name="event_phrase_empty_past_events">There is no recent past events to show at this time.</string>
     <string name="event_phrase_note_for_events">All the events are free and open to public, unless otherwise noted. All are welcome.</string>
     <string name="event_label_recurring">Recurring Events</string>
-    <string name="event_phrase_recurring">Following are the events that happening every week.</string>
+    <string name="event_phrase_recurring">Following are the events / programs that happening every week.</string>
     <string name="event_phrase_empty_recurring_events">There is no recurring events to show at this time. Soon we will come up with new events / programs.</string>
 
     <string name="event_label_from">From: </string>
@@ -55,6 +55,8 @@
     <string name="event_phrase_reg_un_reg_failure">At this time, PBC failed to process your request. Please try again later. Sorry for the incontinence</string>
     <string name="event_label_invite_heading">You Are Cordially Invited</string>
     <string name="event_label_invite_message">Please join us for this event to bring our community together. Everyone is welcome!</string>
+    <string name="event_label_thank_heading">Thank you!</string>
+    <string name="event_label_thank_message">We are truly grateful for your participation and support in making our event a success.</string>
 
     <string name="event_label_potluck_details">Potluck Details</string>
     <string name="event_label_potluck">Potluck</string>

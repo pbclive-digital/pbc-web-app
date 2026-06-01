@@ -143,6 +143,7 @@ fun EventCreateUI(
     val createOrModifyEvent by viewModel.createOrModifyEvent.collectAsState()
     val eventCreationOrModifyState by viewModel.eventCreationOrModifyState.collectAsState()
     val eventFormValidationError by viewModel.eventFormValidationError.collectAsState()
+    val isRecurringEvent by viewModel.isRecurringEvent.collectAsState()
 
     val errorBalloonVisibility = remember { mutableStateOf(false) }
     var errorBalloonMessage by remember { mutableStateOf("") }
@@ -212,14 +213,16 @@ fun EventCreateUI(
                         // This will contain UI for create program schedule
                         EventAgenda(viewModel = viewModel)
 
-                        // This will contain UI for set-up event registration
-                        EventRegistrationSetup(viewModel = viewModel)
+                        if (!isRecurringEvent) {
+                            // This will contain UI for set-up event registration
+                            EventRegistrationSetup(viewModel = viewModel)
 
-                        // This will contain UI for set-up event potluck
-                        EventPotluckSetup(viewModel = viewModel)
+                            // This will contain UI for set-up event potluck
+                            EventPotluckSetup(viewModel = viewModel)
 
-                        // This will contain UI for set-up additional sign-up sheets
-                        EventSignUpSheetSetup(viewModel = viewModel)
+                            // This will contain UI for set-up additional sign-up sheets
+                            EventSignUpSheetSetup(viewModel = viewModel)
+                        }
 
                         Row (
                             modifier = Modifier
@@ -436,8 +439,7 @@ private fun EventCreationForm(viewModel: EventCreateViewModel) {
                 .padding(top = 4.dp),
             title = stringResource(Res.string.event_label_event_type).uppercase(),
             selectableItems = listOf(
-                EventType.BUDDHISM_CLASS.name, EventType.MEDITATION.name,
-                EventType.DHAMMA_TALK.name, EventType.SPECIAL.name, EventType.RECURRING.name),
+                EventType.SPECIAL.name, EventType.RECURRING.name),
             selectedItem = eventType,
         )
 

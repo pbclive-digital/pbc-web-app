@@ -2,6 +2,7 @@ package com.kavi.pbc.web.event.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +33,7 @@ import pbcwebapp.ui_event.generated.resources.event_image_pbc
 
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 @Composable
-fun EventListItem(modifier: Modifier = Modifier, event: Event) {
+fun EventListItem(modifier: Modifier = Modifier, event: Event, onClick: () -> Unit) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     BoxWithConstraints (
@@ -49,7 +50,10 @@ fun EventListItem(modifier: Modifier = Modifier, event: Event) {
                     spotColor = themeAdditionalColors.shadow,
                     shape = RoundedCornerShape(8.dp),
                 )
-                .background(MaterialTheme.colorScheme.background),
+                .background(MaterialTheme.colorScheme.background)
+                .clickable {
+                    onClick.invoke()
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column (

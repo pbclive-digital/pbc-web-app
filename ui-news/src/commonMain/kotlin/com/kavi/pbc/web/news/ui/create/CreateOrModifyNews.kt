@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,7 +44,6 @@ import com.kavi.pbc.web.common.ui.component.AppFilledButton
 import com.kavi.pbc.web.common.ui.component.AppOutlineMultiLineTextField
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
 import com.kavi.pbc.web.common.ui.component.ErrorMessageBalloon
-import com.kavi.pbc.web.common.ui.component.SuccessMessageBalloon
 import com.kavi.pbc.web.common.ui.component.TitleWithAction
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.news.News
@@ -67,7 +67,6 @@ import pbcwebapp.ui_news.generated.resources.news_label_modify_news
 import pbcwebapp.ui_news.generated.resources.news_label_pick_image
 import pbcwebapp.ui_news.generated.resources.news_phrase_create_or_modify_empty_fields
 import pbcwebapp.ui_news.generated.resources.news_phrase_create_or_modify_failure
-import pbcwebapp.ui_news.generated.resources.news_phrase_create_or_modify_success
 
 @Composable
 fun CreateOrModifyNewsDialog(
@@ -98,25 +97,33 @@ private fun CreateOrModifyNewsContent(
     val viewModel: CreateOrModifyNewsViewModel = viewModel { CreateOrModifyNewsViewModel() }
     var isModify by remember { mutableStateOf(false) }
 
-    modifyNews?.let {
-        isModify = true
-        viewModel.setModifyNews(news = it)
+    LaunchedEffect(modifyNews) {
+        if (modifyNews != null) {
+            isModify = true
+            viewModel.setModifyNews(news = modifyNews)
+        } else {
+            isModify = false
+            viewModel.initiateNewNews()
+        }
     }
-
-    var anyModifySuccess by remember { mutableStateOf(false) }
 
     val createOrModifyNews by viewModel.createOrModifyNews.collectAsState()
     val newsCreationOrModifyState by viewModel.newsCreationOrModifyState.collectAsState()
 
-    val newsHeadline = remember { mutableStateOf(TextFieldValue(createOrModifyNews?.title?: "")) }
-    val newsContent = remember { mutableStateOf(TextFieldValue(createOrModifyNews?.content?: "")) }
+    val newsHeadline = remember { mutableStateOf(TextFieldValue(createOrModifyNews.title)) }
+    val newsContent = remember { mutableStateOf(TextFieldValue(createOrModifyNews.content)) }
     val facebookLink = remember { mutableStateOf(TextFieldValue(
-        createOrModifyNews?.facebookLink ?: run { "" }
+        createOrModifyNews.facebookLink ?: run { "" }
     )) }
+
+    LaunchedEffect(createOrModifyNews) {
+        newsHeadline.value = TextFieldValue(createOrModifyNews.title)
+        newsContent.value = TextFieldValue(createOrModifyNews.content)
+        facebookLink.value = TextFieldValue(createOrModifyNews.facebookLink ?: "")
+    }
 
     val errorBalloonVisibility = remember { mutableStateOf(false) }
     var errorBalloonMessage by remember { mutableStateOf("") }
-    val successBalloonVisibility = remember { mutableStateOf(false) }
 
     var selectedImage by remember { mutableStateOf<ImageBitmap?>(null) }
     val scope = rememberCoroutineScope()
@@ -151,21 +158,20 @@ private fun CreateOrModifyNewsContent(
             ) {
                 TitleWithAction(
                     titleText = if (isModify)
-                        stringResource(Res.string.news_label_create_news)
+                        stringResource(Res.string.news_label_modify_news)
                     else
-                        stringResource(Res.string.news_label_modify_news),
+                        stringResource(Res.string.news_label_create_news),
                     actionPainter = painterResource(Res.drawable.news_icon_close_x),
                     actionPainterSize = 40.dp,
                     isIcon = true,
                 ) {
-                    viewModel.clearNews()
+                    // Create the news
+                    viewModel.initiateNewNews()
                     errorBalloonVisibility.value = false
                     viewModel.revokeCreateOrModifyUiStatus()
-                    if (anyModifySuccess) {
-                        onCreateOrModify.invoke()
-                    } else {
-                        onDismiss.invoke()
-                    }
+
+                    // Dismiss the dialog
+                    onDismiss.invoke()
                 }
 
                 Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -176,15 +182,6 @@ private fun CreateOrModifyNewsContent(
                         errorMessage = errorBalloonMessage,
                         onDismiss = {
                             errorBalloonVisibility.value = false
-                            viewModel.revokeCreateOrModifyUiStatus()
-                        }
-                    )
-                    SuccessMessageBalloon(
-                        modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                        showBalloon = successBalloonVisibility,
-                        successMessage = stringResource(Res.string.news_phrase_create_or_modify_success),
-                        onDismiss = {
-                            successBalloonVisibility.value = false
                             viewModel.revokeCreateOrModifyUiStatus()
                         }
                     )
@@ -339,14 +336,13 @@ private fun CreateOrModifyNewsContent(
             errorBalloonMessage = stringResource(Res.string.news_phrase_create_or_modify_empty_fields)
         }
         NewsCreateOrModifyUiState.SUCCESS -> {
-            anyModifySuccess = true
-            successBalloonVisibility.value = true
+            // Invoke create or modify
+            onCreateOrModify.invoke()
 
             // Clear the question form
-            newsHeadline.value = TextFieldValue("")
-            newsContent.value = TextFieldValue("")
-            facebookLink.value = TextFieldValue("")
-            selectedImage = null
+            viewModel.initiateNewNews()
+            errorBalloonVisibility.value = false
+            viewModel.revokeCreateOrModifyUiStatus()
         }
     }
 }

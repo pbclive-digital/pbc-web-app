@@ -82,6 +82,8 @@ import pbcwebapp.ui_event.generated.resources.event_label_potluck
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_details
 import pbcwebapp.ui_event.generated.resources.event_label_register_or_unregister
 import pbcwebapp.ui_event.generated.resources.event_label_registration
+import pbcwebapp.ui_event.generated.resources.event_label_thank_heading
+import pbcwebapp.ui_event.generated.resources.event_label_thank_message
 import pbcwebapp.ui_event.generated.resources.event_phrase_additional_sign_ups
 import pbcwebapp.ui_event.generated.resources.event_phrase_agenda
 import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_details
@@ -213,7 +215,10 @@ fun WebScreenUI(viewModel: SelectedEventViewModel) {
 
                         Text(
                             modifier = Modifier.padding(top = 12.dp, end = 8.dp),
-                            text = stringResource(Res.string.event_label_invite_heading),
+                            text = if (selectedEvent.eventStatus == EventStatus.PASSED)
+                                stringResource(Res.string.event_label_thank_heading)
+                            else
+                                stringResource(Res.string.event_label_invite_heading),
                             fontFamily = PBCFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 28.sp,
@@ -223,7 +228,10 @@ fun WebScreenUI(viewModel: SelectedEventViewModel) {
 
                         Text(
                             modifier = Modifier.padding(top = 4.dp, end = 8.dp),
-                            text = stringResource(Res.string.event_label_invite_message),
+                            text = if (selectedEvent.eventStatus == EventStatus.PASSED)
+                                stringResource(Res.string.event_label_thank_message)
+                            else
+                                stringResource(Res.string.event_label_invite_message),
                             fontFamily = PBCFontFamily,
                             fontWeight = FontWeight.Thin,
                             fontSize = 18.sp,
