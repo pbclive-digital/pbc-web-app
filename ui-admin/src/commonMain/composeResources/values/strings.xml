@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="email_group_label_tip_delete">Delete</string>
+    <string name="email_group_label_tip_add_email">Add new email to group</string>
+    <string name="email_group_label_tip_remove_email">Remove email from group</string>
+    <string name="user_label_tip_view">View User</string>
+    <string name="user_label_tip_modify_role">Modify user role</string>
+
+    <string name="email_group_label_manage">Manage Email Group</string>
+    <string name="email_group_label_create">Create Group</string>
+    <string name="email_group_phrase_manage">This section is to manage all the Email Groups in PBC. From here can create new Groups, modify or remove any existing email group.</string>
+
+    <string name="email_group_label_yes">Yes</string>
+    <string name="email_group_label_no">No</string>
+    <string name="email_group_label_add_to_group">Add Email to Email Group</string>
+    <string name="email_group_phrase_add_to_group">Enter new email and owner name to add the email to the selected email group.</string>
+    <string name="email_group_label_email">Email</string>
+    <string name="email_group_label_owner_name">Owner's Name</string>
+    <string name="email_group_label_add_email">Add Email</string>
+    <string name="email_group_label_cancel">Cancel</string>
+    <string name="email_group_label_remove_confirmation">Are you sure to remove?</string>
+    <string name="email_group_phrase_remove_confirmation">Do you want to remove this email from this email group? Once you remove this, this recipient will not receive any email related to this email group.</string>
+
+    <string name="email_group_label_new_group">Create Email Group</string>
+    <string name="email_group_phrase_new_group">Enter new email group name and upload a .csv file that contain all the emails that need to add into this group. You can download the required .csv file template from here too.</string>
+    <string name="email_group_label_csv_template">Download .csv file template</string>
+    <string name="email_group_label_new_group_name">Email group name</string>
+    <string name="email_group_label_select_file">Select a .csv/.exel file</string>
+    <string name="email_group_label_no_required_fields_create">Missing email-group name or missing email list .csv file. Please provide them and create email group again.</string>
+
+    <string name="email_group_label_delete_confirmation">Are you sure to delete?</string>
+    <string name="email_group_phrase_delete_confirmation">Do you want to delete this email-group? Once you delete this, you will no longer have accesses to those emails and application will not prompt this email group to send emails in the future.</string>
+
+    <string name="user_label_manage">Manage Users</string>
+    <string name="user_phrase_manage">This section is to manage all users in PBC. From here can admin can see user details and modify user roles.</string>
+    <string name="user_label_admin_users">Admin Users</string>
+    <string name="user_label_resident_monks">Resident Monks</string>
+    <string name="user_label_consumer_users">Consumer Users</string>
+
+    <string name="user_label_basic_info">Basic Info</string>
+    <string name="user_phrase_basic_info">Basic information and available contact details about selected user.</string>
+    <string name="user_label_email">Email</string>
+    <string name="user_label_phone">Phone #</string>
+    <string name="user_label_address">Address</string>
+    <string name="user_label_modify_role">Modify User's Role</string>
+    <string name="user_phrase_modify_role">This is to assign new role to selected user. You can select any predefined user roles in the app and assign that to user. Below drop-down menu already selected the current role of the selected user.</string>
+    <string name="user_label_user_type">User Type</string>
+    <string name="user_label_resident_monk">Is this a resident monk?</string>
+    <string name="user_label_role_modify">Change User Role</string>
+
+    <string name="user_label_user">User Details</string>
+    <string name="user_label_yes">Yes</string>
+    <string name="user_label_no">No</string>
+    <string name="user_label_delete_confirmation">Are you sure to delete this user?</string>
+    <string name="user_phrase_delete_confirmation">Do you want to delete this user? Once you delete this user, that user's complete data will remove from the system and that user will lose their login and account too. They can create an account again if they need.</string>
+    <string name="user_label_user_delete_failed">Failed to remove the selected user at this time. Please try again later.</string>
+    <string name="user_label_user_delete_success">Successfully remove the selected user from PBC. That email holder can create new account in PBC again with same email.</string>
+    <string name="user_label_user_role_modify_failed">Failed to modify the user role at this time. Please try again later.</string>
+    <string name="user_label_user_role_modify_success">Successfully modify the user role. Now this user can perform as selected role in PBC application.</string>
+
+    <string name="broadcast_label_manage">Manage Broadcast</string>
+    <string name="broadcast_label_create">Send Broadcast</string>
+</resources>

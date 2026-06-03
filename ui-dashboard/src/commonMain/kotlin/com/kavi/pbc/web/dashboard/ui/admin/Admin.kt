@@ -33,7 +33,7 @@ import com.kavi.pbc.web.network.session.Session
 import com.kavi.pbc.web.parent.contract.ContractServiceLocator
 import com.kavi.pbc.web.parent.contract.model.EventContract
 import com.kavi.pbc.web.parent.contract.model.NewsContract
-import com.kavi.pbc.web.parent.contract.model.UsersAndEmailsContract
+import com.kavi.pbc.web.parent.contract.model.AdminContract
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_phrase_unsupport_screen_type
@@ -76,9 +76,9 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                         AdminItem(label = "User Management") {
                             selectedAction = AdminAction.USER_MANAGEMENT
                         }
-                        /*AdminItem(label = "Broadcast Messages") {
-                            selectedAction = AdminAction.BROADCAST_MSG
-                        }*/
+                        AdminItem(label = "Broadcast Management") {
+                            selectedAction = AdminAction.BROADCAST_MANAGEMENT
+                        }
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -103,7 +103,7 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                                     .GetEventAdminUI(navController = navController)
                             }
                             AdminAction.USER_MANAGEMENT -> {
-                                ContractServiceLocator.locate(UsersAndEmailsContract::class)
+                                ContractServiceLocator.locate(AdminContract::class)
                                     .GetUserManageUI(navController = navController)
                             }
                             AdminAction.NEWS_MANAGEMENT -> {
@@ -111,18 +111,12 @@ fun AdminUI(modifier: Modifier = Modifier, navController: NavController) {
                                     .GetNewsManage(navController = navController)
                             }
                             AdminAction.EMAIL_GROUP_MANAGEMENT -> {
-                                ContractServiceLocator.locate(UsersAndEmailsContract::class)
+                                ContractServiceLocator.locate(AdminContract::class)
                                     .GetEmailGroupManageUI(navController = navController)
                             }
-                            AdminAction.BROADCAST_MSG -> {
-                                Box(modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(20.dp)
-                                    .background(MaterialTheme.colorScheme.background),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text("Yet to implement")
-                                }
+                            AdminAction.BROADCAST_MANAGEMENT -> {
+                                ContractServiceLocator.locate(AdminContract::class)
+                                    .GetBroadcastManageUI(navController = navController)
                             }
                         }
                     }
