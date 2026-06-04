@@ -59,5 +59,6 @@
     <string name="user_label_user_role_modify_success">Successfully modify the user role. Now this user can perform as selected role in PBC application.</string>
 
     <string name="broadcast_label_manage">Manage Broadcast</string>
+    <string name="broadcast_phrase_manage">This section is to send and keep records of all the broadcast email and notifications in PBC. From here admin user can send new emails or notifications and see the previous emails or notifications that sent from PBC.</string>
     <string name="broadcast_label_create">Send Broadcast</string>
 </resources>
