@@ -19,6 +19,8 @@ class BroadcastManageViewModel: ViewModel() {
 
     val broadcastRepository = BroadcastRepository()
 
+    private val isInitialRequestFired = mutableStateOf(false)
+
     private val paginationRequest = PaginationRequest(null)
     private var isPagingReachedEnd by mutableStateOf(false)
 
@@ -28,9 +30,25 @@ class BroadcastManageViewModel: ViewModel() {
     private val _emailRecordUiState = MutableStateFlow(EmailRecordUiState.NONE)
     val emailRecordUiState: StateFlow<EmailRecordUiState> = _emailRecordUiState
 
-    fun fetchEmailRecordList(replaceList: Boolean = false) {
+    fun fetchEmailRecords(forceFetch: Boolean = false) {
+        if (forceFetch) {
+            paginationRequest.previousPageLastDocKey = null
+            isInitialRequestFired.value = true
+            fetchEmailRecordList(true)
+        } else {
+            if (!isPagingReachedEnd) {
+                if (!isInitialRequestFired.value && paginationRequest.previousPageLastDocKey == null) {
+                    isInitialRequestFired.value = true
+                    fetchEmailRecordList()
+                } else if (isInitialRequestFired.value && paginationRequest.previousPageLastDocKey != null) {
+                    fetchEmailRecordList()
+                }
+            }
+        }
+    }
+
+    private fun fetchEmailRecordList(replaceList: Boolean = false) {
         viewModelScope.launch {
-            _emailRecordUiState.value = EmailRecordUiState.PENDING
             when(val response = broadcastRepository.getEmailRecordList(paginationRequest = paginationRequest)) {
                 is ResultWrapper.NetworkError -> {
                     _emailRecordUiState.value = EmailRecordUiState.FAILURE

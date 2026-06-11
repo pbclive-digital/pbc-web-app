@@ -9,7 +9,7 @@ import de.jensklingenberg.ktorfit.http.POST
 
 interface BroadcastApi {
 
-    @POST("question/get/all")
+    @POST("broadcast/get/records")
     suspend fun getEmailRecords(@Body paginationRequest: PaginationRequest?):
             BaseResponse<PaginationResponse<EmailRecord>>
 }

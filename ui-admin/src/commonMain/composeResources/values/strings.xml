@@ -60,5 +60,14 @@
 
     <string name="broadcast_label_manage">Manage Broadcast</string>
     <string name="broadcast_phrase_manage">This section is to send and keep records of all the broadcast email and notifications in PBC. From here admin user can send new emails or notifications and see the previous emails or notifications that sent from PBC.</string>
+    <string name="broadcast_label_email_empty_list">There is no email records to show at this time. Once you create new event and send email or send broadcast email from here, that will create a new email record.</string>
     <string name="broadcast_label_create">Send Broadcast</string>
+    <string name="broadcast_label_email_subject">Subject</string>
+    <string name="broadcast_label_email_title">Title</string>
+    <string name="broadcast_label_email_to">To</string>
+    <string name="broadcast_label_email_template">Template</string>
+    <string name="broadcast_label_email_message">Message</string>
+    <string name="broadcast_label_email_event_desc">Event Description</string>
+    <string name="broadcast_label_email_event_agenda">Event Agenda</string>
+    <string name="broadcast_label_email_event_url">Event Url</string>
 </resources>
