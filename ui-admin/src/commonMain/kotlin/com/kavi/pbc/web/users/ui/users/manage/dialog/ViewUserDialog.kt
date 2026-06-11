@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -81,52 +83,56 @@ private fun ViewUserContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+        Column (
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Box(
+            Row(
                 modifier = Modifier
-                    .size(140.dp)
-                    .clip(CircleShape)
-                    .border(
-                        border = BorderStroke(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.tertiary
-                        ),
-                        shape = CircleShape
-                    )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-                AsyncImage(
-                    model = user.profilePicUrl,
-                    contentDescription = "Profile Picture",
-                    contentScale = ContentScale.Crop,
+                Box(
                     modifier = Modifier
                         .size(140.dp)
-                        .padding(5.dp)
                         .clip(CircleShape)
-                )
+                        .border(
+                            border = BorderStroke(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.tertiary
+                            ),
+                            shape = CircleShape
+                        )
+                ) {
+                    AsyncImage(
+                        model = user.profilePicUrl,
+                        contentDescription = "Profile Picture",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(140.dp)
+                            .padding(5.dp)
+                            .clip(CircleShape)
+                    )
+                }
             }
-        }
 
-        Text(
-            text = "${user.firstName} ${user.lastName}",
-            fontFamily = PBCFontFamily,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            fontSize = 22.sp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-        )
+            Text(
+                text = "${user.firstName} ${user.lastName}",
+                fontFamily = PBCFontFamily,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                fontSize = 22.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+            )
 
-        BasicUserInfoCard(user = user)
+            BasicUserInfoCard(user = user)
 
-        if (Session.user?.id != user.id) {
-            ModifyUserRoleCard(user = user, onModifyUserRole = { newUserRole, isResidentMonk ->
-                onModifyUserRole.invoke(newUserRole, isResidentMonk, user)
-            })
+            if (Session.user?.id != user.id) {
+                ModifyUserRoleCard(user = user, onModifyUserRole = { newUserRole, isResidentMonk ->
+                    onModifyUserRole.invoke(newUserRole, isResidentMonk, user)
+                })
+            }
         }
     }
 }
