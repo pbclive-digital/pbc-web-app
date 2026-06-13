@@ -602,17 +602,15 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 eventSignUpSheetData.signUpSheetItemList.forEach { signUpSheetItem ->
                     Spacer(modifier = Modifier.height(8.dp))
                     SignUpSheetItemUI(
-                        modifier = Modifier
-                            .clickable {
-                                // Open up bottom sheet to register to selected sign-up sheet
-                                if (Session.isLogIn()) {
-                                    selectedSignUpSheetItem.value = signUpSheetItem
-                                    showSignUpSheetBottomSheet.value = true
-                                } else
-                                    showAuthInviteDialog.value = true
-                            },
                         signUpSheet = signUpSheetItem
-                    )
+                    ) {
+                        // Open up bottom sheet to register to selected sign-up sheet
+                        if (Session.isLogIn()) {
+                            selectedSignUpSheetItem.value = signUpSheetItem
+                            showSignUpSheetBottomSheet.value = true
+                        } else
+                            showAuthInviteDialog.value = true
+                    }
                 }
             }
         }

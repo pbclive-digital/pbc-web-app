@@ -51,12 +51,13 @@ fun AppFilledButton(label: String,
                     labelTextSize: TextUnit? = null,
                     isDisable: MutableState<Boolean> = mutableStateOf(false),
                     modifier: Modifier = Modifier,
+                    buttonHeight: Dp = 50.dp,
                     onClick: () -> Unit) {
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     Button(
         onClick = onClick,
-        modifier = modifier.height(50.dp),
+        modifier = modifier.height(buttonHeight),
         enabled = !isDisable.value,
         shape = RoundedCornerShape(5.dp),
         colors = ButtonDefaults.buttonColors(
@@ -71,7 +72,7 @@ fun AppFilledButton(label: String,
             fontSize = labelTextSize ?: run { 14.sp },
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.Normal,
-            modifier = Modifier.padding(4.dp),
+            //modifier = Modifier.padding(4.dp),
         )
     }
 }
