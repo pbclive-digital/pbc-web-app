@@ -278,7 +278,7 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
 
     Column (
         modifier = modifier
-            .padding(top = 20.dp)
+            .padding(top = 20.dp, bottom = 10.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.background)
             .padding(20.dp)
@@ -602,17 +602,15 @@ fun EventInformationComponent(modifier: Modifier = Modifier, viewModel: Selected
                 eventSignUpSheetData.signUpSheetItemList.forEach { signUpSheetItem ->
                     Spacer(modifier = Modifier.height(8.dp))
                     SignUpSheetItemUI(
-                        modifier = Modifier
-                            .clickable {
-                                // Open up bottom sheet to register to selected sign-up sheet
-                                if (Session.isLogIn()) {
-                                    selectedSignUpSheetItem.value = signUpSheetItem
-                                    showSignUpSheetBottomSheet.value = true
-                                } else
-                                    showAuthInviteDialog.value = true
-                            },
                         signUpSheet = signUpSheetItem
-                    )
+                    ) {
+                        // Open up bottom sheet to register to selected sign-up sheet
+                        if (Session.isLogIn()) {
+                            selectedSignUpSheetItem.value = signUpSheetItem
+                            showSignUpSheetBottomSheet.value = true
+                        } else
+                            showAuthInviteDialog.value = true
+                    }
                 }
             }
         }

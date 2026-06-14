@@ -145,6 +145,7 @@
     <string name="event_label_new_sign_up_sheet">Add sign-up sheet to event</string>
     <string name="event_phrase_new_sign_up_sheet">Enter new sign-up sheet name and it's relevant sign-up availability.</string>
     <string name="event_label_sheet_name">Sheet name</string>
+    <string name="event_label_sheet_sign_up_sign_out">Sign-up / Sign-out</string>
     <string name="event_label_sheet_desc">Sheet Description</string>
     <string name="event_label_sheet_available_count">Sign-up Count</string>
     <string name="event_label_is_allow_multi_sign_ups">Are we allow multiple sign-ups for single user?</string>

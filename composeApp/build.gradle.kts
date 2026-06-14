@@ -79,7 +79,7 @@ kotlin {
             implementation(projects.uiNews)
             implementation(projects.uiQuestion)
             implementation(projects.uiAppointment)
-            implementation(projects.uiUsersAndEmails)
+            implementation(projects.uiAdmin)
         }
     }
 }
