@@ -70,4 +70,9 @@
     <string name="broadcast_label_email_event_desc">Event Description</string>
     <string name="broadcast_label_email_event_agenda">Event Agenda</string>
     <string name="broadcast_label_email_event_url">Event Url</string>
+
+    <string name="broadcast_label_send_new_broadcast">Send Broadcast Email</string>
+    <string name="broadcast_label_send_new_broadcast_failure">Failed to send broadcast email at this time. Please try again from few minutes.</string>
+    <string name="broadcast_label_send_no_email_groups">No any email group is selected to send broadcast email. Please select email group and try again.</string>
+    <string name="broadcast_label_send_invalid_form">Required content for the email is missing. Please fill the missing, Subject or Title or Message and try to send email again.</string>
 </resources>

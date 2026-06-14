@@ -53,6 +53,7 @@ import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.email.record.EmailRecord
 import com.kavi.pbc.web.data.email.record.EmailRecordContent
 import com.kavi.pbc.web.users.data.model.EmailRecordUiState
+import com.kavi.pbc.web.users.ui.broadcast.send.SendBroadcastEmailDialog
 import com.kavi.pbc.web.users.ui.common.EmailRecordItem
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -87,6 +88,8 @@ fun BroadcastManageUI(
         emailTemplate = EmailTemplateType.BROADCAST,
         emailRecordContent = EmailRecordContent()
     )) }
+
+    val showSendBroadcastDialog = remember { mutableStateOf(false) }
 
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
@@ -123,7 +126,7 @@ fun BroadcastManageUI(
                     icon = painterResource(Res.drawable.broadcast_icon_send),
                     cornerRadius = 12.dp
                 ) {
-                    //showCreateEmailGroupDialog.value = true
+                    showSendBroadcastDialog.value = true
                 }
             }
 
@@ -195,6 +198,17 @@ fun BroadcastManageUI(
             }
         }
     }
+
+    SendBroadcastEmailDialog(
+        showDialog = showSendBroadcastDialog,
+        onSendBroadcast = {
+            viewModel.fetchEmailRecords(forceFetch = true)
+            showSendBroadcastDialog.value = false
+        },
+        onDismiss = {
+            showSendBroadcastDialog.value = false
+        }
+    )
 }
 
 @Composable
