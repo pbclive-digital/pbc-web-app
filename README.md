@@ -73,6 +73,9 @@ to deploy changes to production from `main` branch.
    ./gradlew composeApp:wasmJsBrowserDistribution
    ````
 4. Use `Firebase-CLI` to execute the production deployment.
+    ````shell
+   firebase deploy
+   ````
 5. Create a pull request from release branch to `main` branch.
 6. Merge changes to `main` branch after having required approvals.
 7. Checkout to `main` branch and pull changes to local.
