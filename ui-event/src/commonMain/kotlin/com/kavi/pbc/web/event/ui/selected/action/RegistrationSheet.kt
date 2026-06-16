@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -58,7 +56,6 @@ import pbcwebapp.ui_event.generated.resources.event_icon_remove_item
 import pbcwebapp.ui_event.generated.resources.event_icon_unregister_success
 import pbcwebapp.ui_event.generated.resources.event_icon_view
 import pbcwebapp.ui_event.generated.resources.event_label_close
-import pbcwebapp.ui_event.generated.resources.event_label_contribute_potluck
 import pbcwebapp.ui_event.generated.resources.event_label_current_list
 import pbcwebapp.ui_event.generated.resources.event_label_reg_success
 import pbcwebapp.ui_event.generated.resources.event_label_reg_un_reg_failure
@@ -69,7 +66,6 @@ import pbcwebapp.ui_event.generated.resources.event_label_un_reg_success
 import pbcwebapp.ui_event.generated.resources.event_label_unregister
 import pbcwebapp.ui_event.generated.resources.event_label_unregistering
 import pbcwebapp.ui_event.generated.resources.event_phrase_current_list
-import pbcwebapp.ui_event.generated.resources.event_phrase_potluck_contribution_data
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_success
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_un_reg_failure
 import pbcwebapp.ui_event.generated.resources.event_phrase_registering
