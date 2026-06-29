@@ -10,8 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,11 +26,13 @@ import com.kavi.pbc.web.common.ui.component.AppOutlineButton
 import com.kavi.pbc.web.common.ui.component.AppOutlineTextField
 import com.kavi.pbc.web.common.ui.theme.PBCFontFamily
 import com.kavi.pbc.web.data.event.potluck.PotluckItem
+import io.ktor.client.request.invoke
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_event.generated.resources.Res
 import pbcwebapp.ui_event.generated.resources.event_label_add_to_potluck
 import pbcwebapp.ui_event.generated.resources.event_label_cancel
 import pbcwebapp.ui_event.generated.resources.event_label_create
+import pbcwebapp.ui_event.generated.resources.event_label_modify
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_item_count
 import pbcwebapp.ui_event.generated.resources.event_label_potluck_item_name
 import pbcwebapp.ui_event.generated.resources.event_phrase_add_to_potluck
@@ -38,7 +42,9 @@ import kotlin.uuid.Uuid
 @Composable
 fun PotluckItemCreateDialog(
     showDialog: MutableState<Boolean>,
+    modifyItem: PotluckItem? = null,
     onCreate: (potluckItem: PotluckItem) -> Unit,
+    onModify: (potluckItem: PotluckItem) -> Unit,
     onCancel: () -> Unit
 ) {
     AppBasicDialog(
@@ -49,7 +55,9 @@ fun PotluckItemCreateDialog(
         }
     ) {
         PotluckItemCreateContent(
+            modifyItem = modifyItem,
             onCreate = onCreate,
+            onModify = onModify,
             onCancel = onCancel
         )
     }
@@ -57,10 +65,20 @@ fun PotluckItemCreateDialog(
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-private fun PotluckItemCreateContent(onCreate: (potluckItem: PotluckItem) -> Unit, onCancel: () -> Unit) {
+private fun PotluckItemCreateContent(modifyItem: PotluckItem?,
+                                     onCreate: (potluckItem: PotluckItem) -> Unit,
+                                     onModify: (potluckItem: PotluckItem) -> Unit,
+                                     onCancel: () -> Unit) {
 
+    var isModify by remember { mutableStateOf(false) }
     val itemName = remember { mutableStateOf(TextFieldValue("")) }
     val itemAvailability = remember { mutableStateOf(TextFieldValue("")) }
+
+    modifyItem?.let {
+        isModify = true
+        itemName.value = TextFieldValue(it.itemName)
+        itemAvailability.value = TextFieldValue("${it.itemCount}")
+    }
 
     Box (
         modifier = Modifier
@@ -114,10 +132,24 @@ private fun PotluckItemCreateContent(onCreate: (potluckItem: PotluckItem) -> Uni
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.dp),
-                    label = stringResource(Res.string.event_label_create)
+                    label = if (isModify)
+                        stringResource(Res.string.event_label_modify)
+                    else
+                        stringResource(Res.string.event_label_create)
                 ) {
-                    onCreate.invoke(PotluckItem(Uuid.random().toString(),
-                        itemName.value.text, itemAvailability.value.text.toInt()))
+                    if (isModify) {
+                        onModify.invoke(
+                            PotluckItem(modifyItem?.itemId!!,
+                                itemName.value.text, itemAvailability.value.text.toInt())
+                        )
+                    } else {
+                        onCreate.invoke(
+                            PotluckItem(
+                                Uuid.random().toString(),
+                                itemName.value.text, itemAvailability.value.text.toInt()
+                            )
+                        )
+                    }
                 }
 
                 AppOutlineButton(

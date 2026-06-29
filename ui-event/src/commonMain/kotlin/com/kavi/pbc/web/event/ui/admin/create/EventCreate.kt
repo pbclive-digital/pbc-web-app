@@ -69,13 +69,13 @@ import com.kavi.pbc.web.data.event.Event
 import com.kavi.pbc.web.data.event.EventRecurringDay
 import com.kavi.pbc.web.data.event.EventType
 import com.kavi.pbc.web.data.event.VenueType
-import com.kavi.pbc.web.data.util.DateTimeUtil
+import com.kavi.pbc.web.data.event.potluck.PotluckItem
 import com.kavi.pbc.web.event.data.model.EventCreateOrModifyUiState
 import com.kavi.pbc.web.event.data.model.EventManageOrCreate
 import com.kavi.pbc.web.event.data.model.TimePickerMode
 import com.kavi.pbc.web.event.ui.admin.common.AgendaItem
 import com.kavi.pbc.web.event.ui.admin.common.AgendaItemEdit
-import com.kavi.pbc.web.event.ui.admin.common.PotluckListItem
+import com.kavi.pbc.web.event.ui.admin.common.PotluckItemUI
 import com.kavi.pbc.web.event.ui.admin.common.SignUpSheetListItem
 import com.kavi.pbc.web.event.ui.admin.create.dialog.PotluckItemCreateDialog
 import com.kavi.pbc.web.event.ui.admin.create.dialog.SignUpSheetCreateDialog
@@ -882,6 +882,9 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
     val createOrModifyEvent by viewModel.createOrModifyEvent.collectAsState()
     val potluckItemList by viewModel.potluckItemList.collectAsState()
 
+    //var modifyPotluckItem by remember { mutableStateOf(PotluckItem("", "", 0)) }
+    var modifyPotluckItem: MutableState<PotluckItem?> = remember { mutableStateOf(null) }
+
     var isPotluckChecked by remember { mutableStateOf(createOrModifyEvent.potluckAvailable) }
     val showCreatePotluckItemDialog = remember { mutableStateOf(false) }
 
@@ -963,8 +966,13 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
             ) {
                 potluckItemList.forEachIndexed { index, potluckItem ->
                     key (potluckItem.itemId) {
-                        PotluckListItem(
+                        PotluckItemUI(
                             potluckItem = potluckItem,
+                            onModify = {
+                                // On Modify
+                                modifyPotluckItem.value = potluckItem
+                                showCreatePotluckItemDialog.value = true
+                            },
                             onDelete = {
                                 viewModel.removePotluckItem(potluckItem)
                             }
@@ -983,16 +991,26 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
             }
         }
 
-        PotluckItemCreateDialog(
-            showDialog = showCreatePotluckItemDialog,
-            onCreate = { potluckItem ->
-                viewModel.addPotluckItem(potluckItem)
-                showCreatePotluckItemDialog.value = false
-            },
-            onCancel = {
-                showCreatePotluckItemDialog.value = false
-            }
-        )
+        if (showCreatePotluckItemDialog.value) {
+            PotluckItemCreateDialog(
+                showDialog = showCreatePotluckItemDialog,
+                modifyItem = modifyPotluckItem.value,
+                onCreate = { potluckItem ->
+                    viewModel.addPotluckItem(potluckItem)
+                    showCreatePotluckItemDialog.value = false
+                    modifyPotluckItem.value = null
+                },
+                onModify = { potluckItem ->
+                    viewModel.modifyPotluckItem(potluckItem)
+                    showCreatePotluckItemDialog.value = false
+                    modifyPotluckItem.value = null
+                },
+                onCancel = {
+                    showCreatePotluckItemDialog.value = false
+                    modifyPotluckItem.value = null
+                }
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
     }
