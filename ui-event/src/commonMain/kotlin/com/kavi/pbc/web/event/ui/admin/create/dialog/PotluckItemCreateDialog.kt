@@ -39,12 +39,12 @@ import pbcwebapp.ui_event.generated.resources.event_phrase_add_to_potluck
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@Composable
+// Currently not using, waiting for removing
+
+/*@Composable
 fun PotluckItemCreateDialog(
     showDialog: MutableState<Boolean>,
-    modifyItem: PotluckItem? = null,
     onCreate: (potluckItem: PotluckItem) -> Unit,
-    onModify: (potluckItem: PotluckItem) -> Unit,
     onCancel: () -> Unit
 ) {
     AppBasicDialog(
@@ -55,30 +55,20 @@ fun PotluckItemCreateDialog(
         }
     ) {
         PotluckItemCreateContent(
-            modifyItem = modifyItem,
             onCreate = onCreate,
-            onModify = onModify,
             onCancel = onCancel
         )
     }
-}
+}*/
 
+/*
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-private fun PotluckItemCreateContent(modifyItem: PotluckItem?,
-                                     onCreate: (potluckItem: PotluckItem) -> Unit,
-                                     onModify: (potluckItem: PotluckItem) -> Unit,
+private fun PotluckItemCreateContent(onCreate: (potluckItem: PotluckItem) -> Unit,
                                      onCancel: () -> Unit) {
 
-    var isModify by remember { mutableStateOf(false) }
     val itemName = remember { mutableStateOf(TextFieldValue("")) }
     val itemAvailability = remember { mutableStateOf(TextFieldValue("")) }
-
-    modifyItem?.let {
-        isModify = true
-        itemName.value = TextFieldValue(it.itemName)
-        itemAvailability.value = TextFieldValue("${it.itemCount}")
-    }
 
     Box (
         modifier = Modifier
@@ -132,24 +122,15 @@ private fun PotluckItemCreateContent(modifyItem: PotluckItem?,
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.dp),
-                    label = if (isModify)
-                        stringResource(Res.string.event_label_modify)
-                    else
-                        stringResource(Res.string.event_label_create)
+                    label = stringResource(Res.string.event_label_create)
+
                 ) {
-                    if (isModify) {
-                        onModify.invoke(
-                            PotluckItem(modifyItem?.itemId!!,
-                                itemName.value.text, itemAvailability.value.text.toInt())
+                    onCreate.invoke(
+                        PotluckItem(
+                            Uuid.random().toString(),
+                            itemName.value.text, itemAvailability.value.text.toInt()
                         )
-                    } else {
-                        onCreate.invoke(
-                            PotluckItem(
-                                Uuid.random().toString(),
-                                itemName.value.text, itemAvailability.value.text.toInt()
-                            )
-                        )
-                    }
+                    )
                 }
 
                 AppOutlineButton(
@@ -163,4 +144,4 @@ private fun PotluckItemCreateContent(modifyItem: PotluckItem?,
             }
         }
     }
-}
+}*/

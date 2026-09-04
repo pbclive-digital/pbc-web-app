@@ -77,7 +77,6 @@ import com.kavi.pbc.web.event.ui.admin.common.AgendaItem
 import com.kavi.pbc.web.event.ui.admin.common.AgendaItemEdit
 import com.kavi.pbc.web.event.ui.admin.common.PotluckItemUI
 import com.kavi.pbc.web.event.ui.admin.common.SignUpSheetListItem
-import com.kavi.pbc.web.event.ui.admin.create.dialog.PotluckItemCreateDialog
 import com.kavi.pbc.web.event.ui.admin.create.dialog.SignUpSheetCreateDialog
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
@@ -949,14 +948,6 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
         }
 
         if (isPotluckChecked) {
-            AppButtonWithIcon (
-                modifier = Modifier.padding(top = 4.dp),
-                label = stringResource(Res.string.event_label_add_to_potluck),
-                icon = painterResource(Res.drawable.event_icon_plus)
-            ) {
-                showCreatePotluckItemDialog.value = true
-            }
-
             Column (
                 modifier = Modifier
                     .fillMaxWidth()
@@ -968,10 +959,9 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
                     key (potluckItem.itemId) {
                         PotluckItemUI(
                             potluckItem = potluckItem,
-                            onModify = {
+                            onModify = { modifiedPotluckItem ->
                                 // On Modify
-                                modifyPotluckItem.value = potluckItem
-                                showCreatePotluckItemDialog.value = true
+                                viewModel.modifyPotluckItem(modifiedPotluckItem)
                             },
                             onDelete = {
                                 viewModel.removePotluckItem(potluckItem)
@@ -988,28 +978,38 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
                         }
                     }
                 }
-            }
-        }
 
-        if (showCreatePotluckItemDialog.value) {
-            PotluckItemCreateDialog(
-                showDialog = showCreatePotluckItemDialog,
-                modifyItem = modifyPotluckItem.value,
-                onCreate = { potluckItem ->
-                    viewModel.addPotluckItem(potluckItem)
-                    showCreatePotluckItemDialog.value = false
-                    modifyPotluckItem.value = null
-                },
-                onModify = { potluckItem ->
-                    viewModel.modifyPotluckItem(potluckItem)
-                    showCreatePotluckItemDialog.value = false
-                    modifyPotluckItem.value = null
-                },
-                onCancel = {
-                    showCreatePotluckItemDialog.value = false
-                    modifyPotluckItem.value = null
+                if (showCreatePotluckItemDialog.value) {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 8.dp),
+                        thickness = 2.dp,
+                        color = themeAdditionalColors.shadow
+                    )
+
+                    PotluckItemUI(
+                        potluckItem = PotluckItem(itemName = "", itemCount = 0),
+                        isCreate = true,
+                        onModify = {}, onDelete = {}, onCreate = { newPotluckItem ->
+                            showCreatePotluckItemDialog.value = false
+                            viewModel.addPotluckItem(newPotluckItem)
+                        }, onCreateCancel = {
+                            showCreatePotluckItemDialog.value = false
+                        }
+                    )
                 }
-            )
+            }
+
+            if (!showCreatePotluckItemDialog.value) {
+                AppButtonWithIcon(
+                    modifier = Modifier.padding(top = 8.dp),
+                    label = stringResource(Res.string.event_label_add_to_potluck),
+                    icon = painterResource(Res.drawable.event_icon_plus)
+                ) {
+                    showCreatePotluckItemDialog.value = true
+                }
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
