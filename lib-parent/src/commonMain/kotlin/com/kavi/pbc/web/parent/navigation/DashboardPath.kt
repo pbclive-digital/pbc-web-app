@@ -17,6 +17,10 @@ object DashboardPath {
     )
 
     @Serializable
+    @SerialName("${ROUTE}/privacy-policy")
+    object PrivacyPolicy
+
+    @Serializable
     @SerialName("${ROUTE}/about-us")
     object AboutUs
 

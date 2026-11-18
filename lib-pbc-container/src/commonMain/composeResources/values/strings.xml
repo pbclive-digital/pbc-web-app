@@ -8,6 +8,7 @@
     <string name="container_label_profile">Profile</string>
     <string name="container_label_close">Close</string>
 
+    <string name="container_label_privacy_policy">Privacy Policy</string>
     <string name="container_label_about_us">About Us</string>
     <string name="container_label_contact_us">Contract Us</string>
 </resources>

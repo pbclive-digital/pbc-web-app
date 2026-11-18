@@ -3,6 +3,7 @@ package com.kavi.pbc.web.dashboard.data.repository.remote
 import com.kavi.pbc.web.data.BaseResponse
 import com.kavi.pbc.web.data.event.Event
 import com.kavi.pbc.web.data.news.News
+import com.kavi.pbc.web.data.privacy.PolicyItem
 import com.kavi.pbc.web.data.quote.Quote
 import de.jensklingenberg.ktorfit.http.GET
 
@@ -16,4 +17,7 @@ interface DashboardApi {
 
     @GET("dashboard/get/news")
     suspend fun fetchDashboardNews(): BaseResponse<List<News>>
+
+    @GET("dashboard/get/privacy/policy")
+    suspend fun fetchPrivacyPolicy(): BaseResponse<List<PolicyItem>>
 }
