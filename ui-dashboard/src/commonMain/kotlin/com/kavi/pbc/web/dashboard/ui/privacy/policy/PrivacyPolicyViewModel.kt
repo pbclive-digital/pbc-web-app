@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kavi.pbc.web.dashboard.data.model.PolicyUiState
 import com.kavi.pbc.web.dashboard.data.repository.remote.DashboardRemoteRepository
 import com.kavi.pbc.web.data.privacy.PolicyItem
+import com.kavi.pbc.web.data.privacy.PrivacyPolicy
 import com.kavi.pbc.web.network.model.ResultWrapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +15,8 @@ class PrivacyPolicyViewModel: ViewModel() {
 
     val dashboardRemoteRepository = DashboardRemoteRepository()
 
-    private val _policyItemList = MutableStateFlow<List<PolicyItem>>(mutableListOf())
-    val policyItemList: StateFlow<List<PolicyItem>> = _policyItemList
+    private val _privacyPolicy = MutableStateFlow(PrivacyPolicy("", emptyList()))
+    val privacyPolicy: StateFlow<PrivacyPolicy> = _privacyPolicy
 
     private val _policyFetchStatus = MutableStateFlow(PolicyUiState.NONE)
     val policyFetchStatus: StateFlow<PolicyUiState> = _policyFetchStatus
@@ -29,9 +30,9 @@ class PrivacyPolicyViewModel: ViewModel() {
                 }
                 is ResultWrapper.Success -> {
                     response.value.body?.let {
-                        if (it.isNotEmpty()) {
+                        if (it.policyItemList.isNotEmpty()) {
                             _policyFetchStatus.value = PolicyUiState.SUCCESS
-                            _policyItemList.value = it
+                            _privacyPolicy.value = it
                         } else {
                             _policyFetchStatus.value = PolicyUiState.FAILURE
                         }

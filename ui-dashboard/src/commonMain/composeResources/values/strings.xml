@@ -26,5 +26,6 @@
 
     <string name="dashboard_phrase_privacy_policy_failure">Failed to fetch the privacy policy this time. Please try again from few minutes. Sorry for the inconvenience.</string>
     <string name="dashboard_label_privacy_policy">Privacy Policy</string>
+    <string name="dashboard_label_privacy_policy_last_updated">Last updated on</string>
     <string name="dashboard_phrase_privacy_policy">The Pittsburgh Buddhist Center ("we," "our," or "us") operates the Pittsburgh Buddhist Center web application and upcoming mobile applications (collectively, the "Service"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our web application, mobile applications, and related services.</string>
 </resources>

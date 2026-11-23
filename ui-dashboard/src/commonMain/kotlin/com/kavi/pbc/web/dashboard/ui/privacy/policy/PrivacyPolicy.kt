@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,6 +39,7 @@ import com.kavi.pbc.web.dashboard.ui.common.PrivacyPolicyItem
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.ui_dashboard.generated.resources.Res
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_privacy_policy
+import pbcwebapp.ui_dashboard.generated.resources.dashboard_label_privacy_policy_last_updated
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_phrase_privacy_policy
 import pbcwebapp.ui_dashboard.generated.resources.dashboard_phrase_privacy_policy_failure
 
@@ -47,7 +49,7 @@ fun PrivacyPolicyUI() {
     val viewModel: PrivacyPolicyViewModel = viewModel { PrivacyPolicyViewModel() }
 
     val policyFetchStatus by viewModel.policyFetchStatus.collectAsState()
-    val policyItemList by viewModel.policyItemList.collectAsState()
+    val privacyPolicy by viewModel.privacyPolicy.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.fetchPrivacyPolicy()
@@ -58,7 +60,6 @@ fun PrivacyPolicyUI() {
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        val maxHeight = this.maxHeight
         val maxWidth = this.maxWidth
 
         when(policyFetchStatus) {
@@ -75,14 +76,15 @@ fun PrivacyPolicyUI() {
                         LazyColumn {
                             item {
                                 PolicyHeading(
-                                    modifier = Modifier.padding(8.dp)
+                                    modifier = Modifier.padding(8.dp),
+                                    lastUpdatedOn = privacyPolicy.lastUpdated
                                 )
                             }
-                            itemsIndexed(policyItemList) { index, policyItem ->
+                            itemsIndexed(privacyPolicy.policyItemList) { index, policyItem ->
                                 PrivacyPolicyItem(
                                     index = (index + 1), policyItem = policyItem
                                 )
-                                if (index < policyItemList.lastIndex) {
+                                if (index < privacyPolicy.policyItemList.lastIndex) {
                                     Spacer(modifier = Modifier.height(8.dp).fillMaxWidth())
                                 }
                             }
@@ -95,16 +97,16 @@ fun PrivacyPolicyUI() {
                         Column {
                             Spacer(modifier = Modifier.padding(12.dp))
 
-                            PolicyHeading()
+                            PolicyHeading(lastUpdatedOn = privacyPolicy.lastUpdated)
 
                             Spacer(modifier = Modifier.padding(12.dp))
 
                             LazyColumn {
-                                itemsIndexed(policyItemList) { index, policyItem ->
+                                itemsIndexed(privacyPolicy.policyItemList) { index, policyItem ->
                                     PrivacyPolicyItem(
                                         index = (index + 1), policyItem = policyItem
                                     )
-                                    if (index < policyItemList.lastIndex) {
+                                    if (index < privacyPolicy.policyItemList.lastIndex) {
                                         Spacer(modifier = Modifier.height(8.dp).fillMaxWidth())
                                     }
                                 }
@@ -121,13 +123,25 @@ fun PrivacyPolicyUI() {
 }
 
 @Composable
-fun PolicyHeading(modifier: Modifier = Modifier) {
+fun PolicyHeading(modifier: Modifier = Modifier, lastUpdatedOn: String) {
     Column (
         modifier = modifier
             .fillMaxWidth()
     ) {
+
         Title(
             titleText = stringResource(Res.string.dashboard_label_privacy_policy)
+        )
+
+        Text(
+            text = "${stringResource(Res.string.dashboard_label_privacy_policy_last_updated)}: $lastUpdatedOn",
+            fontFamily = PBCFontFamily,
+            fontSize = 14.sp,
+            textAlign = TextAlign.End,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .fillMaxWidth()
         )
 
         Text(
