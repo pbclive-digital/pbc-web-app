@@ -300,6 +300,15 @@ class EventCreateViewModel: ViewModel() {
         _createOrModifyEvent.value.signUpSheetList = _signUpSheetItemList.value
     }
 
+    fun modifySignUpSheet(signUpSheet: SignUpSheet) {
+        _signUpSheetItemList.update { currentList ->
+            currentList.map { existing ->
+                if (existing.sheetId == signUpSheet.sheetId) signUpSheet else existing
+            }.toMutableList()
+        }
+        _createOrModifyEvent.value.signUpSheetList = _signUpSheetItemList.value
+    }
+
     fun updateEventImageFile(newsImage: PlatformFile) {
         eventImageFile = newsImage
     }

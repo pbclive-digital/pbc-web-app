@@ -1,6 +1,7 @@
 package com.kavi.pbc.web.common.ui.component
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -32,32 +33,39 @@ fun AppDatePickerDialog(
     onConfirmAction: () -> Unit,
     onDismissAction: () -> Unit
 ) {
-    DatePickerDialog(
-        onDismissRequest = { showDatePicker.value = false },
-        confirmButton = {
-            TextButton(onClick = {
-                // Handle selected date from datePickerState.selectedDateMillis
-                onConfirmAction.invoke()
-            }) {
-                Text(
-                    modifier = Modifier.padding(end = 4.dp),
-                    text = stringResource(Res.string.common_label_date_picker_pick),
-                    fontFamily = PBCFontFamily,
-                    fontWeight = FontWeight.Bold
-                )
+    DisableSelection { // This is adding to resolve `not in view hierarchy` issue when it has SelectionContainer to wrap all views
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker.value = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    // Handle selected date from datePickerState.selectedDateMillis
+                    onConfirmAction.invoke()
+                }) {
+                    Text(
+                        modifier = Modifier.padding(end = 4.dp),
+                        text = stringResource(Res.string.common_label_date_picker_pick),
+                        fontFamily = PBCFontFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onDismissAction.invoke() }) {
+                    Text(
+                        text = stringResource(Res.string.common_label_date_picker_cancel),
+                        fontFamily = PBCFontFamily,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
-        },
-        dismissButton = {
-            TextButton(onClick = { onDismissAction.invoke() }) {
-                Text(
-                    text = stringResource(Res.string.common_label_date_picker_cancel),
-                    fontFamily = PBCFontFamily,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                showModeToggle = false,
+                title = null,
+                headline = null
+            )
         }
-    ) {
-        DatePicker(state = datePickerState, showModeToggle = false, title = null, headline = null)
     }
 }
 
@@ -82,32 +90,34 @@ fun AppTimePickerDialog (
         is24Hour = true // Set to true for 24-hour format
     )
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Select Time") },
-        text = {
-            TimePicker(state = timePickerState)
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                onConfirm(timePickerState.hour, timePickerState.minute)
-                onDismiss()
-            }) {
-                Text(
-                    text = stringResource(Res.string.common_label_date_picker_pick),
-                    fontFamily = PBCFontFamily,
-                    fontWeight = FontWeight.Bold
-                )
+    DisableSelection { // This is adding to resolve `not in view hierarchy` issue when it has SelectionContainer to wrap all views
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("Select Time") },
+            text = {
+                TimePicker(state = timePickerState)
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onConfirm(timePickerState.hour, timePickerState.minute)
+                    onDismiss()
+                }) {
+                    Text(
+                        text = stringResource(Res.string.common_label_date_picker_pick),
+                        fontFamily = PBCFontFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(
+                        text = stringResource(Res.string.common_label_date_picker_cancel),
+                        fontFamily = PBCFontFamily,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = stringResource(Res.string.common_label_date_picker_cancel),
-                    fontFamily = PBCFontFamily,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-    )
+        )
+    }
 }
