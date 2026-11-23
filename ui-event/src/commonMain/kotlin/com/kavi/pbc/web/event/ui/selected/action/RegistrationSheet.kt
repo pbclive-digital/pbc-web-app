@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -95,34 +96,36 @@ fun RegistrationSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>
         containerColor = MaterialTheme.colorScheme.background,
         scrimColor = themeAdditionalColors.shadow.copy(alpha = .5f)
     ) {
-        Box (
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
-                .fillMaxWidth()
-        ) {
-            if (Session.isLogIn()) {
-                when(eventRegUnRegUiState) {
-                    EventActionUiState.INITIAL -> {
-                        RegUnRegInitialUI(viewModel = viewModel, isCurrentUserRegistered = isCurrentUserRegistered, givenEvent = givenEvent)
-                    }
-                    EventActionUiState.PENDING -> {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(400.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator()
+        DisableSelection {
+            Box (
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
+                    .fillMaxWidth()
+            ) {
+                if (Session.isLogIn()) {
+                    when(eventRegUnRegUiState) {
+                        EventActionUiState.INITIAL -> {
+                            RegUnRegInitialUI(viewModel = viewModel, isCurrentUserRegistered = isCurrentUserRegistered, givenEvent = givenEvent)
                         }
-                    }
-                    EventActionUiState.FAILURE -> {
-                        RegUnRegFailure(viewModel = viewModel, showSheet = showSheet)
-                    }
-                    EventActionUiState.SUCCESS -> {
-                        val regUnRegType = if (isCurrentUserRegistered) RegUnRegType.UNREGISTER else RegUnRegType.REGISTER
-                        RegUnRegSuccess(viewModel = viewModel, regUnRegType = regUnRegType, showSheet = showSheet)
+                        EventActionUiState.PENDING -> {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(400.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                        EventActionUiState.FAILURE -> {
+                            RegUnRegFailure(viewModel = viewModel, showSheet = showSheet)
+                        }
+                        EventActionUiState.SUCCESS -> {
+                            val regUnRegType = if (isCurrentUserRegistered) RegUnRegType.UNREGISTER else RegUnRegType.REGISTER
+                            RegUnRegSuccess(viewModel = viewModel, regUnRegType = regUnRegType, showSheet = showSheet)
+                        }
                     }
                 }
             }

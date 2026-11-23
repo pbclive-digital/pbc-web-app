@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -58,122 +59,124 @@ fun NewsSelectedBottomSheetUI(
         containerColor = MaterialTheme.colorScheme.background,
         scrimColor = themeAdditionalColors.shadow.copy(alpha = .5f)
     ) {
-        Box (
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
-                .fillMaxWidth()
-        ) {
-            Column (
+        DisableSelection {
+            Box (
                 modifier = Modifier
-                    .fillMaxHeight(.75f)
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
+                    .fillMaxWidth()
             ) {
-                Text(
-                    text = selectedNews.title,
-                    fontFamily = PBCFontFamily,
-                    fontSize = 36.sp,
-                    lineHeight = 36.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                Column (
                     modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                Text(
-                    text = "on ${selectedNews.getFormatPublishedDate()}",
-                    fontFamily = PBCFontFamily,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Start,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                )
-
-                Text(
-                    text = "by ${selectedNews.author.name}",
-                    fontFamily = PBCFontFamily,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Start,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(2.dp),
-                    thickness = 2.dp
-                )
-
-                Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState())
+                        .fillMaxHeight(.75f)
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .padding(top = 20.dp)
-                                .shadow(
-                                    elevation = 12.dp,
-                                    spotColor = themeAdditionalColors.shadow
-                                ),
-                            shape = RoundedCornerShape(12.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                        ) {
-                            AsyncImage(
-                                model = selectedNews.newsImage,
-                                error = painterResource(Res.drawable.news_icon_pbc),
-                                contentDescription = null, // decorative image
-                                contentScale = ContentScale.Fit,
-                                modifier = Modifier
-                                    .background(color = MaterialTheme.colorScheme.background)
-                            )
-                        }
-                    }
-
                     Text(
-                        text = selectedNews.content,
+                        text = selectedNews.title,
                         fontFamily = PBCFontFamily,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Justify,
+                        fontSize = 36.sp,
+                        lineHeight = 36.sp,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 16.dp)
                     )
 
-                    selectedNews.facebookLink?.let {
+                    Text(
+                        text = "on ${selectedNews.getFormatPublishedDate()}",
+                        fontFamily = PBCFontFamily,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+
+                    Text(
+                        text = "by ${selectedNews.author.name}",
+                        fontFamily = PBCFontFamily,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(2.dp),
+                        thickness = 2.dp
+                    )
+
+                    Column(
+                        modifier = Modifier.verticalScroll(rememberScrollState())
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Card(
+                                modifier = Modifier
+                                    .padding(top = 20.dp)
+                                    .shadow(
+                                        elevation = 12.dp,
+                                        spotColor = themeAdditionalColors.shadow
+                                    ),
+                                shape = RoundedCornerShape(12.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                            ) {
+                                AsyncImage(
+                                    model = selectedNews.newsImage,
+                                    error = painterResource(Res.drawable.news_icon_pbc),
+                                    contentDescription = null, // decorative image
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier
+                                        .background(color = MaterialTheme.colorScheme.background)
+                                )
+                            }
+                        }
+
                         Text(
-                            text = stringResource(Res.string.news_label_reference),
+                            text = selectedNews.content,
                             fontFamily = PBCFontFamily,
-                            fontSize = 18.sp,
+                            fontSize = 16.sp,
                             textAlign = TextAlign.Justify,
-                            fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 4.dp)
+                                .padding(top = 16.dp)
                         )
 
-                        Text(
-                            text = it,
-                            fontFamily = PBCFontFamily,
-                            fontSize = 16.sp,
-                            fontStyle = FontStyle.Italic,
-                            textDecoration = TextDecoration.Underline,
-                            color = themeAdditionalColors.quaternary,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 2.dp)
-                                .clickable {
-                                    openUrl(url = it)
-                                }
-                        )
+                        selectedNews.facebookLink?.let {
+                            Text(
+                                text = stringResource(Res.string.news_label_reference),
+                                fontFamily = PBCFontFamily,
+                                fontSize = 18.sp,
+                                textAlign = TextAlign.Justify,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp)
+                            )
+
+                            Text(
+                                text = it,
+                                fontFamily = PBCFontFamily,
+                                fontSize = 16.sp,
+                                fontStyle = FontStyle.Italic,
+                                textDecoration = TextDecoration.Underline,
+                                color = themeAdditionalColors.quaternary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 2.dp)
+                                    .clickable {
+                                        openUrl(url = it)
+                                    }
+                            )
+                        }
                     }
                 }
             }

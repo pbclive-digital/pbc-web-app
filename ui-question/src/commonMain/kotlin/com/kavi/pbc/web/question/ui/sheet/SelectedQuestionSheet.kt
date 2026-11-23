@@ -1,6 +1,7 @@
 package com.kavi.pbc.web.question.ui.sheet
 
 
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -30,6 +31,8 @@ fun QuestionSelectedBottomSheetUI(
         containerColor = MaterialTheme.colorScheme.background,
         scrimColor = themeAdditionalColors.shadow.copy(alpha = .5f)
     ) {
-        SelectedQuestion(selectedQuestion = selectedQuestion, viewModel = viewModel)
+        DisableSelection {
+            SelectedQuestion(selectedQuestion = selectedQuestion, viewModel = viewModel)
+        }
     }
 }
