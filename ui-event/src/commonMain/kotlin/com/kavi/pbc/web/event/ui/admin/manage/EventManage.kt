@@ -1086,15 +1086,29 @@ private fun SignUpSheetItem(modifier: Modifier = Modifier, signUpSheet: SignUpSh
             modifier = Modifier
                 .padding(12.dp)
         ) {
-            Text(
-                modifier = Modifier
-                    .padding(start = 4.dp, end = 4.dp),
-                text = signUpSheet.sheetName,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontFamily = PBCFontFamily,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row {
+                Text(
+                    modifier = Modifier
+                        .padding(start = 4.dp),
+                    text = "${signUpSheet.availableCount}: ",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontFamily = PBCFontFamily,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Text(
+                    modifier = Modifier
+                        .padding(end = 4.dp),
+                    text = signUpSheet.sheetName,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontFamily = PBCFontFamily,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
             Text(
                 modifier = Modifier

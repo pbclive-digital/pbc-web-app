@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,40 +47,42 @@ fun AppBasicDialog(
     val themeAdditionalColors = LocalThemeAdditionalColors.current
 
     if (showDialog) {
-        Dialog(
-            onDismissRequest = onDismissRequest,
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false,
-            )
-        ) {
-            BoxWithConstraints (
-                modifier = modifier,
-                contentAlignment = Alignment.Center
+        DisableSelection {
+            Dialog(
+                onDismissRequest = onDismissRequest,
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = false,
+                )
             ) {
-                val screenWidth = this.maxWidth
-                val dialogWidth = screenWidth.value * 0.85
-                val screenType = UIUtil.screenType(maxWidth)
-
-                val sidePadding = when (screenType) {
-                    ScreenType.PHONE -> 8.dp
-                    ScreenType.TABLET, ScreenType.COMPUTER -> {
-                        (maxWidth.value * .1).dp
-                    }
-                }
-
-                Box(
-                    Modifier
-                        .padding(start = sidePadding, end = sidePadding)
-                        .pointerInput(Unit) { detectTapGestures { } }
-                        .shadow(8.dp, shape = RoundedCornerShape(16.dp), spotColor = themeAdditionalColors.shadow)
-                        .width(dialogWidth.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(
-                            MaterialTheme.colorScheme.surface,
-                        ),
+                BoxWithConstraints (
+                    modifier = modifier,
                     contentAlignment = Alignment.Center
                 ) {
-                    content()
+                    val screenWidth = this.maxWidth
+                    val dialogWidth = screenWidth.value * 0.85
+                    val screenType = UIUtil.screenType(maxWidth)
+
+                    val sidePadding = when (screenType) {
+                        ScreenType.PHONE -> 8.dp
+                        ScreenType.TABLET, ScreenType.COMPUTER -> {
+                            (maxWidth.value * .1).dp
+                        }
+                    }
+
+                    Box(
+                        Modifier
+                            .padding(start = sidePadding, end = sidePadding)
+                            .pointerInput(Unit) { detectTapGestures { } }
+                            .shadow(8.dp, shape = RoundedCornerShape(16.dp), spotColor = themeAdditionalColors.shadow)
+                            .width(dialogWidth.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(
+                                MaterialTheme.colorScheme.surface,
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        content()
+                    }
                 }
             }
         }

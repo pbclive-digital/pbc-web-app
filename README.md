@@ -56,9 +56,10 @@ deployed to github-pages using github-action.
 
 #### Steps to follow in new staging-release
 1. From feature branch update the application version and set application environment to `staging` in `gradle.properties` file.
-2. Create a pull-request from feature branch to `main` branch.
-3. Merge feature branch to `main` branch after having required approvals.
-4. Let github-action to execute from `main` branch to deploy to `staging` environment.
+2. Update the application version to new version in `gradle.properties`.
+3. Create a pull-request from feature branch to `main` branch.
+4. Merge feature branch to `main` branch after having required approvals.
+5. Let github-action to execute from `main` branch to deploy to `staging` environment.
 
 ### Deploy to Production
 Firebase Hosting is using as production environment for this application. Once changes are testing in staging environment, use firebase cli

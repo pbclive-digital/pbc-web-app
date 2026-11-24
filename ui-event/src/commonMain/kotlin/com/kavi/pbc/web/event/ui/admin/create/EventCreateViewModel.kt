@@ -262,6 +262,19 @@ class EventCreateViewModel: ViewModel() {
         _createOrModifyEvent.value.potluckItemList = _potluckItemList.value
     }
 
+    fun modifyPotluckItem(potluckItem: PotluckItem) {
+        _potluckItemList.update { currentList ->
+            currentList.map {
+                if (it.itemId == potluckItem.itemId) {
+                    it.copy(itemName = potluckItem.itemName, itemCount = potluckItem.itemCount)
+                } else {
+                    it
+                }
+            } as MutableList<PotluckItem>
+        }
+        _createOrModifyEvent.value.potluckItemList = _potluckItemList.value
+    }
+
     fun removePotluckItem(potluckItem: PotluckItem) {
         _potluckItemList.value = _potluckItemList.value
             .filterNot { it == potluckItem }
@@ -284,6 +297,15 @@ class EventCreateViewModel: ViewModel() {
         _signUpSheetItemList.value = _signUpSheetItemList.value
             .filterNot { it == signUpSheet }
             .toMutableList()
+        _createOrModifyEvent.value.signUpSheetList = _signUpSheetItemList.value
+    }
+
+    fun modifySignUpSheet(signUpSheet: SignUpSheet) {
+        _signUpSheetItemList.update { currentList ->
+            currentList.map { existing ->
+                if (existing.sheetId == signUpSheet.sheetId) signUpSheet else existing
+            }.toMutableList()
+        }
         _createOrModifyEvent.value.signUpSheetList = _signUpSheetItemList.value
     }
 

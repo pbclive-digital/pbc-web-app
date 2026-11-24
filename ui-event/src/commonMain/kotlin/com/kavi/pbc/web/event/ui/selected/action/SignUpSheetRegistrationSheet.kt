@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -56,20 +57,16 @@ import pbcwebapp.ui_event.generated.resources.event_icon_remove_item
 import pbcwebapp.ui_event.generated.resources.event_icon_unregister_success
 import pbcwebapp.ui_event.generated.resources.event_icon_view
 import pbcwebapp.ui_event.generated.resources.event_label_close
-import pbcwebapp.ui_event.generated.resources.event_label_current_list
 import pbcwebapp.ui_event.generated.resources.event_label_or
 import pbcwebapp.ui_event.generated.resources.event_label_reg_success
 import pbcwebapp.ui_event.generated.resources.event_label_reg_un_reg_failure
-import pbcwebapp.ui_event.generated.resources.event_label_registering
 import pbcwebapp.ui_event.generated.resources.event_label_remaining_seats
 import pbcwebapp.ui_event.generated.resources.event_label_sign_out
 import pbcwebapp.ui_event.generated.resources.event_label_sign_up
 import pbcwebapp.ui_event.generated.resources.event_label_sign_up_sheet_registration_list
 import pbcwebapp.ui_event.generated.resources.event_label_sign_up_sheet_title
 import pbcwebapp.ui_event.generated.resources.event_label_un_reg_success
-import pbcwebapp.ui_event.generated.resources.event_label_unregistering
 import pbcwebapp.ui_event.generated.resources.event_label_user_sign_up_count
-import pbcwebapp.ui_event.generated.resources.event_phrase_current_list
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_success
 import pbcwebapp.ui_event.generated.resources.event_phrase_reg_un_reg_failure
 import pbcwebapp.ui_event.generated.resources.event_phrase_sign_up_sheet_registration_list
@@ -97,36 +94,38 @@ fun SignUpSheetBottomSheetUI(sheetState: SheetState,
         containerColor = MaterialTheme.colorScheme.background,
         scrimColor = themeAdditionalColors.shadow.copy(alpha = .5f)
     ) {
-        Box (
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
-                .fillMaxWidth()
-        ) {
-            if (Session.isLogIn()) {
-                when(actionStatus) {
-                    SignUpSheetRegUnRegUiStatus.INITIAL -> {
-                        SignUpSheetRegUnRegInitial(viewModel = viewModel, selectedSignUpSheet = selectedSignUpSheet)
-                    }
-                    SignUpSheetRegUnRegUiStatus.PENDING -> {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(300.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator()
+        DisableSelection {
+            Box (
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
+                    .fillMaxWidth()
+            ) {
+                if (Session.isLogIn()) {
+                    when(actionStatus) {
+                        SignUpSheetRegUnRegUiStatus.INITIAL -> {
+                            SignUpSheetRegUnRegInitial(viewModel = viewModel, selectedSignUpSheet = selectedSignUpSheet)
                         }
-                    }
-                    SignUpSheetRegUnRegUiStatus.FAILURE -> {
-                        SignUpSheetRegUnRegFailure(viewModel = viewModel, showSheet = showSheet)
-                    }
-                    SignUpSheetRegUnRegUiStatus.REG_SUCCESS -> {
-                        SignUpSheetRegUnRegSuccess(viewModel = viewModel, regUnRegType = RegUnRegType.REGISTER, showSheet = showSheet)
-                    }
-                    SignUpSheetRegUnRegUiStatus.UN_REG_SUCCESS -> {
-                        SignUpSheetRegUnRegSuccess(viewModel = viewModel, regUnRegType = RegUnRegType.UNREGISTER, showSheet = showSheet)
+                        SignUpSheetRegUnRegUiStatus.PENDING -> {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(300.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                        SignUpSheetRegUnRegUiStatus.FAILURE -> {
+                            SignUpSheetRegUnRegFailure(viewModel = viewModel, showSheet = showSheet)
+                        }
+                        SignUpSheetRegUnRegUiStatus.REG_SUCCESS -> {
+                            SignUpSheetRegUnRegSuccess(viewModel = viewModel, regUnRegType = RegUnRegType.REGISTER, showSheet = showSheet)
+                        }
+                        SignUpSheetRegUnRegUiStatus.UN_REG_SUCCESS -> {
+                            SignUpSheetRegUnRegSuccess(viewModel = viewModel, regUnRegType = RegUnRegType.UNREGISTER, showSheet = showSheet)
+                        }
                     }
                 }
             }

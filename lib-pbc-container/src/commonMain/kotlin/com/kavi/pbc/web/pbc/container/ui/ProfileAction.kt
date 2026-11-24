@@ -33,9 +33,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.lib_pbc_container.generated.resources.Res
 import pbcwebapp.lib_pbc_container.generated.resources.container_icon_profile
-import pbcwebapp.lib_pbc_container.generated.resources.container_image_dhamma_chakra_256
+import pbcwebapp.lib_pbc_container.generated.resources.container_icon_sign_in
 import pbcwebapp.lib_pbc_container.generated.resources.container_label_close
-import pbcwebapp.lib_pbc_container.generated.resources.container_label_profile
 import pbcwebapp.lib_pbc_container.generated.resources.container_label_sign_in
 import pbcwebapp.lib_pbc_container.generated.resources.container_label_sign_out
 import pbcwebapp.lib_pbc_container.generated.resources.container_label_sign_up
@@ -79,7 +78,7 @@ fun ProfileActionComponent(
                 }
                 else -> {
                     Image(
-                        painterResource(Res.drawable.container_image_dhamma_chakra_256),
+                        painterResource(Res.drawable.container_icon_sign_in),
                         contentDescription = "Dhamma chakkra",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

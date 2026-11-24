@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -217,9 +218,7 @@ fun PBCDashboardContainer(
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.End
                                         ) {
-                                            // TODO: Uncomment this when it ready.
-                                            //  These are the header-link buttons for (Contact Us, About Us, etc...)
-                                            // AdditionalActionComponent(navController = navController)
+                                            AdditionalActionComponent(navController = navController)
 
                                             Spacer(modifier = Modifier.width(8.dp))
 
@@ -297,7 +296,7 @@ fun PBCDashboardContainer(
                                 ) {
                                     // TODO: Uncomment this when it ready.
                                     //  These are the header-link buttons for (Contact Us, About Us, etc...)
-                                    // AdditionalActionComponent(navController = navController)
+                                    AdditionalActionComponent(navController = navController)
 
                                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -376,7 +375,9 @@ fun PBCDashboardContainer(
                 }
             }
 
-            tabContent(selectedTabIndex, appAuthStatus)
+            SelectionContainer {
+                tabContent(selectedTabIndex, appAuthStatus)
+            }
         }
     }
 }

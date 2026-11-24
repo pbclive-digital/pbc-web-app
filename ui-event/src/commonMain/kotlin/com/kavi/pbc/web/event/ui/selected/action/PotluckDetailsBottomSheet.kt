@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -63,55 +64,57 @@ fun PotluckSheetUI(sheetState: SheetState, showSheet: MutableState<Boolean>,
         containerColor = MaterialTheme.colorScheme.background,
         scrimColor = themeAdditionalColors.shadow.copy(alpha = .5f)
     ) {
-        Box (
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
-                .fillMaxWidth()
-        ) {
-            if (Session.isLogIn()) {
-                Column {
-                    when (viewMode) {
-                        PotluckViewMode.CONTRIBUTING_MODE -> {
-                            TitleWithAction(
-                                titleText = stringResource(Res.string.event_label_contribute_potluck),
-                                textSize = 24,
-                                actionPainter = painterResource(Res.drawable.event_icon_view),
-                                actionPainterSize = 28.dp,
-                                isIcon = true
-                            ) {
-                                viewMode = PotluckViewMode.CONTRIBUTION_VIEW_MODE
+        DisableSelection {
+            Box (
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
+                    .fillMaxWidth()
+            ) {
+                if (Session.isLogIn()) {
+                    Column {
+                        when (viewMode) {
+                            PotluckViewMode.CONTRIBUTING_MODE -> {
+                                TitleWithAction(
+                                    titleText = stringResource(Res.string.event_label_contribute_potluck),
+                                    textSize = 24,
+                                    actionPainter = painterResource(Res.drawable.event_icon_view),
+                                    actionPainterSize = 28.dp,
+                                    isIcon = true
+                                ) {
+                                    viewMode = PotluckViewMode.CONTRIBUTION_VIEW_MODE
+                                }
+                            }
+
+                            PotluckViewMode.CONTRIBUTION_VIEW_MODE -> {
+                                TitleWithBackNav(
+                                    titleText = stringResource(Res.string.event_label_contribute_potluck),
+                                    textSize = 24,
+                                    backIconSize = 24.dp
+                                ) {
+                                    viewMode = PotluckViewMode.CONTRIBUTING_MODE
+                                }
                             }
                         }
 
-                        PotluckViewMode.CONTRIBUTION_VIEW_MODE -> {
-                            TitleWithBackNav(
-                                titleText = stringResource(Res.string.event_label_contribute_potluck),
-                                textSize = 24,
-                                backIconSize = 24.dp
-                            ) {
-                                viewMode = PotluckViewMode.CONTRIBUTING_MODE
+                        HorizontalDivider(
+                            modifier = Modifier.padding(2.dp),
+                            thickness = 2.dp
+                        )
+
+                        when (viewMode) {
+                            PotluckViewMode.CONTRIBUTING_MODE -> {
+                                // Contributing Mode
+                                ShowContributingMode(viewModel = viewModel)
+                            }
+
+                            PotluckViewMode.CONTRIBUTION_VIEW_MODE -> {
+                                // Show current contributions mode
+                                ShowCurrentContributionsModel(viewModel = viewModel)
                             }
                         }
+
                     }
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(2.dp),
-                        thickness = 2.dp
-                    )
-
-                    when (viewMode) {
-                        PotluckViewMode.CONTRIBUTING_MODE -> {
-                            // Contributing Mode
-                            ShowContributingMode(viewModel = viewModel)
-                        }
-
-                        PotluckViewMode.CONTRIBUTION_VIEW_MODE -> {
-                            // Show current contributions mode
-                            ShowCurrentContributionsModel(viewModel = viewModel)
-                        }
-                    }
-
                 }
             }
         }

@@ -69,16 +69,15 @@ import com.kavi.pbc.web.data.event.Event
 import com.kavi.pbc.web.data.event.EventRecurringDay
 import com.kavi.pbc.web.data.event.EventType
 import com.kavi.pbc.web.data.event.VenueType
-import com.kavi.pbc.web.data.util.DateTimeUtil
+import com.kavi.pbc.web.data.event.potluck.PotluckItem
+import com.kavi.pbc.web.data.event.signup.SignUpSheet
 import com.kavi.pbc.web.event.data.model.EventCreateOrModifyUiState
 import com.kavi.pbc.web.event.data.model.EventManageOrCreate
 import com.kavi.pbc.web.event.data.model.TimePickerMode
 import com.kavi.pbc.web.event.ui.admin.common.AgendaItem
 import com.kavi.pbc.web.event.ui.admin.common.AgendaItemEdit
-import com.kavi.pbc.web.event.ui.admin.common.PotluckListItem
+import com.kavi.pbc.web.event.ui.admin.common.PotluckItemUI
 import com.kavi.pbc.web.event.ui.admin.common.SignUpSheetListItem
-import com.kavi.pbc.web.event.ui.admin.create.dialog.PotluckItemCreateDialog
-import com.kavi.pbc.web.event.ui.admin.create.dialog.SignUpSheetCreateDialog
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
@@ -882,6 +881,9 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
     val createOrModifyEvent by viewModel.createOrModifyEvent.collectAsState()
     val potluckItemList by viewModel.potluckItemList.collectAsState()
 
+    //var modifyPotluckItem by remember { mutableStateOf(PotluckItem("", "", 0)) }
+    var modifyPotluckItem: MutableState<PotluckItem?> = remember { mutableStateOf(null) }
+
     var isPotluckChecked by remember { mutableStateOf(createOrModifyEvent.potluckAvailable) }
     val showCreatePotluckItemDialog = remember { mutableStateOf(false) }
 
@@ -946,14 +948,6 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
         }
 
         if (isPotluckChecked) {
-            AppButtonWithIcon (
-                modifier = Modifier.padding(top = 4.dp),
-                label = stringResource(Res.string.event_label_add_to_potluck),
-                icon = painterResource(Res.drawable.event_icon_plus)
-            ) {
-                showCreatePotluckItemDialog.value = true
-            }
-
             Column (
                 modifier = Modifier
                     .fillMaxWidth()
@@ -963,8 +957,12 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
             ) {
                 potluckItemList.forEachIndexed { index, potluckItem ->
                     key (potluckItem.itemId) {
-                        PotluckListItem(
+                        PotluckItemUI(
                             potluckItem = potluckItem,
+                            onModify = { modifiedPotluckItem ->
+                                // On Modify
+                                viewModel.modifyPotluckItem(modifiedPotluckItem)
+                            },
                             onDelete = {
                                 viewModel.removePotluckItem(potluckItem)
                             }
@@ -980,19 +978,39 @@ private fun EventPotluckSetup(viewModel: EventCreateViewModel) {
                         }
                     }
                 }
+
+                if (showCreatePotluckItemDialog.value) {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 8.dp),
+                        thickness = 2.dp,
+                        color = themeAdditionalColors.shadow
+                    )
+
+                    PotluckItemUI(
+                        potluckItem = PotluckItem(itemName = "", itemCount = 0),
+                        isCreate = true,
+                        onModify = {}, onDelete = {}, onCreate = { newPotluckItem ->
+                            showCreatePotluckItemDialog.value = false
+                            viewModel.addPotluckItem(newPotluckItem)
+                        }, onCreateCancel = {
+                            showCreatePotluckItemDialog.value = false
+                        }
+                    )
+                }
+            }
+
+            if (!showCreatePotluckItemDialog.value) {
+                AppButtonWithIcon(
+                    modifier = Modifier.padding(top = 8.dp),
+                    label = stringResource(Res.string.event_label_add_to_potluck),
+                    icon = painterResource(Res.drawable.event_icon_plus)
+                ) {
+                    showCreatePotluckItemDialog.value = true
+                }
             }
         }
-
-        PotluckItemCreateDialog(
-            showDialog = showCreatePotluckItemDialog,
-            onCreate = { potluckItem ->
-                viewModel.addPotluckItem(potluckItem)
-                showCreatePotluckItemDialog.value = false
-            },
-            onCancel = {
-                showCreatePotluckItemDialog.value = false
-            }
-        )
 
         Spacer(modifier = Modifier.weight(1f))
     }
@@ -1067,14 +1085,6 @@ private fun EventSignUpSheetSetup(viewModel: EventCreateViewModel) {
         }
 
         if (isAdditionalSignUpsChecked) {
-            AppButtonWithIcon (
-                modifier = Modifier.padding(top = 8.dp),
-                label = stringResource(Res.string.event_label_add_new_sign_up_sheet),
-                icon = painterResource(Res.drawable.event_icon_plus)
-            ) {
-                showCreateSignUpSheetItemDialog.value = true
-            }
-
             Column (
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1086,6 +1096,9 @@ private fun EventSignUpSheetSetup(viewModel: EventCreateViewModel) {
                     key (signUpSheet.sheetId) {
                         SignUpSheetListItem(
                             signUpSheet = signUpSheet,
+                            onModify = { signUpSheet ->
+                                viewModel.modifySignUpSheet(signUpSheet)
+                            },
                             onDelete = {
                                 viewModel.removeSignUpSheet(signUpSheet)
                             }
@@ -1101,19 +1114,41 @@ private fun EventSignUpSheetSetup(viewModel: EventCreateViewModel) {
                         }
                     }
                 }
+
+                if (showCreateSignUpSheetItemDialog.value) {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 8.dp),
+                        thickness = 2.dp,
+                        color = themeAdditionalColors.shadow
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    SignUpSheetListItem(
+                        signUpSheet = SignUpSheet(sheetName = "", availableCount = 0),
+                        isCreate = true,
+                        onModify = {}, onDelete = {}, onCreate = { newSignUpSheet ->
+                            viewModel.addSignUpSheet(newSignUpSheet)
+                            showCreateSignUpSheetItemDialog.value = false
+                        }, onCreateCancel = {
+                            showCreateSignUpSheetItemDialog.value = false
+                        }
+                    )
+                }
+            }
+
+            if (!showCreateSignUpSheetItemDialog.value) {
+                AppButtonWithIcon (
+                    modifier = Modifier.padding(top = 8.dp),
+                    label = stringResource(Res.string.event_label_add_new_sign_up_sheet),
+                    icon = painterResource(Res.drawable.event_icon_plus)
+                ) {
+                    showCreateSignUpSheetItemDialog.value = true
+                }
             }
         }
-
-        SignUpSheetCreateDialog(
-            showDialog = showCreateSignUpSheetItemDialog,
-            onCreate = { signUpSheet ->
-                viewModel.addSignUpSheet(signUpSheet)
-                showCreateSignUpSheetItemDialog.value = false
-            },
-            onCancel = {
-                showCreateSignUpSheetItemDialog.value = false
-            }
-        )
 
         Spacer(modifier = Modifier.weight(1f))
     }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -296,11 +297,13 @@ private fun PageContainer(
                 }
             }
 
-            Box (
-                modifier = Modifier.padding(start = sidePadding, end = sidePadding),
-                contentAlignment = Alignment.Center,
-            ) {
-                content.invoke()
+            SelectionContainer {
+                Box (
+                    modifier = Modifier.padding(start = sidePadding, end = sidePadding),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    content.invoke()
+                }
             }
         }
     }

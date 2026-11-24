@@ -15,13 +15,15 @@ import org.jetbrains.compose.resources.stringResource
 import pbcwebapp.lib_pbc_container.generated.resources.Res
 import pbcwebapp.lib_pbc_container.generated.resources.container_label_about_us
 import pbcwebapp.lib_pbc_container.generated.resources.container_label_contact_us
+import pbcwebapp.lib_pbc_container.generated.resources.container_label_privacy_policy
 
 @Composable
 fun AdditionalActionComponent(navController: NavController) {
     Row (
         horizontalArrangement = Arrangement.End
     ) {
-        AppLinkButton(
+        // TODO: Uncomment this when it ready. These are the header-link buttons for (Contact Us, About Us, etc...)
+        /*AppLinkButton(
             label = stringResource(Res.string.container_label_contact_us),
             color = MaterialTheme.colorScheme.onPrimary
         ) {
@@ -35,6 +37,15 @@ fun AdditionalActionComponent(navController: NavController) {
             color = MaterialTheme.colorScheme.onPrimary
         ) {
             navController.navigate(DashboardPath.AboutUs)
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))*/
+
+        AppLinkButton(
+            label = stringResource(Res.string.container_label_privacy_policy),
+            color = MaterialTheme.colorScheme.onPrimary
+        ) {
+            navController.navigate(DashboardPath.PrivacyPolicy)
         }
     }
 }
